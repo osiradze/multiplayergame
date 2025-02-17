@@ -7,7 +7,7 @@ interface BaseUrlProvider {
 
 class BaseUrlProviderImpl : BaseUrlProvider {
 
-    private var baseUrl: String = "192.168.25.211"
+    private var baseUrl: String = "http://192.168.25.211"
 
     override fun set(url : String) {
         baseUrl = url

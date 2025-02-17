@@ -5,5 +5,5 @@ import ge.siradze.mutiplayergame.menu.domain.model.Server
 
 interface ServerRepository {
     fun host()
-    fun getServers(): ResultFace<List<Server>, String>
+    suspend fun getServers(): ResultFace<List<Server>, String>
 }

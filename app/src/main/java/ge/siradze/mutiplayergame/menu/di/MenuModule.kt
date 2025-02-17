@@ -13,7 +13,7 @@ import org.koin.dsl.module
 val menuDataModule = module {
     single<GetServersUseCase> { GetServersUseCaseImpl(get()) }
     single<HostGameUseCase> { HostGameUseCaseImpl() }
-    single<ServerRepository> { ServerRepositoryImpl(get(), get()) }
+    single<ServerRepository> { ServerRepositoryImpl(get()) }
 }
 
 val menuPresentationModule = module {

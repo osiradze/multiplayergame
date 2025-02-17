@@ -5,15 +5,13 @@ import ge.siradze.mutiplayergame.menu.data.network.ServerRepository
 import ge.siradze.mutiplayergame.menu.domain.model.Server
 
 fun interface GetServersUseCase {
-    fun invoke(): ResultFace<List<Server>, String>
+    suspend fun invoke(): ResultFace<List<Server>, String>
 }
 
 class GetServersUseCaseImpl(
     private val serverRepository: ServerRepository
 ) : GetServersUseCase {
-    override fun invoke(
-
-    ): ResultFace<List<Server>, String> {
+    override suspend fun invoke(): ResultFace<List<Server>, String> {
         val result = serverRepository.getServers()
         return result
     }
