@@ -19,8 +19,8 @@ class MenuActivityVM(
     private val hostGameUseCase: HostGameUseCase
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<MenuActivityState> = MutableStateFlow(
-        MenuActivityState.Main(baseUrlProvider.get())
+    private val _state: MutableStateFlow<MenuState> = MutableStateFlow(
+        MenuState.Main(baseUrlProvider.get())
     )
     val state = _state.asStateFlow()
 
@@ -32,7 +32,7 @@ class MenuActivityVM(
     fun event(event: MenuEvent) {
         when(event) {
             is MenuEvent.IpChanged -> setIp(event.ip)
-            MenuEvent.HostClicked -> host()
+            is MenuEvent.HostClicked -> host(event.name)
             MenuEvent.JoinClicked -> join()
             MenuEvent.OnBackPress -> backPress()
         }
@@ -40,14 +40,13 @@ class MenuActivityVM(
 
     private fun setIp(ip: String) {
         baseUrlProvider.set(ip)
-        _state.value = MenuActivityState.Main(baseUrlProvider.get())
+        _state.value = MenuState.Main(baseUrlProvider.get())
     }
 
-    private fun host() = viewModelScope.launch {
-        val result = hostGameUseCase.invoke()
-        when (result) {
+    private fun host(name: String) = viewModelScope.launch {
+        when (val result = hostGameUseCase.invoke(name)) {
             is ResultFace.Error -> {
-                _effect.emit(MenuEffect.ShowToast(result.error.toString()))
+                _effect.emit(MenuEffect.ShowToast(result.error))
             }
             is ResultFace.Success -> {
                 _effect.emit(MenuEffect.StartGame(result.value))
@@ -62,14 +61,14 @@ class MenuActivityVM(
                 _effect.emit(MenuEffect.ShowToast(result.error))
             }
             is ResultFace.Success -> {
-                _state.value = MenuActivityState.Servers(result.value)
+                _state.value = MenuState.Servers(result.value)
             }
         }
     }
 
     private fun backPress() = viewModelScope.launch {
-        if(_state.value is MenuActivityState.Servers) {
-            _state.value = MenuActivityState.Main(baseUrlProvider.get())
+        if(_state.value is MenuState.Servers) {
+            _state.value = MenuState.Main(baseUrlProvider.get())
         } else {
             _effect.emit(MenuEffect.Finish)
         }
@@ -78,14 +77,14 @@ class MenuActivityVM(
 
 
 
-    sealed class MenuActivityState {
-        data class Main(val ip: String) : MenuActivityState()
-        data class Servers(val servers: List<Server>) : MenuActivityState()
+    sealed class MenuState {
+        data class Main(val ip: String) : MenuState()
+        data class Servers(val servers: List<Server>) : MenuState()
     }
 
     sealed class MenuEvent {
         data class IpChanged(val ip: String) : MenuEvent()
-        data object HostClicked : MenuEvent()
+        data class HostClicked(val name: String) : MenuEvent()
         data object JoinClicked : MenuEvent()
         data object OnBackPress : MenuEvent()
     }

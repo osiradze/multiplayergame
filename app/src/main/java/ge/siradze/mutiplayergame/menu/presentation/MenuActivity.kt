@@ -2,7 +2,6 @@ package ge.siradze.mutiplayergame.menu.presentation
 
 import android.os.Bundle
 import android.widget.Toast
-import android.window.OnBackInvokedDispatcher
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
@@ -38,13 +37,14 @@ class MenuActivity : ComponentActivity() {
                     val state = viewModel.state.collectAsState().value
 
                     when(state){
-                        is MenuActivityVM.MenuActivityState.Main -> {
+                        is MenuActivityVM.MenuState.Main -> {
                             MainScreen(
+                                state = state,
                                 onEvent = viewModel::event,
                                 modifier = Modifier.padding(innerPadding)
                             )
                         }
-                        is MenuActivityVM.MenuActivityState.Servers -> {
+                        is MenuActivityVM.MenuState.Servers -> {
                             ServersScreen(state.servers)
                         }
                     }

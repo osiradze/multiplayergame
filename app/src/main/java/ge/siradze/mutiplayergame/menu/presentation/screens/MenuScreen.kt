@@ -4,20 +4,30 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ge.siradze.mutiplayergame.menu.presentation.MenuActivityVM
+import ge.siradze.mutiplayergame.menu.presentation.screens.alert.AlertDialogWithTextField
 import ge.siradze.mutiplayergame.ui.theme.MutiplayerGameTheme
 
 @Composable
 fun MainScreen(
+    state: MenuActivityVM.MenuState.Main,
     onEvent: (MenuActivityVM.MenuEvent) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
@@ -25,12 +35,26 @@ fun MainScreen(
         modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        var showAlert by remember { mutableStateOf(false) }
+
+        if(showAlert) {
+            AlertDialogWithTextField(
+                title = "Host Game",
+                description = "Enter game name",
+                onDismissRequest = { showAlert = false },
+                onConfirm = {
+                    onEvent(MenuActivityVM.MenuEvent.HostClicked(it))
+                    showAlert = false
+                }
+            )
+        }
+
         Column(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             OutlinedTextField(
-                value = "192.168.25.211",
+                value = state.ip,
                 onValueChange = {
                     onEvent(MenuActivityVM.MenuEvent.IpChanged(it))
                 },
@@ -38,7 +62,8 @@ fun MainScreen(
             Spacer(modifier = Modifier.height(50.dp))
             OutlinedButton(
                 onClick = {
-                    onEvent(MenuActivityVM.MenuEvent.HostClicked)
+                    showAlert = true
+                    //onEvent(MenuActivityVM.MenuEvent.HostClicked)
                 }
             ) {
                 Text(text = "Host")
@@ -60,6 +85,8 @@ fun MainScreen(
 @Composable
 fun MainScreenPreview() {
     MutiplayerGameTheme {
-        MainScreen()
+        MainScreen(
+            MenuActivityVM.MenuState.Main("localhost")
+        )
     }
 }
