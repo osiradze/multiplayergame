@@ -49,7 +49,7 @@ class MenuActivityVM(
                 _effect.emit(MenuEffect.ShowToast(result.error))
             }
             is ResultFace.Success -> {
-                _effect.emit(MenuEffect.StartGame(result.value))
+                _effect.emit(MenuEffect.StartGame(result.value.port))
             }
         }
 

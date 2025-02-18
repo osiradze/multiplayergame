@@ -1,23 +1,21 @@
 package ge.siradze.mutiplayergame.menu.data.network
 
 import ge.siradze.mutiplayergame.core.ResultFace
-import ge.siradze.mutiplayergame.core.network.BaseUrlProvider
 import ge.siradze.mutiplayergame.menu.data.network.api.ServerService
 import ge.siradze.mutiplayergame.menu.data.network.map.toModel
 import ge.siradze.mutiplayergame.menu.data.network.model.HostRequestDto
 import ge.siradze.mutiplayergame.menu.domain.model.Server
-import kotlinx.coroutines.Dispatchers
 
 class ServerRepositoryImpl(
     private val serverService: ServerService,
 ): ServerRepository {
-    override suspend fun host(name: String): ResultFace<Int, String> {
+    override suspend fun host(name: String): ResultFace<Server, String> {
         try {
             val result = serverService.host(HostRequestDto(name))
             return when {
                 result.isSuccessful -> {
-                    result.body()?.serverId?.let {
-                        ResultFace.Success(it)
+                    result.body()?.server?.let {
+                        ResultFace.Success(it.toModel())
                     } ?: ResultFace.Error("Server id is null")
                 } else -> {
                     ResultFace.Error(result.message())

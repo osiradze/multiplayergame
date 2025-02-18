@@ -1,5 +1,7 @@
 package ge.siradze.mutiplayergame.core.network
 
+import ge.siradze.mutiplayergame.BuildConfig
+
 interface BaseUrlProvider {
     fun set(url : String)
     fun get(): String
@@ -7,7 +9,8 @@ interface BaseUrlProvider {
 
 class BaseUrlProviderImpl : BaseUrlProvider {
 
-    private var baseUrl: String = "http://10.178.254.220:8080/"
+    private var baseUrl: String = BuildConfig.BASE_URL
+
 
     override fun set(url : String) {
         baseUrl = url

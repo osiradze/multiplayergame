@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -8,6 +10,9 @@ android {
     namespace = "ge.siradze.mutiplayergame"
     compileSdk = 35
 
+    val localProperties = getLocalProperties()
+    val baseUrl: String? = localProperties.getProperty("baseUrl")
+
     defaultConfig {
         applicationId = "ge.siradze.mutiplayergame"
         minSdk = 24
@@ -16,6 +21,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
     }
 
     buildTypes {
@@ -36,8 +43,20 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+
+}
+
+fun getLocalProperties() = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        load(file.inputStream())
     }
 }
+
+
+
 
 dependencies {
     implementation(libs.androidx.core.ktx)
