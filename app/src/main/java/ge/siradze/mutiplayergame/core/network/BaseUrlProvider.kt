@@ -16,5 +16,7 @@ class BaseUrlProviderImpl : BaseUrlProvider {
         baseUrl = url
     }
 
-    override fun get(): String = baseUrl
+    override fun get(): String {
+        return baseUrl
+    }
 }

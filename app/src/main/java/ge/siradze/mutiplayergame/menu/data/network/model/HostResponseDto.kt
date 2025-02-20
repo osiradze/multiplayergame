@@ -4,6 +4,6 @@ import com.google.gson.annotations.SerializedName
 import ge.siradze.mutiplayergame.menu.domain.model.Server
 
 data class HostResponseDto (
-    @SerializedName("serverId")
+    @SerializedName("server")
     val server: ServerDto
 )
