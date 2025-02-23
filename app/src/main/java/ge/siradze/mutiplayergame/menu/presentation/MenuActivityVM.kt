@@ -35,6 +35,7 @@ class MenuActivityVM(
             is MenuEvent.HostClicked -> host(event.name)
             MenuEvent.JoinClicked -> join()
             MenuEvent.OnBackPress -> backPress()
+            MenuEvent.PlayClicked -> play()
         }
     }
 
@@ -66,6 +67,10 @@ class MenuActivityVM(
         }
     }
 
+    private fun play() = viewModelScope.launch  {
+        _effect.emit(MenuEffect.StartGame(null))
+    }
+
     private fun backPress() = viewModelScope.launch {
         if(_state.value is MenuState.Servers) {
             _state.value = MenuState.Main(baseUrlProvider.get())
@@ -86,11 +91,12 @@ class MenuActivityVM(
         data class IpChanged(val ip: String) : MenuEvent()
         data class HostClicked(val name: String) : MenuEvent()
         data object JoinClicked : MenuEvent()
+        data object PlayClicked : MenuEvent()
         data object OnBackPress : MenuEvent()
     }
 
     sealed class MenuEffect {
-        data class StartGame(val port: Int) : MenuEffect()
+        data class StartGame(val port: Int?) : MenuEffect()
         data class ShowToast(val message: String) : MenuEffect()
         data object Finish : MenuEffect()
     }

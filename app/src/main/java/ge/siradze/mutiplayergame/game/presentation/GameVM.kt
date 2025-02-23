@@ -18,6 +18,10 @@ class GameVM(
 
     init {
         viewModelScope.launch {
+            if(port == 0) {
+                Log.i(TAG, "init: singlePlayer")
+                return@launch
+            }
             val result = gameRepository.connect(port)
             when(result) {
                 is ResultFace.Success -> {

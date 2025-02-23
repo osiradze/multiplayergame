@@ -65,7 +65,6 @@ fun MainScreen(
             OutlinedButton(
                 onClick = {
                     showAlert = true
-                    //onEvent(MenuActivityVM.MenuEvent.HostClicked)
                 }
             ) {
                 Text(text = "Host")
@@ -76,6 +75,14 @@ fun MainScreen(
                 }
             ) {
                 Text(text = "Join")
+            }
+            Spacer(modifier = Modifier.height(50.dp))
+            OutlinedButton(
+                onClick = {
+                    onEvent(MenuActivityVM.MenuEvent.PlayClicked)
+                }
+            ) {
+                Text(text = "Play")
             }
 
         }
