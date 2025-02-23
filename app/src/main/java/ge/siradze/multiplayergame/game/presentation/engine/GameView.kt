@@ -2,6 +2,7 @@ package ge.siradze.multiplayergame.game.presentation.engine
 
 import android.content.Context
 import android.opengl.GLSurfaceView
+import ge.siradze.multiplayergame.game.presentation.engine.gameUi.UIEvents
 
 class GameView (private val context: Context) : GLSurfaceView(context) {
 
@@ -15,6 +16,11 @@ class GameView (private val context: Context) : GLSurfaceView(context) {
 
         renderMode = RENDERMODE_CONTINUOUSLY
     }
+
+    fun onUIEvent(event: UIEvents) {
+        renderer.onUIEvent(event)
+    }
+
 
     fun release() {
         renderer.release()

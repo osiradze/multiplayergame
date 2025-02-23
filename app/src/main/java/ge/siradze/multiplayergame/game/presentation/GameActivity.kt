@@ -14,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import ge.siradze.multiplayergame.game.presentation.engine.GameView
+import ge.siradze.multiplayergame.game.presentation.engine.gameUi.UIEvents
+import ge.siradze.multiplayergame.game.presentation.engine.gameUi.buttons.GameUI
 import ge.siradze.multiplayergame.ui.theme.MultiplayerGameTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -26,8 +28,6 @@ class GameActivity : ComponentActivity() {
 
     private lateinit var gameView : GameView
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel
@@ -39,10 +39,17 @@ class GameActivity : ComponentActivity() {
                 Scaffold(contentWindowInsets = WindowInsets(0,0,0,0)) { innerPadding ->
                     Box(Modifier.padding(innerPadding)) {
                         ComposeGLSurfaceView()
+                        GameUI() { event ->
+                            handleUIEvents(event)
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun handleUIEvents(event: UIEvents) {
+        gameView.onUIEvent(event)
     }
 
     override fun onDestroy() {

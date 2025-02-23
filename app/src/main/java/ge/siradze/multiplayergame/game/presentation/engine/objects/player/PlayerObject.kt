@@ -31,6 +31,7 @@ import ge.siradze.multiplayergame.game.presentation.engine.extensions.middlePoin
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.scale
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
+import ge.siradze.multiplayergame.game.presentation.engine.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
 import ge.siradze.multiplayergame.game.presentation.engine.utils.ShaderUtils
@@ -45,7 +46,7 @@ class PlayerData {
             0.0f, 0.5f,
             0.5f, -0.5f,
             -0.5f, -0.5f,
-        ).scale(0.1f, numberOfFloatsPerVertex)
+        ).scale(0.05f, numberOfFloatsPerVertex)
 
         val middlePoint = data.middlePoint(numberOfFloatsPerVertex)
 
@@ -62,16 +63,34 @@ class PlayerData {
     class ShaderLocations(
         var vertex: Int = 0,
         var ratio: Int = 0,
-        var position: Int = 0,
         var middlePoint : Int = 0,
+
+        var position: Int = 0,
         var rotation: Int = 0,
         var velocity: Int = 0,
     )
     class Properties(
         val position: FloatArray = floatArrayOf(0.0f, 0.0f),
-        var rotation: Float = 0.1f,
+        var rotation: Float = 0.0f,
         val velocity: FloatArray = floatArrayOf(0.0f, 0.0f),
-    )
+    ) {
+
+        var gas = false
+        private val gasForce = 0.0005f
+        private val maxSpeed = 0.01f
+        private val deceleration = 0.90f
+
+        fun update() {
+            if (gas && velocity.y < maxSpeed) {
+                velocity[1] += gasForce
+            } else {
+                velocity[0] *= deceleration
+                velocity[1] *= deceleration
+            }
+            position[0] += velocity[0]
+            position[1] += velocity[1]
+        }
+    }
 }
 
 
@@ -89,6 +108,8 @@ class PlayerObject(
 
     private var shaders = IntArray(2)
     private var program = 0
+
+
 
 
 
@@ -116,13 +137,8 @@ class PlayerObject(
         glUniform2f(locations.ratio, vertex.middlePoint.x, vertex.middlePoint.y)
 
         locations.position = glGetUniformLocation(program, "u_position")
-        glUniform2f(locations.middlePoint, properties.position.x, properties.position.y)
-
         locations.rotation = glGetUniformLocation(program, "u_rotation")
-        glUniform1f(locations.rotation, properties.rotation)
-
         locations.velocity = glGetUniformLocation(program, "u_velocity")
-        glUniform2f(locations.velocity, properties.velocity.x, properties.velocity.y)
 
     }
 
@@ -155,11 +171,7 @@ class PlayerObject(
         glBindVertexArray(vao[0])
         glEnableVertexAttribArray(locations.vertex)
 
-
-        properties.rotation += 0.01f
-        glUniform1f(locations.rotation, properties.rotation)
-
-
+        updateAttributes()
 
         GLES20.glDrawArrays(
             GL_LINE_LOOP,
@@ -172,10 +184,29 @@ class PlayerObject(
         glUseProgram(0)
     }
 
+    private fun updateAttributes() {
+        properties.update()
+        glUniform1f(locations.rotation, properties.rotation)
+        glUniform2f(locations.position, properties.position.x, properties.position.y)
+        glUniform2f(locations.velocity, properties.velocity.x, properties.velocity.y)
+    }
+
     override fun release() {
         glDeleteVertexArrays(vao.size, vao, 0)
         glDeleteBuffers(vbo.size, vbo, 0)
         glDeleteProgram(program)
+    }
+
+    fun onUIEvent(event: UIEvents) {
+        properties.gas = when(event) {
+            UIEvents.OnDown -> {
+                true
+            }
+
+            UIEvents.OnUp -> {
+                false
+            }
+        }
     }
 
 }

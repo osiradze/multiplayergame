@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -30,57 +33,68 @@ fun MainScreen(
 ) {
     Box(
         modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
     ) {
         var showAlert by remember { mutableStateOf(false) }
 
-        if(showAlert) {
-            AlertDialogWithTextField(
-                title = "Host Game",
-                description = "Enter game name",
-                onDismissRequest = { showAlert = false },
-                defaultValue = Random.nextInt(1000, 9999).toString(),
-                onConfirm = {
-                    onEvent(MenuActivityVM.MenuEvent.HostClicked(it))
-                    showAlert = false
-                }
-            )
-        }
-
-        Column(
-            modifier = modifier,
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Box(
+            modifier = Modifier.align(Alignment.BottomCenter).padding(30.dp)
         ) {
+            if(showAlert) {
+                AlertDialogWithTextField(
+                    title = "Host Game",
+                    description = "Enter game name",
+                    onDismissRequest = { showAlert = false },
+                    defaultValue = Random.nextInt(1000, 9999).toString(),
+                    onConfirm = {
+                        onEvent(MenuActivityVM.MenuEvent.HostClicked(it))
+                        showAlert = false
+                    }
+                )
+            }
             OutlinedTextField(
                 value = state.ip,
+                shape = RoundedCornerShape(30.dp),
+                textStyle = MaterialTheme.typography.bodySmall,
                 onValueChange = {
                     onEvent(MenuActivityVM.MenuEvent.IpChanged(it))
                 },
             )
-            Spacer(modifier = Modifier.height(50.dp))
-            OutlinedButton(
-                onClick = {
-                    showAlert = true
-                }
-            ) {
-                Text(text = "Host")
-            }
-            OutlinedButton(
-                onClick = {
-                    onEvent(MenuActivityVM.MenuEvent.JoinClicked)
-                }
-            ) {
-                Text(text = "Join")
-            }
-            Spacer(modifier = Modifier.height(50.dp))
-            OutlinedButton(
-                onClick = {
-                    onEvent(MenuActivityVM.MenuEvent.PlayClicked)
-                }
-            ) {
-                Text(text = "Play")
-            }
 
+        }
+
+        Box(
+            modifier = Modifier.align(Alignment.Center)
+        ) {
+            Column(
+                modifier = modifier,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+
+                Spacer(modifier = Modifier.height(50.dp))
+                OutlinedButton(
+                    onClick = {
+                        onEvent(MenuActivityVM.MenuEvent.PlayClicked)
+                    }
+                ) {
+                    Text(text = "Play")
+                }
+                OutlinedButton(
+                    onClick = {
+                        showAlert = true
+                    }
+                ) {
+                    Text(text = "Host")
+                }
+                OutlinedButton(
+                    onClick = {
+                        onEvent(MenuActivityVM.MenuEvent.JoinClicked)
+                    }
+                ) {
+                    Text(text = "Join")
+                }
+
+
+            }
         }
     }
 
