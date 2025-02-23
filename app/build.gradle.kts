@@ -7,14 +7,14 @@ plugins {
 }
 
 android {
-    namespace = "ge.siradze.mutiplayergame"
+    namespace = "ge.siradze.multiplayergame"
     compileSdk = 35
 
     val localProperties = getLocalProperties()
     val baseUrl: String? = localProperties.getProperty("baseUrl")
 
     defaultConfig {
-        applicationId = "ge.siradze.mutiplayergame"
+        applicationId = "ge.siradze.multiplayergame"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
