@@ -15,7 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import ge.siradze.multiplayergame.game.presentation.GameActivity
 import ge.siradze.multiplayergame.menu.presentation.screens.MainScreen
 import ge.siradze.multiplayergame.menu.presentation.screens.ServersScreen
-import ge.siradze.multiplayergame.ui.theme.MutiplayerGameTheme
+import ge.siradze.multiplayergame.ui.theme.MultiplayerGameTheme
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -31,7 +31,7 @@ class MenuActivity : ComponentActivity() {
         backPress()
         enableEdgeToEdge()
         setContent {
-            MutiplayerGameTheme {
+            MultiplayerGameTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
                     val state = viewModel.state.collectAsState().value

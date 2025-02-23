@@ -19,8 +19,10 @@ class GameRender(context: Context) : GLSurfaceView.Renderer {
         }
     }
 
-    override fun onSurfaceChanged(p0: GL10?, p1: Int, p2: Int) {
-
+    override fun onSurfaceChanged(p0: GL10?, width: Int, height: Int) {
+        objects.forEach {
+            it.setRatio(width.toFloat() / height.toFloat())
+        }
     }
 
     override fun onDrawFrame(p0: GL10?) {

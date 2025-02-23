@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ge.siradze.multiplayergame.menu.presentation.MenuActivityVM
 import ge.siradze.multiplayergame.menu.presentation.screens.alert.AlertDialogWithTextField
-import ge.siradze.multiplayergame.ui.theme.MutiplayerGameTheme
+import ge.siradze.multiplayergame.ui.theme.MultiplayerGameTheme
 import kotlin.random.Random
 
 @Composable
@@ -89,7 +89,7 @@ fun MainScreen(
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    MutiplayerGameTheme {
+    MultiplayerGameTheme {
         MainScreen(
             MenuActivityVM.MenuState.Main("localhost")
         )

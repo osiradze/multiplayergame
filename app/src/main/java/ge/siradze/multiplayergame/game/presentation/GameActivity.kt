@@ -7,14 +7,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import ge.siradze.multiplayergame.game.presentation.engine.GameView
-import ge.siradze.multiplayergame.ui.theme.MutiplayerGameTheme
+import ge.siradze.multiplayergame.ui.theme.MultiplayerGameTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -35,8 +35,8 @@ class GameActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            MutiplayerGameTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+            MultiplayerGameTheme {
+                Scaffold(contentWindowInsets = WindowInsets(0,0,0,0)) { innerPadding ->
                     Box(Modifier.padding(innerPadding)) {
                         ComposeGLSurfaceView()
                     }

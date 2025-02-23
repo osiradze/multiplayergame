@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MutiplayerGame"
+rootProject.name = "MultiplayerGame"
 include(":app")
  

@@ -4,6 +4,8 @@ interface GameObject {
 
     fun init()
 
+    fun setRatio(ratio: Float) {}
+
     fun draw()
 
     fun release()
