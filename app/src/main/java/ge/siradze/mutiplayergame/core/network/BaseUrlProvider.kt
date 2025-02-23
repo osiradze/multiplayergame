@@ -1,10 +1,12 @@
 package ge.siradze.mutiplayergame.core.network
 
 import ge.siradze.mutiplayergame.BuildConfig
+import java.net.URI
 
 interface BaseUrlProvider {
     fun set(url : String)
     fun get(): String
+    fun getWithoutPort(): String
 }
 
 class BaseUrlProviderImpl : BaseUrlProvider {
@@ -18,5 +20,10 @@ class BaseUrlProviderImpl : BaseUrlProvider {
 
     override fun get(): String {
         return baseUrl
+    }
+
+    override fun getWithoutPort(): String {
+        val uri = URI(baseUrl)
+        return uri.host
     }
 }

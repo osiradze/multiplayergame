@@ -1,4 +1,4 @@
-package ge.siradze.mutiplayergame.game
+package ge.siradze.mutiplayergame.game.presentation
 
 import android.content.Context
 import android.content.Intent
@@ -14,12 +14,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import ge.siradze.mutiplayergame.ui.theme.MutiplayerGameTheme
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class GameActivity : ComponentActivity() {
+
+    private val viewModel: GameVM by viewModel {
+        parametersOf(intent.extras?.getInt(PORT))
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val port = intent.extras?.getInt(PORT)
+
+        viewModel
 
         enableEdgeToEdge()
         setContent {

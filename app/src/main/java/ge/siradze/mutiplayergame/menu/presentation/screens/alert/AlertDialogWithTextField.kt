@@ -22,10 +22,11 @@ fun AlertDialogWithTextField(
     description: String,
     confirmText: String = "Confirm",
     dismissText: String = "Cancel",
+    defaultValue: String = "",
     onDismissRequest: () -> Unit,
     onConfirm: (String) -> Unit
 ) {
-    var textFieldValue by remember { mutableStateOf("") }
+    var textFieldValue by remember { mutableStateOf(defaultValue) }
 
     AlertDialog(
         onDismissRequest = onDismissRequest,

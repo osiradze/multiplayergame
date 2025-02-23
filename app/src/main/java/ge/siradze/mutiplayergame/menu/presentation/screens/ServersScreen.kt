@@ -32,6 +32,9 @@ fun ServersScreen(
         modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        if(list.isEmpty()) {
+            Text(text = "No servers found")
+        }
         LazyColumn(
             modifier = modifier.padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,

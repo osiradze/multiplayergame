@@ -13,8 +13,8 @@ fun provideHttpClient(
     return OkHttpClient
         .Builder()
         .addInterceptor(interceptor)
-        .readTimeout(10, TimeUnit.SECONDS)
-        .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(2, TimeUnit.SECONDS)
+        .connectTimeout(2, TimeUnit.SECONDS)
         .build()
 }
 

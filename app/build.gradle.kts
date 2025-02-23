@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.koin)
     implementation(libs.gson)
+    implementation(libs.ktorSockets)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

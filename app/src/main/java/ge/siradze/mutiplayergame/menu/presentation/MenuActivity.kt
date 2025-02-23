@@ -12,7 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
-import ge.siradze.mutiplayergame.game.GameActivity
+import ge.siradze.mutiplayergame.game.presentation.GameActivity
 import ge.siradze.mutiplayergame.menu.presentation.screens.MainScreen
 import ge.siradze.mutiplayergame.menu.presentation.screens.ServersScreen
 import ge.siradze.mutiplayergame.ui.theme.MutiplayerGameTheme

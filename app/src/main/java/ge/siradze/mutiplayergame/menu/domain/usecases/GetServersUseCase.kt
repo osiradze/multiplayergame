@@ -1,7 +1,7 @@
 package ge.siradze.mutiplayergame.menu.domain.usecases
 
 import ge.siradze.mutiplayergame.core.ResultFace
-import ge.siradze.mutiplayergame.menu.data.network.ServerRepository
+import ge.siradze.mutiplayergame.menu.domain.ServerRepository
 import ge.siradze.mutiplayergame.menu.domain.model.Server
 
 fun interface GetServersUseCase {

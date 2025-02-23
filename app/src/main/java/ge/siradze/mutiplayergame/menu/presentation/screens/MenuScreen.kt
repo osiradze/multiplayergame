@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import ge.siradze.mutiplayergame.menu.presentation.MenuActivityVM
 import ge.siradze.mutiplayergame.menu.presentation.screens.alert.AlertDialogWithTextField
 import ge.siradze.mutiplayergame.ui.theme.MutiplayerGameTheme
+import kotlin.random.Random
 
 @Composable
 fun MainScreen(
@@ -42,6 +43,7 @@ fun MainScreen(
                 title = "Host Game",
                 description = "Enter game name",
                 onDismissRequest = { showAlert = false },
+                defaultValue = Random.nextInt(1000, 9999).toString(),
                 onConfirm = {
                     onEvent(MenuActivityVM.MenuEvent.HostClicked(it))
                     showAlert = false

@@ -4,6 +4,7 @@ import ge.siradze.mutiplayergame.core.ResultFace
 import ge.siradze.mutiplayergame.menu.data.network.api.ServerService
 import ge.siradze.mutiplayergame.menu.data.network.map.toModel
 import ge.siradze.mutiplayergame.menu.data.network.model.HostRequestDto
+import ge.siradze.mutiplayergame.menu.domain.ServerRepository
 import ge.siradze.mutiplayergame.menu.domain.model.Server
 
 class ServerRepositoryImpl(
@@ -16,13 +17,13 @@ class ServerRepositoryImpl(
                 result.isSuccessful -> {
                     result.body()?.server?.let {
                         ResultFace.Success(it.toModel())
-                    } ?: ResultFace.Error("Server id is null")
+                    } ?: ResultFace.Failure("Server is null")
                 } else -> {
-                    ResultFace.Error(result.message())
+                    ResultFace.Failure(result.message())
                 }
             }
         } catch (e: Exception) {
-            return ResultFace.Error(e.message ?: "Unknown error")
+            return ResultFace.Failure(e.message ?: "Unknown error")
         }
     }
 
@@ -35,11 +36,11 @@ class ServerRepositoryImpl(
                         result.body()?.map { it.toModel() } ?: emptyList()
                     )
                 } else -> {
-                    ResultFace.Error(result.message())
+                    ResultFace.Failure(result.message())
                 }
             }
         } catch (e: Exception) {
-            return ResultFace.Error(e.message ?: "Unknown error")
+            return ResultFace.Failure(e.message ?: "Unknown error")
         }
     }
 

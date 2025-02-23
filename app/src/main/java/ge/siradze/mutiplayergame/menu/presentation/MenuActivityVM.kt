@@ -45,7 +45,7 @@ class MenuActivityVM(
 
     private fun host(name: String) = viewModelScope.launch {
         when (val result = hostGameUseCase.invoke(name)) {
-            is ResultFace.Error -> {
+            is ResultFace.Failure -> {
                 _effect.emit(MenuEffect.ShowToast(result.error))
             }
             is ResultFace.Success -> {
@@ -57,7 +57,7 @@ class MenuActivityVM(
 
     private fun join() = viewModelScope.launch {
         when (val result = getServersUseCase.invoke()) {
-            is ResultFace.Error -> {
+            is ResultFace.Failure -> {
                 _effect.emit(MenuEffect.ShowToast(result.error))
             }
             is ResultFace.Success -> {

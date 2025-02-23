@@ -1,4 +1,4 @@
-package ge.siradze.mutiplayergame.menu.data.network
+package ge.siradze.mutiplayergame.menu.domain
 
 import ge.siradze.mutiplayergame.core.ResultFace
 import ge.siradze.mutiplayergame.menu.domain.model.Server
