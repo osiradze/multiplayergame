@@ -6,8 +6,12 @@ uniform float u_ratio;
 uniform vec2 u_position;
 uniform vec2 u_middlePoint;
 
-uniform float u_rotation;
-uniform vec2 u_velosity;
+uniform vec2 u_direction;
+
+float angleBetween(vec2 v1, vec2 v2) {
+    float dotProd = dot(normalize(v1), normalize(v2));
+    return acos(clamp(dotProd, -1.0, 1.0)); // Clamp to prevent precision errors
+}
 
 vec2 rotateAround(vec2 point, vec2 center, float angle) {
     float c = cos(angle);
@@ -28,7 +32,8 @@ vec2 rotateAround(vec2 point, vec2 center, float angle) {
 
 
 void main() {
-    vec2 position = rotateAround(a_position, u_middlePoint, u_rotation);
+    float angle = angleBetween(u_direction, vec2(0.0, 1.0)); // 0.0, 1.0 because the player is facing up by default
+    vec2 position = rotateAround(a_position, u_middlePoint, angle);
     position += position + u_position;
     gl_Position = vec4(
         position.x,

@@ -1,5 +1,8 @@
 package ge.siradze.multiplayergame.game.presentation.engine.extensions
 
+import kotlin.math.cos
+import kotlin.math.sin
+
 fun FloatArray.scale(times: Float, floatsPerVertex: Int): FloatArray {
     return FloatArray(
         init = { i ->
@@ -46,6 +49,38 @@ fun FloatArray.middlePoint(floatsPerVertex: Int): FloatArray {
 
     }
     return floatArrayOf(midX / vertexNumber, midY / vertexNumber)
+}
+
+operator fun FloatArray.times(amount: Float): FloatArray {
+    return FloatArray(this.size) { i -> this[i] * amount }
+}
+
+inline fun FloatArray.add(other: FloatArray) {
+    for (i in this.indices) {
+        set(i, this[i] + other[i])
+    }
+}
+
+fun FloatArray.normalizeInPlace() {
+    val magnitude = kotlin.math.sqrt(this.sumOf { it.toDouble() * it }).toFloat() // Compute length
+    require(magnitude > 0) { "Cannot normalize a zero vector" }
+    for (i in this.indices) {
+        this[i] /= magnitude
+    }
+}
+
+fun FloatArray.rotate(angleDegrees: Float) {
+    require(size == 2) { "Only 2D vectors can be rotated" }
+
+    val angleRad = Math.toRadians(angleDegrees.toDouble()).toFloat() // Convert to radians
+    val cosA = cos(angleRad)
+    val sinA = sin(angleRad)
+
+    val x = this[0]
+    val y = this[1]
+
+    this[0] = x * cosA - y * sinA // Apply rotation
+    this[1] = x * sinA + y * cosA
 }
 
 val FloatArray.x: Float get () = get(0)

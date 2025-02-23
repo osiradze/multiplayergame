@@ -27,8 +27,12 @@ import android.opengl.GLES31.glGenBuffers
 import android.opengl.GLES31.glGenVertexArrays
 import androidx.compose.ui.unit.Velocity
 import ge.siradze.multiplayergame.R
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.add
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.middlePoint
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.normalizeInPlace
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.rotate
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.scale
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.times
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.engine.gameUi.UIEvents
@@ -66,13 +70,15 @@ class PlayerData {
         var middlePoint : Int = 0,
 
         var position: Int = 0,
-        var rotation: Int = 0,
+        var direction: Int = 0,
         var velocity: Int = 0,
     )
     class Properties(
         val position: FloatArray = floatArrayOf(0.0f, 0.0f),
-        var rotation: Float = 0.0f,
-        val velocity: FloatArray = floatArrayOf(0.0f, 0.0f),
+        var direction: FloatArray = floatArrayOf(1.0f, 1.0f).apply {
+            normalizeInPlace()
+        },
+        var velocity: Float = 0f,
     ) {
 
         var gas = false
@@ -81,15 +87,30 @@ class PlayerData {
         private val deceleration = 0.90f
 
         fun update() {
-            if (gas && velocity.y < maxSpeed) {
-                velocity[1] += gasForce
+            if (gas && velocity < maxSpeed) {
+                velocity += gasForce
             } else {
-                velocity[0] *= deceleration
-                velocity[1] *= deceleration
+                velocity *= deceleration
             }
-            position[0] += velocity[0]
-            position[1] += velocity[1]
+            position.add(direction * velocity)
         }
+
+        fun onUIEvent(event: UIEvents) {
+            when(event) {
+                UIEvents.OnDown -> {
+                    gas =true
+                }
+                UIEvents.OnUp -> {
+                    gas = false
+                }
+
+                is UIEvents.OnMove -> {
+                    direction.rotate(event.x)
+                }
+            }
+        }
+
+
     }
 }
 
@@ -108,9 +129,6 @@ class PlayerObject(
 
     private var shaders = IntArray(2)
     private var program = 0
-
-
-
 
 
     override fun init() {
@@ -137,7 +155,7 @@ class PlayerObject(
         glUniform2f(locations.ratio, vertex.middlePoint.x, vertex.middlePoint.y)
 
         locations.position = glGetUniformLocation(program, "u_position")
-        locations.rotation = glGetUniformLocation(program, "u_rotation")
+        locations.direction = glGetUniformLocation(program, "u_direction")
         locations.velocity = glGetUniformLocation(program, "u_velocity")
 
     }
@@ -186,9 +204,8 @@ class PlayerObject(
 
     private fun updateAttributes() {
         properties.update()
-        glUniform1f(locations.rotation, properties.rotation)
+        glUniform2f(locations.direction, properties.direction.x, properties.direction.y)
         glUniform2f(locations.position, properties.position.x, properties.position.y)
-        glUniform2f(locations.velocity, properties.velocity.x, properties.velocity.y)
     }
 
     override fun release() {
@@ -198,15 +215,7 @@ class PlayerObject(
     }
 
     fun onUIEvent(event: UIEvents) {
-        properties.gas = when(event) {
-            UIEvents.OnDown -> {
-                true
-            }
-
-            UIEvents.OnUp -> {
-                false
-            }
-        }
+        properties.onUIEvent(event)
     }
 
 }

@@ -72,7 +72,6 @@ class MenuActivity : ComponentActivity() {
         onBackPressedDispatcher.addCallback {
             viewModel.event(MenuActivityVM.MenuEvent.OnBackPress)
         }
-
     }
 
 }
