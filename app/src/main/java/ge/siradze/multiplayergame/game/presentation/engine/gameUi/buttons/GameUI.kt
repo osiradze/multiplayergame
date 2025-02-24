@@ -1,6 +1,5 @@
 package ge.siradze.multiplayergame.game.presentation.engine.gameUi.buttons
 
-import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -27,15 +26,11 @@ fun GameUI(
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-        JoySticks(modifier = Modifier.align(Alignment.BottomStart))
         JoySticks(
             modifier = Modifier.align(Alignment.BottomEnd),
-            onDown = {
-                onEvent(UIEvents.OnDown)
-            },
-            onUp = {
-                onEvent(UIEvents.OnUp)
-            }
+        )
+        JoySticks(
+            modifier = Modifier.align(Alignment.BottomStart)
         )
     }
 }
@@ -43,10 +38,10 @@ fun GameUI(
 @Composable
 fun JoySticks (
     modifier: Modifier = Modifier,
-    onDown: () -> Unit = {},
-    onUp: () -> Unit = {}
 ) {
-    Box(modifier.padding(60.dp)){
+    Box(
+        modifier.padding(60.dp)
+    ){
         Box(modifier = Modifier
             .width(70.dp)
             .height(70.dp)
@@ -55,25 +50,6 @@ fun JoySticks (
                 color = Color.White,
                 shape = RoundedCornerShape(35.dp)
             )
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onPress = {
-                        onDown()
-                        //start
-                        val released = try {
-                            tryAwaitRelease()
-                        } catch (c: CancellationException) {
-                            false
-                        }
-                        if (released) {
-                            onUp()
-                        } else {
-                            onUp()
-                        }
-                    },
-                )
-            }
-
         )
     }
 }

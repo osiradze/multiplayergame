@@ -33,6 +33,9 @@ vec2 rotateAround(vec2 point, vec2 center, float angle) {
 
 void main() {
     float angle = angleBetween(u_direction, vec2(0.0, 1.0)); // 0.0, 1.0 because the player is facing up by default
+    if (u_direction.x > 0.0) {
+        angle = -angle;
+    }
     vec2 position = rotateAround(a_position, u_middlePoint, angle);
     position += position + u_position;
     gl_Position = vec4(

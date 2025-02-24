@@ -61,7 +61,7 @@ inline fun FloatArray.add(other: FloatArray) {
     }
 }
 
-fun FloatArray.normalizeInPlace() {
+inline fun FloatArray.normalize() {
     val magnitude = kotlin.math.sqrt(this.sumOf { it.toDouble() * it }).toFloat() // Compute length
     require(magnitude > 0) { "Cannot normalize a zero vector" }
     for (i in this.indices) {
@@ -69,7 +69,7 @@ fun FloatArray.normalizeInPlace() {
     }
 }
 
-fun FloatArray.rotate(angleDegrees: Float) {
+inline fun FloatArray.rotate(angleDegrees: Float) {
     require(size == 2) { "Only 2D vectors can be rotated" }
 
     val angleRad = Math.toRadians(angleDegrees.toDouble()).toFloat() // Convert to radians
