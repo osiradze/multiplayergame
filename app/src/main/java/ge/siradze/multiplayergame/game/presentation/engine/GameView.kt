@@ -2,6 +2,7 @@ package ge.siradze.multiplayergame.game.presentation.engine
 
 import android.content.Context
 import android.opengl.GLSurfaceView
+import android.util.Log
 import android.view.MotionEvent
 import ge.siradze.multiplayergame.game.presentation.engine.gameUi.UIEvents
 
@@ -33,40 +34,46 @@ class GameView (private val context: Context) : GLSurfaceView(context) {
     private var touchPointer: Int? = null
 
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        when(event?.action) {
-            MotionEvent.ACTION_DOWN -> {
-                if(touchPointer != null) {
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
+                val pointerIndex = event.actionIndex
+                val pointerId = event.getPointerId(pointerIndex)
+                if(pointerId != 0) {
                     return true
                 }
-                touchPointer = event.getPointerId(0)
+                lastX = event.getX(pointerIndex)
+                lastY = event.getY(pointerIndex)
                 renderer.onUIEvent(UIEvents.OnDown)
-                lastX = event.x
-                lastY = event.y
-                return true
             }
+
             MotionEvent.ACTION_MOVE -> {
-                if (touchPointer == null) {
-                   return false
+                for (i in 0 until event.pointerCount) {
+                    val pointerId = event.getPointerId(i)
+                    if(pointerId != 0) {
+                        continue
+                    }
+                    val x = event.getX(i)
+                    val y = event.getY(i)
+
+                    val dx = x - lastX
+                    val dy = y - lastY
+                    lastX = x
+                    lastY = y
+                    renderer.onUIEvent(UIEvents.OnMove(dx, dy))
                 }
-                val dx = event.x - lastX
-                val dy = event.y - lastY
-                renderer.onUIEvent(UIEvents.OnMove(dx, dy))
-                lastX = event.x
-                lastY = event.y
-                return true
             }
-            MotionEvent.ACTION_UP -> {
-                if (touchPointer != null) {
-                    touchPointer = null
+
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
+                val pointerIndex = event.actionIndex
+                val pointerId = event.getPointerId(pointerIndex)
+                if(pointerId != 0) {
+                    return true
                 }
                 renderer.onUIEvent(UIEvents.OnUp)
-                lastX = 0f
-                lastY = 0f
-                return true
             }
         }
-        return super.onTouchEvent(event)
+        return true
     }
 
 }
