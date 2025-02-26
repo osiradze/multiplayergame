@@ -51,6 +51,8 @@ class MenuActivity : ComponentActivity() {
                 }
             }
         }
+
+        GameActivity.start(this@MenuActivity, null)
     }
 
     private fun handleEffects() = lifecycleScope.launch {

@@ -1,8 +1,15 @@
-layout(std430, binding = 0) buffer TrailBuffer {
-    vec2 a_trail[30];
-};
+precision mediump float;
+attribute vec2 a_position;
+uniform float u_ratio;
+
+
 
 void main() {
-    gl_Position = vec4(positions[gl_VertexID], 0.0, 1.0);
+    gl_PointSize = 10.0;
+    gl_Position = vec4(
+        a_position.x,
+        a_position.y * u_ratio,
+        0.0,
+        1.0
+    );
 }
-

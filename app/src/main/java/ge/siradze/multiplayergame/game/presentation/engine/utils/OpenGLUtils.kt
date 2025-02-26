@@ -17,7 +17,7 @@ import android.util.Log
 
 object OpenGLUtils {
 
-    fun createShader(type: Int, shaderSource: String): Int? {
+    fun createShader(type: Int, shaderSource: String, shaderName: String = ""): Int? {
         val shader = glCreateShader(type)
         glShaderSource(shader, shaderSource)
         glCompileShader(shader)
@@ -25,7 +25,7 @@ object OpenGLUtils {
         glGetShaderiv(shader, GL_COMPILE_STATUS, compileStatus, 0)
         if (compileStatus[0] != GL_TRUE) {
             val info = glGetShaderInfoLog(shader)
-            Log.e("createShader", "error: $type $info")
+            Log.e("$shaderName createShader", "error: $type $info")
             return null
         }
         return shader
