@@ -5,15 +5,20 @@ import android.opengl.GLSurfaceView
 import ge.siradze.multiplayergame.game.presentation.engine.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerObject
+import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerTrail
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 class GameRender(context: Context) : GLSurfaceView.Renderer {
 
     private val player = PlayerObject(context)
+    private val playerTrail = PlayerTrail(
+        context  = context,
+        player.properties
+    )
 
     private val objects: MutableList<GameObject> = mutableListOf(
-        player
+        player, playerTrail
     )
 
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {

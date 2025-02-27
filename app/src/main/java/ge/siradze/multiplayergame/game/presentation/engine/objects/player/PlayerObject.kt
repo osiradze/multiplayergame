@@ -5,6 +5,7 @@ import android.opengl.GLES20
 import android.opengl.GLES20.GL_FLOAT
 import android.opengl.GLES20.GL_FRAGMENT_SHADER
 import android.opengl.GLES20.GL_LINE_LOOP
+import android.opengl.GLES20.GL_TRIANGLES
 import android.opengl.GLES20.GL_VERTEX_SHADER
 import android.opengl.GLES20.glGetAttribLocation
 import android.opengl.GLES20.glGetUniformLocation
@@ -132,16 +133,11 @@ class PlayerObject(
 
     private val vertex = PlayerData.Vertex()
     private val shaderLocations = PlayerData.ShaderLocations()
-    private val properties = PlayerData.Properties()
+    val properties = PlayerData.Properties()
 
 
     private var shaders = IntArray(2)
     private var program = 0
-
-    private val playerTrail = PlayerTrail(
-        context  = context,
-        properties
-    )
 
     override fun init() {
         initProgram()
@@ -178,7 +174,6 @@ class PlayerObject(
     override fun setRatio(ratio: Float) {
         glUseProgram(program)
         glUniform1f(shaderLocations.ratio, ratio)
-        playerTrail.setRatio(ratio)
     }
 
     private fun initProgram() {
@@ -207,14 +202,11 @@ class PlayerObject(
 
         updateAttributes()
 
-        GLES20.glDrawArrays(GL_LINE_LOOP, 0, vertex.pointNumber,)
+        GLES20.glDrawArrays(GL_TRIANGLES, 0, vertex.pointNumber,)
 
         glDisableVertexAttribArray(shaderLocations.vertex)
 
         glBindVertexArray(0)
-
-
-        playerTrail.draw()
     }
 
     private fun updateAttributes() {

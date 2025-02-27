@@ -13,8 +13,18 @@ uniform vec2 u_position;
 void main() {
     uint floatIndex = gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x;
 
-    if(floatIndex == u_index) {
-        inputOutput.data[floatIndex] = u_position.x;
-        inputOutput.data[floatIndex + 1u] = u_position.y;
+    uint dataSize = uint(inputOutput.data.length);
+    if(floatIndex == 0u)  {
+        for (uint i = 0u; i < dataSize; i += 2u) {
+            if(i + 2u < dataSize) {
+                inputOutput.data[i] = inputOutput.data[i + 2u];
+                inputOutput.data[i + 1u] = inputOutput.data[i + 3u];
+            } else {
+                inputOutput.data[i] = u_position.x;
+                inputOutput.data[i + 1u] = u_position.y;
+            }
+        }
     }
+
+
 }

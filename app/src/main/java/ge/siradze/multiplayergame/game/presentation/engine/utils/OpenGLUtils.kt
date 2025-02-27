@@ -1,5 +1,8 @@
 package ge.siradze.multiplayergame.game.presentation.engine.utils
 
+import android.opengl.GLES20.GL_ACTIVE_UNIFORMS
+import android.opengl.GLES20.GL_ACTIVE_UNIFORM_MAX_LENGTH
+import android.opengl.GLES20.glGetActiveUniform
 import android.opengl.GLES30.GL_COMPILE_STATUS
 import android.opengl.GLES30.GL_LINK_STATUS
 import android.opengl.GLES30.GL_TRUE
@@ -47,6 +50,26 @@ object OpenGLUtils {
             return null
         }
         return program
+    }
+
+    fun printShaderProgramUniforms(program: Int) {
+        val uniformCount = IntArray(1)
+        glGetProgramiv(program, GL_ACTIVE_UNIFORMS, uniformCount, 0)
+
+        val maxLength = IntArray(1)
+        glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, maxLength, 0)
+
+        for (i in 0 until uniformCount[0]) {
+            val length = IntArray(1)
+            val size = IntArray(1)
+            val type = IntArray(1)
+            val name = ByteArray(maxLength[0])
+
+            glGetActiveUniform(program, i, maxLength[0], length, 0, size, 0, type, 0, name, 0)
+            val uniformName = String(name, 0, length[0])
+
+            println("Uniform #$i: Name = $uniformName, Size = ${size[0]}, Type = ${type[0]}")
+        }
     }
 
 }
