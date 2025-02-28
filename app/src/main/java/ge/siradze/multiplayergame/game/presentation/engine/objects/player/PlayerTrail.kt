@@ -34,6 +34,7 @@ import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.RatioShaderLocation
+import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderAttribLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderUniformLocation
@@ -93,7 +94,11 @@ class PlayerTrail(
     private val shaderLocations = PlayerTrailData.ShaderLocations()
     private val properties = PlayerTrailData.Properties()
 
-    private val shaders = IntArray(3)
+    private val shaders = arrayOf(
+        Shader(GL_VERTEX_SHADER, R.raw.player_trail_vertex, "Trail Vertex"),
+        Shader(GL_FRAGMENT_SHADER, R.raw.player_trail_fragment, "Trail Fragment"),
+        Shader(GL_COMPUTE_SHADER, R.raw.player_trail_compute, "Trail Compute"),
+    )
     private var program = 0
     private var computeProgram = 0
 
@@ -130,26 +135,14 @@ class PlayerTrail(
     }
 
     private fun initProgram() {
-        shaders[0] = OpenGLUtils.createShader(
-            GL_VERTEX_SHADER,
-            ShaderUtils.readShaderFile(context, R.raw.player_trail_vertex),
-            shaderName = "Trail Vertex"
-        ) ?: return
-        shaders[1] = OpenGLUtils.createShader(
-            GL_FRAGMENT_SHADER,
-            ShaderUtils.readShaderFile(context, R.raw.player_trail_fragment),
-            shaderName = "Trail Fragment"
-        ) ?: return
-        shaders[2] = OpenGLUtils.createShader(
-            GL_COMPUTE_SHADER,
-            ShaderUtils.readShaderFile(context, R.raw.player_trail_compute),
-            shaderName = "Trail Compute"
-        ) ?: return
-        program = OpenGLUtils.createAndLinkProgram(shaders[0], shaders[1]) ?: return
-        computeProgram = OpenGLUtils.createAndLinkProgram(shaders[2]) ?: return
-        shaders.forEach {
-            glDeleteShader(it)
-        }
+        val vertexShader = shaders[0].create(context) ?: return
+        val fragmentShader = shaders[1].create(context) ?: return
+        val computeShader = shaders[2].create(context) ?: return
+        program = OpenGLUtils.createAndLinkProgram(vertexShader, fragmentShader) ?: return
+        computeProgram = OpenGLUtils.createAndLinkProgram(computeShader) ?: return
+        glDeleteShader(vertexShader)
+        glDeleteShader(fragmentShader)
+        glDeleteShader(computeShader)
     }
 
 

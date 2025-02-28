@@ -6,8 +6,6 @@ import android.opengl.GLES20.GL_FLOAT
 import android.opengl.GLES20.GL_FRAGMENT_SHADER
 import android.opengl.GLES20.GL_LINE_LOOP
 import android.opengl.GLES20.GL_VERTEX_SHADER
-import android.opengl.GLES20.glGetAttribLocation
-import android.opengl.GLES20.glGetUniformLocation
 import android.opengl.GLES20.glUniform2f
 import android.opengl.GLES20.glVertexAttribPointer
 import android.opengl.GLES30.GL_STATIC_DRAW
@@ -40,10 +38,10 @@ import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.RatioShaderLocation
+import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderAttribLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderUniformLocation
 import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
-import ge.siradze.multiplayergame.game.presentation.engine.utils.ShaderUtils
 import java.nio.Buffer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -71,7 +69,6 @@ class PlayerData {
 
     }
 
-
     class ShaderLocations(
         val vertex : ShaderLocation = ShaderAttribLocation(
             name = "a_position"
@@ -92,8 +89,6 @@ class PlayerData {
             name = "u_velocity"
         ),
     )
-
-
 
     class Properties(
         val position: FloatArray = floatArrayOf(0.0f, 0.0f),
@@ -134,7 +129,6 @@ class PlayerData {
                 }
             }
         }
-
     }
 }
 
@@ -151,8 +145,18 @@ class PlayerObject(
     private val shaderLocations = PlayerData.ShaderLocations()
     val properties = PlayerData.Properties()
 
-
-    private var shaders = IntArray(2)
+    private val shaders = arrayOf(
+        Shader(
+            type = GL_VERTEX_SHADER,
+            source = R.raw.player_vertex,
+            name = "Player Vertex"
+        ),
+        Shader(
+            type = GL_FRAGMENT_SHADER,
+            source = R.raw.player_fragment,
+            name = "Player Fragment"
+        )
+    )
     private var program = 0
 
     override fun init() {
@@ -194,19 +198,12 @@ class PlayerObject(
     }
 
     private fun initProgram() {
-        shaders[0] = OpenGLUtils.createShader(
-            GL_VERTEX_SHADER,
-            ShaderUtils.readShaderFile(context, R.raw.player_vertex),
-            shaderName = "Player Vertex"
-        ) ?: return
-        shaders[1] = OpenGLUtils.createShader(
-            GL_FRAGMENT_SHADER,
-            ShaderUtils.readShaderFile(context, R.raw.player_fragment),
-            shaderName = "Player Fragment"
-        ) ?: return
-        program = OpenGLUtils.createAndLinkProgram(shaders[0], shaders[1]) ?: return
-        glDeleteShader(shaders[0])
-        glDeleteShader(shaders[1])
+        val vertexShader = shaders[0].create(context) ?: return
+        val fragmentShader = shaders[1].create(context) ?: return
+
+        program = OpenGLUtils.createAndLinkProgram(vertexShader, fragmentShader) ?: return
+        glDeleteShader(vertexShader)
+        glDeleteShader(fragmentShader)
     }
 
 
@@ -218,7 +215,7 @@ class PlayerObject(
 
         updateAttributes()
         Camera.bindUniform(shaderLocations.camera.location)
-        GLES20.glDrawArrays(GL_LINE_LOOP, 0, vertex.pointNumber,)
+        GLES20.glDrawArrays(GL_LINE_LOOP, 0, vertex.pointNumber)
 
         glDisableVertexAttribArray(shaderLocations.vertex.location)
 
