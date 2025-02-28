@@ -10,13 +10,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.lifecycleScope
 import ge.siradze.multiplayergame.game.presentation.engine.GameView
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.gameUi.buttons.GameUI
 import ge.siradze.multiplayergame.ui.theme.MultiplayerGameTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -28,11 +36,14 @@ class GameActivity : ComponentActivity() {
 
     private lateinit var gameView : GameView
 
+    private var fps = mutableIntStateOf(0)
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel
         gameView = GameView(context = this)
-
+        fps()
         enableEdgeToEdge()
         setContent {
             MultiplayerGameTheme {
@@ -42,11 +53,22 @@ class GameActivity : ComponentActivity() {
                         GameUI { event ->
                             handleUIEvents(event)
                         }
+                        Box(modifier = Modifier.align(Alignment.BottomStart).padding(10.dp)) { Text(text = fps.intValue.toString()) }
                     }
                 }
             }
         }
     }
+
+    private fun fps() {
+        lifecycleScope.launch {
+            while (true) {
+                delay(1000)
+                fps.intValue = gameView.getFPS()
+            }
+        }
+    }
+
 
     private fun handleUIEvents(event: UIEvents) {
         gameView.onUIEvent(event)

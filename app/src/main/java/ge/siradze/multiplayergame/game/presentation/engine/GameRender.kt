@@ -13,6 +13,8 @@ import javax.microedition.khronos.opengles.GL10
 
 class GameRender(context: Context) : GLSurfaceView.Renderer {
 
+    var fps = 0
+
     // create player and set camera to follow it
     private val player = PlayerObject(context).also {
         Camera.followPlayer(it.properties)
@@ -48,6 +50,7 @@ class GameRender(context: Context) : GLSurfaceView.Renderer {
         objects.forEach {
            it.draw()
         }
+        fps++
     }
 
     fun release() {

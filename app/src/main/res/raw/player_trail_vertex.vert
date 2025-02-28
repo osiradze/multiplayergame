@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 attribute vec2 a_position;
 uniform float u_ratio;
 uniform vec2 u_camera;

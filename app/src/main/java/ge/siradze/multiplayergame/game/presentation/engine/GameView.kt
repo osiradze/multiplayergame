@@ -33,9 +33,6 @@ class GameView (private val context: Context) : GLSurfaceView(context) {
     private var lastX = 0f
     private var lastY = 0f
 
-    private var touchPointer: Int? = null
-
-
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
@@ -76,6 +73,12 @@ class GameView (private val context: Context) : GLSurfaceView(context) {
             }
         }
         return true
+    }
+
+    fun getFPS(): Int {
+        val fps = renderer.fps
+        renderer.fps = 0
+        return fps
     }
 
 }
