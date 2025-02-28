@@ -14,8 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import ge.siradze.multiplayergame.game.presentation.engine.GameView
-import ge.siradze.multiplayergame.game.presentation.engine.gameUi.UIEvents
-import ge.siradze.multiplayergame.game.presentation.engine.gameUi.buttons.GameUI
+import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
+import ge.siradze.multiplayergame.game.presentation.gameUi.buttons.GameUI
 import ge.siradze.multiplayergame.ui.theme.MultiplayerGameTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -39,7 +39,7 @@ class GameActivity : ComponentActivity() {
                 Scaffold(contentWindowInsets = WindowInsets(0,0,0,0)) { innerPadding ->
                     Box(Modifier.padding(innerPadding)) {
                         ComposeGLSurfaceView()
-                        GameUI() { event ->
+                        GameUI { event ->
                             handleUIEvents(event)
                         }
                     }

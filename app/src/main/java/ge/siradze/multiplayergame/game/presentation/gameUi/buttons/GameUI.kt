@@ -1,4 +1,4 @@
-package ge.siradze.multiplayergame.game.presentation.engine.gameUi.buttons
+package ge.siradze.multiplayergame.game.presentation.gameUi.buttons
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ge.siradze.multiplayergame.game.presentation.engine.gameUi.UIEvents
+import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import java.util.concurrent.CancellationException
 
 @Composable
@@ -30,7 +30,13 @@ fun GameUI(
             modifier = Modifier.align(Alignment.BottomEnd),
         )
         JoySticks(
-            modifier = Modifier.align(Alignment.BottomStart)
+            modifier = Modifier.align(Alignment.BottomStart).pointerInput(Unit) {
+                detectTapGestures(
+                   onTap = {
+                       onEvent(UIEvents.onTap)
+                   }
+                )
+            }
         )
     }
 }

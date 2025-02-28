@@ -2,23 +2,15 @@ package ge.siradze.multiplayergame.game.presentation.engine.objects.player
 
 import android.content.Context
 import android.opengl.GLES20
-import android.opengl.GLES20.GL_ACTIVE_UNIFORMS
-import android.opengl.GLES20.GL_ACTIVE_UNIFORM_MAX_LENGTH
 import android.opengl.GLES20.GL_DYNAMIC_DRAW
 import android.opengl.GLES20.GL_FLOAT
 import android.opengl.GLES20.GL_FRAGMENT_SHADER
-import android.opengl.GLES20.GL_LINE_LOOP
 import android.opengl.GLES20.GL_LINE_STRIP
-import android.opengl.GLES20.GL_POINTS
 import android.opengl.GLES20.GL_VERTEX_SHADER
 import android.opengl.GLES20.glDeleteBuffers
 import android.opengl.GLES20.glDeleteProgram
-import android.opengl.GLES20.glGetActiveUniform
 import android.opengl.GLES20.glGetAttribLocation
-import android.opengl.GLES20.glGetProgramiv
 import android.opengl.GLES20.glGetUniformLocation
-import android.opengl.GLES20.glLineWidth
-import android.opengl.GLES20.glUniform1i
 import android.opengl.GLES20.glUniform2f
 import android.opengl.GLES20.glVertexAttribPointer
 import android.opengl.GLES30.glDeleteShader
@@ -26,7 +18,6 @@ import android.opengl.GLES30.glDeleteVertexArrays
 import android.opengl.GLES30.glDisableVertexAttribArray
 import android.opengl.GLES30.glEnableVertexAttribArray
 import android.opengl.GLES30.glUniform1f
-import android.opengl.GLES30.glUniform1ui
 import android.opengl.GLES30.glUseProgram
 import android.opengl.GLES31.GL_ARRAY_BUFFER
 import android.opengl.GLES31.GL_COMPUTE_SHADER
@@ -37,9 +28,15 @@ import android.opengl.GLES31.glBufferData
 import android.opengl.GLES31.glGenBuffers
 import android.opengl.GLES31.glGenVertexArrays
 import ge.siradze.multiplayergame.R
+import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
+import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
+import ge.siradze.multiplayergame.game.presentation.engine.shader.RatioShaderLocation
+import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderAttribLocation
+import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderLocation
+import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderUniformLocation
 import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
 import ge.siradze.multiplayergame.game.presentation.engine.utils.ShaderUtils
 import java.nio.Buffer
@@ -63,9 +60,14 @@ class PlayerTrailData {
     }
 
     class ShaderLocations(
-        var vertex: Int = 0,
-        var ratio: Int = 0,
-        var position: Int = 0,
+        val vertex : ShaderLocation = ShaderAttribLocation(
+            name = "a_position"
+        ),
+        val ratio: ShaderLocation = RatioShaderLocation(),
+        var camera: ShaderLocation = CameraShaderLocation(),
+        var position: ShaderLocation = ShaderUniformLocation(
+            name = "u_position"
+        )
     )
 
     class Properties {
@@ -110,12 +112,13 @@ class PlayerTrail(
             GL_DYNAMIC_DRAW
         )
 
-        shaderLocations.vertex = glGetAttribLocation(program, "a_position")
-        glEnableVertexAttribArray(shaderLocations.vertex)
-        glVertexAttribPointer(shaderLocations.vertex, 2, GL_FLOAT, false, vertex.stride, 0)
-        glDisableVertexAttribArray(shaderLocations.vertex)
-        shaderLocations.ratio = glGetUniformLocation(program, "u_ratio")
-        shaderLocations.position = glGetUniformLocation(computeProgram, "u_position")
+        shaderLocations.vertex.init(program)
+        glEnableVertexAttribArray(shaderLocations.vertex.location)
+        glVertexAttribPointer(shaderLocations.vertex.location, 2, GL_FLOAT, false, vertex.stride, 0)
+        glDisableVertexAttribArray(shaderLocations.vertex.location)
+        shaderLocations.ratio.init(program)
+        shaderLocations.camera.init(program)
+        shaderLocations.position.init(computeProgram)
 
         glBindBuffer(GL_ARRAY_BUFFER, 0)
 
@@ -123,7 +126,7 @@ class PlayerTrail(
 
     override fun setRatio(ratio: Float) {
         glUseProgram(program)
-        glUniform1f(shaderLocations.ratio, ratio)
+        glUniform1f(shaderLocations.ratio.location, ratio)
     }
 
     private fun initProgram() {
@@ -153,21 +156,16 @@ class PlayerTrail(
     override fun draw() {
         glBindVertexArray(vao[0])
         compute()
-        glUseProgram(program)
-        glEnableVertexAttribArray(shaderLocations.vertex)
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, vbo[0])
-        glLineWidth(20.0f)
-        GLES20.glDrawArrays(GL_LINE_STRIP, 0, vertex.pointNumber)
-
-        glDisableVertexAttribArray(shaderLocations.vertex)
+        drawTrail()
         glBindVertexArray(0)
     }
-
-    override fun release() {
-        glDeleteVertexArrays(vao.size, vao, 0)
-        glDeleteBuffers(vbo.size, vbo, 0)
-        glDeleteProgram(program)
-        glDeleteProgram(computeProgram)
+    private fun drawTrail() {
+        glUseProgram(program)
+        glEnableVertexAttribArray(shaderLocations.vertex.location)
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, vbo[0])
+        Camera.bindUniform(shaderLocations.camera.location)
+        GLES20.glDrawArrays(GL_LINE_STRIP, 0, vertex.pointNumber)
+        glDisableVertexAttribArray(shaderLocations.vertex.location)
     }
 
     private fun compute() {
@@ -178,13 +176,21 @@ class PlayerTrail(
             shaderProgram = computeProgram,
             vbo = vbo[0],
             uniforms = {
-                glUniform2f(shaderLocations.position, playerProperties.position.x, playerProperties.position.y)
+                glUniform2f(shaderLocations.position.location, playerProperties.position.x, playerProperties.position.y)
             },
             x = 1,
             y = 1,
             z = 1,
         )
     }
+
+    override fun release() {
+        glDeleteVertexArrays(vao.size, vao, 0)
+        glDeleteBuffers(vbo.size, vbo, 0)
+        glDeleteProgram(program)
+        glDeleteProgram(computeProgram)
+    }
+
 
 
 }

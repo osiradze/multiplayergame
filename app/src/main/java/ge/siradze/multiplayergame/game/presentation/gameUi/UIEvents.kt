@@ -1,4 +1,4 @@
-package ge.siradze.multiplayergame.game.presentation.engine.gameUi
+package ge.siradze.multiplayergame.game.presentation.gameUi
 
 sealed class UIEvents {
     data object OnDown: UIEvents()

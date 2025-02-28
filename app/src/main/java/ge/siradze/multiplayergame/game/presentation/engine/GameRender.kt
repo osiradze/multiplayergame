@@ -2,7 +2,8 @@ package ge.siradze.multiplayergame.game.presentation.engine
 
 import android.content.Context
 import android.opengl.GLSurfaceView
-import ge.siradze.multiplayergame.game.presentation.engine.gameUi.UIEvents
+import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
+import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerObject
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerTrail
@@ -11,7 +12,10 @@ import javax.microedition.khronos.opengles.GL10
 
 class GameRender(context: Context) : GLSurfaceView.Renderer {
 
-    private val player = PlayerObject(context)
+    // create player and set camera to follow it
+    private val player = PlayerObject(context).also {
+        Camera.followPlayer(it.properties)
+    }
     private val playerTrail = PlayerTrail(
         context  = context,
         player.properties
@@ -38,9 +42,10 @@ class GameRender(context: Context) : GLSurfaceView.Renderer {
     }
 
     override fun onDrawFrame(p0: GL10?) {
-       objects.forEach {
+        Camera.update()
+        objects.forEach {
            it.draw()
-       }
+        }
     }
 
     fun release() {

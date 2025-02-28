@@ -83,7 +83,7 @@ inline fun FloatArray.rotate(angleDegrees: Float) {
     this[1] = x * sinA + y * cosA
 }
 
-val FloatArray.x: Float get () = get(0)
-val FloatArray.y: Float get () = get(1)
-val FloatArray.z: Float get () = get(2)
-val FloatArray.w: Float get () = get(3)
+inline val FloatArray.x: Float get () = get(0)
+inline val FloatArray.y: Float get () = get(1)
+inline val FloatArray.z: Float get () = get(2)
+inline val FloatArray.w: Float get () = get(3)

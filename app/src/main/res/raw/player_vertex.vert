@@ -2,6 +2,8 @@ precision mediump float;
 
 attribute vec2 a_position;
 uniform float u_ratio;
+uniform vec2 u_camera;
+
 
 uniform vec2 u_position;
 uniform vec2 u_middlePoint;
@@ -39,8 +41,8 @@ void main() {
     vec2 position = rotateAround(a_position, u_middlePoint, angle);
     position += position + u_position;
     gl_Position = vec4(
-        position.x,
-        position.y * u_ratio,
+        position.x - u_camera.x,
+        (position.y - u_camera.y) * u_ratio,
         0.0, 1.0
     );
 }

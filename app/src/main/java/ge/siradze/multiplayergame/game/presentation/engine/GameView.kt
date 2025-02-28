@@ -5,7 +5,7 @@ import android.opengl.GLES31
 import android.opengl.GLSurfaceView
 import android.util.Log
 import android.view.MotionEvent
-import ge.siradze.multiplayergame.game.presentation.engine.gameUi.UIEvents
+import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 
 
 class GameView (private val context: Context) : GLSurfaceView(context) {

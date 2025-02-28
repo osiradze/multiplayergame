@@ -5,7 +5,6 @@ import android.opengl.GLES20
 import android.opengl.GLES20.GL_FLOAT
 import android.opengl.GLES20.GL_FRAGMENT_SHADER
 import android.opengl.GLES20.GL_LINE_LOOP
-import android.opengl.GLES20.GL_TRIANGLES
 import android.opengl.GLES20.GL_VERTEX_SHADER
 import android.opengl.GLES20.glGetAttribLocation
 import android.opengl.GLES20.glGetUniformLocation
@@ -27,6 +26,8 @@ import android.opengl.GLES31.glBufferData
 import android.opengl.GLES31.glGenBuffers
 import android.opengl.GLES31.glGenVertexArrays
 import ge.siradze.multiplayergame.R
+import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderLocation
+import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.add
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.middlePoint
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.normalize
@@ -35,8 +36,12 @@ import ge.siradze.multiplayergame.game.presentation.engine.extensions.scale
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.times
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
-import ge.siradze.multiplayergame.game.presentation.engine.gameUi.UIEvents
+import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
+import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
+import ge.siradze.multiplayergame.game.presentation.engine.shader.RatioShaderLocation
+import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderAttribLocation
+import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderUniformLocation
 import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
 import ge.siradze.multiplayergame.game.presentation.engine.utils.ShaderUtils
 import java.nio.Buffer
@@ -67,16 +72,25 @@ class PlayerData {
     }
 
 
-
     class ShaderLocations(
-        var vertex: Int = 0,
+        val vertex : ShaderLocation = ShaderAttribLocation(
+            name = "a_position"
+        ),
+        val ratio: ShaderLocation = RatioShaderLocation(),
+        var camera: ShaderLocation = CameraShaderLocation(),
 
-        var ratio: Int = 0,
-        var middlePoint : Int = 0,
-
-        var position: Int = 0,
-        var direction: Int = 0,
-        var velocity: Int = 0,
+        var middlePoint : ShaderLocation = ShaderUniformLocation(
+            name = "u_middlePoint"
+        ),
+        var position: ShaderLocation = ShaderUniformLocation(
+            name = "u_position"
+        ),
+        var direction: ShaderLocation = ShaderUniformLocation(
+            name = "u_direction"
+        ),
+        var velocity: ShaderLocation = ShaderUniformLocation(
+            name = "u_velocity"
+        ),
     )
 
 
@@ -90,7 +104,7 @@ class PlayerData {
     ) {
         private var gas = false
         private val gasForce = 0.0005f
-        private val maxSpeed = 0.01f
+        private var maxSpeed = 0.01f
         private val deceleration = 0.98f
 
         fun update() {
@@ -115,7 +129,9 @@ class PlayerData {
                     direction.rotate(event.x)
                 }
 
-                else -> {}
+                is UIEvents.onTap -> {
+                    maxSpeed += 0.001f
+                }
             }
         }
 
@@ -141,6 +157,7 @@ class PlayerObject(
 
     override fun init() {
         initProgram()
+
         glGenVertexArrays(1, vao, 0)
         glBindVertexArray(vao[0])
 
@@ -153,27 +170,27 @@ class PlayerObject(
             GL_STATIC_DRAW
         )
 
-        shaderLocations.vertex = glGetAttribLocation(program, "a_position")
-        glEnableVertexAttribArray(shaderLocations.vertex)
-        glVertexAttribPointer(shaderLocations.vertex, 2, GL_FLOAT, false, vertex.stride, 0)
-        glDisableVertexAttribArray(shaderLocations.vertex)
+        shaderLocations.vertex.init(program)
+        glEnableVertexAttribArray(shaderLocations.vertex.location)
+        glVertexAttribPointer(shaderLocations.vertex.location, 2, GL_FLOAT, false, vertex.stride, 0)
+        glDisableVertexAttribArray(shaderLocations.vertex.location)
 
         // Uniforms
-        shaderLocations.ratio = glGetUniformLocation(program, "u_ratio")
-        shaderLocations.middlePoint = glGetUniformLocation(program, "u_middlePoint")
-        shaderLocations.position = glGetUniformLocation(program, "u_position")
-        shaderLocations.direction = glGetUniformLocation(program, "u_direction")
-        shaderLocations.velocity = glGetUniformLocation(program, "u_velocity")
+        shaderLocations.ratio.init(program)
+        shaderLocations.camera.init(program)
+        shaderLocations.middlePoint.init(program)
+        shaderLocations.position.init(program)
+        shaderLocations.direction.init(program)
+        shaderLocations.velocity.init(program)
 
-        glUniform2f(shaderLocations.ratio, vertex.middlePoint.x, vertex.middlePoint.y)
+        glUniform2f(shaderLocations.ratio.location, vertex.middlePoint.x, vertex.middlePoint.y)
         glBindBuffer(GL_ARRAY_BUFFER, 0)
 
     }
 
-
     override fun setRatio(ratio: Float) {
         glUseProgram(program)
-        glUniform1f(shaderLocations.ratio, ratio)
+        glUniform1f(shaderLocations.ratio.location, ratio)
     }
 
     private fun initProgram() {
@@ -193,36 +210,35 @@ class PlayerObject(
     }
 
 
-
     override fun draw() {
         glBindVertexArray(vao[0])
         glUseProgram(program)
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
-        glEnableVertexAttribArray(shaderLocations.vertex)
+        glEnableVertexAttribArray(shaderLocations.vertex.location)
 
         updateAttributes()
+        Camera.bindUniform(shaderLocations.camera.location)
+        GLES20.glDrawArrays(GL_LINE_LOOP, 0, vertex.pointNumber,)
 
-        GLES20.glDrawArrays(GL_TRIANGLES, 0, vertex.pointNumber,)
-
-        glDisableVertexAttribArray(shaderLocations.vertex)
+        glDisableVertexAttribArray(shaderLocations.vertex.location)
 
         glBindVertexArray(0)
     }
 
     private fun updateAttributes() {
         properties.update()
-        glUniform2f(shaderLocations.direction, properties.direction.x, properties.direction.y)
-        glUniform2f(shaderLocations.position, properties.position.x, properties.position.y)
+        glUniform2f(shaderLocations.direction.location, properties.direction.x, properties.direction.y)
+        glUniform2f(shaderLocations.position.location, properties.position.x, properties.position.y)
+    }
+
+    fun onUIEvent(event: UIEvents) {
+        properties.onUIEvent(event)
     }
 
     override fun release() {
         glDeleteVertexArrays(vao.size, vao, 0)
         glDeleteBuffers(vbo.size, vbo, 0)
         glDeleteProgram(program)
-    }
-
-    fun onUIEvent(event: UIEvents) {
-        properties.onUIEvent(event)
     }
 
 }
