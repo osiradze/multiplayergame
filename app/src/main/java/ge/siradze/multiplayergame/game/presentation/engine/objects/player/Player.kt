@@ -24,7 +24,6 @@ import android.opengl.GLES31.glBufferData
 import android.opengl.GLES31.glGenBuffers
 import android.opengl.GLES31.glGenVertexArrays
 import ge.siradze.multiplayergame.R
-import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.add
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.middlePoint
@@ -32,19 +31,19 @@ import ge.siradze.multiplayergame.game.presentation.engine.extensions.normalize
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.rotate
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.scale
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.times
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
-import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.RatioShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderAttribLocation
+import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderUniformLocation
 import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
+import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import java.nio.Buffer
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 class PlayerData {
 
@@ -62,10 +61,7 @@ class PlayerData {
         val stride = numberOfFloatsPerVertex * Float.SIZE_BYTES
         val bufferSize = data.size * Float.SIZE_BYTES
 
-        fun getBuffer(): Buffer = ByteBuffer.allocateDirect(bufferSize)
-            .order(ByteOrder.nativeOrder())
-            .asFloatBuffer()
-            .put(data).rewind()
+        fun getBuffer(): Buffer = data.toBuffer()
 
     }
 

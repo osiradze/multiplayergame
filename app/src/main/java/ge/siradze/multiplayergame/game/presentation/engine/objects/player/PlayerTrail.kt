@@ -9,8 +9,6 @@ import android.opengl.GLES20.GL_LINE_STRIP
 import android.opengl.GLES20.GL_VERTEX_SHADER
 import android.opengl.GLES20.glDeleteBuffers
 import android.opengl.GLES20.glDeleteProgram
-import android.opengl.GLES20.glGetAttribLocation
-import android.opengl.GLES20.glGetUniformLocation
 import android.opengl.GLES20.glUniform2f
 import android.opengl.GLES20.glVertexAttribPointer
 import android.opengl.GLES30.glDeleteShader
@@ -29,6 +27,7 @@ import android.opengl.GLES31.glGenBuffers
 import android.opengl.GLES31.glGenVertexArrays
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
@@ -41,8 +40,6 @@ import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderUniformL
 import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
 import ge.siradze.multiplayergame.game.presentation.engine.utils.ShaderUtils
 import java.nio.Buffer
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 
 class PlayerTrailData {
@@ -54,10 +51,7 @@ class PlayerTrailData {
         val stride = numberOfFloatsPerVertex * Float.SIZE_BYTES
         val bufferSize = data.size * Float.SIZE_BYTES
 
-        fun getBuffer(): Buffer = ByteBuffer.allocateDirect(bufferSize)
-            .order(ByteOrder.nativeOrder())
-            .asFloatBuffer()
-            .put(data).rewind()
+        fun getBuffer(): Buffer = data.toBuffer()
     }
 
     class ShaderLocations(
