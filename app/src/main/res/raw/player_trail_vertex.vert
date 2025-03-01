@@ -1,7 +1,9 @@
 precision highp float;
-attribute vec2 a_position;
+attribute vec3 a_position;
 uniform float u_ratio;
 uniform vec2 u_camera;
+
+varying float v_alpha;
 
 
 void main() {
@@ -12,4 +14,5 @@ void main() {
         0.0,
         1.0
     );
+    v_alpha = a_position.z;
 }

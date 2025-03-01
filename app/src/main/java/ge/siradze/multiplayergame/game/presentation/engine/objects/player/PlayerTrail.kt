@@ -9,6 +9,7 @@ import android.opengl.GLES20.GL_LINE_STRIP
 import android.opengl.GLES20.GL_VERTEX_SHADER
 import android.opengl.GLES20.glDeleteBuffers
 import android.opengl.GLES20.glDeleteProgram
+import android.opengl.GLES20.glLineWidth
 import android.opengl.GLES20.glUniform2f
 import android.opengl.GLES20.glVertexAttribPointer
 import android.opengl.GLES30.glDeleteShader
@@ -16,6 +17,7 @@ import android.opengl.GLES30.glDeleteVertexArrays
 import android.opengl.GLES30.glDisableVertexAttribArray
 import android.opengl.GLES30.glEnableVertexAttribArray
 import android.opengl.GLES30.glUniform1f
+import android.opengl.GLES30.glUniform1ui
 import android.opengl.GLES30.glUseProgram
 import android.opengl.GLES31.GL_ARRAY_BUFFER
 import android.opengl.GLES31.GL_COMPUTE_SHADER
@@ -45,8 +47,14 @@ import java.nio.Buffer
 class PlayerTrailData {
 
     class Vertex {
-        private val numberOfFloatsPerVertex = 2
-        private val data: FloatArray = FloatArray(size = 100 * numberOfFloatsPerVertex) { 0f }
+        val numberOfFloatsPerVertex = 3
+        private val data: FloatArray = FloatArray(size = 100 * numberOfFloatsPerVertex) { 0f }.also {
+           for (i in 0 until it.size) {
+               if(i % numberOfFloatsPerVertex == 0) {
+                   it[i+2] = i.toFloat() / it.size.toFloat()
+               }
+           }
+        }
         val pointNumber = data.size / numberOfFloatsPerVertex
         val stride = numberOfFloatsPerVertex * Float.SIZE_BYTES
         val bufferSize = data.size * Float.SIZE_BYTES
@@ -59,9 +67,12 @@ class PlayerTrailData {
             name = "a_position"
         ),
         val ratio: ShaderLocation = RatioShaderLocation(),
-        var camera: ShaderLocation = CameraShaderLocation(),
-        var position: ShaderLocation = ShaderUniformLocation(
+        val camera: ShaderLocation = CameraShaderLocation(),
+        val position: ShaderLocation = ShaderUniformLocation(
             name = "u_position"
+        ),
+        val floatsPerVertex: ShaderLocation = ShaderUniformLocation(
+            name = "u_floatsPerVertex"
         )
     )
 
@@ -113,12 +124,12 @@ class PlayerTrail(
 
         shaderLocations.vertex.init(program)
         glEnableVertexAttribArray(shaderLocations.vertex.location)
-        glVertexAttribPointer(shaderLocations.vertex.location, 2, GL_FLOAT, false, vertex.stride, 0)
+        glVertexAttribPointer(shaderLocations.vertex.location, 3, GL_FLOAT, false, vertex.stride, 0)
         glDisableVertexAttribArray(shaderLocations.vertex.location)
         shaderLocations.ratio.init(program)
         shaderLocations.camera.init(program)
         shaderLocations.position.init(computeProgram)
-
+        shaderLocations.floatsPerVertex.init(computeProgram)
         glBindBuffer(GL_ARRAY_BUFFER, 0)
 
     }
@@ -164,6 +175,7 @@ class PlayerTrail(
             vbo = vbo[0],
             uniforms = {
                 glUniform2f(shaderLocations.position.location, playerProperties.position.x, playerProperties.position.y)
+                glUniform1ui(shaderLocations.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
             },
             x = 1,
             y = 1,

@@ -53,7 +53,7 @@ class PlayerData {
             0.0f, 0.5f,
             0.5f, -0.5f,
             -0.5f, -0.5f,
-        ).scale(0.02f, numberOfFloatsPerVertex)
+        ).scale(0.04f, numberOfFloatsPerVertex)
 
         val middlePoint = data.middlePoint(numberOfFloatsPerVertex)
 

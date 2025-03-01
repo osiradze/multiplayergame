@@ -7,6 +7,7 @@ layout (std430, binding = 0) buffer InputOutputBuffer {
 
 uniform uint u_index;
 uniform vec2 u_position;
+uniform uint u_floatsPerVertex;
 
 
 
@@ -14,11 +15,11 @@ void main() {
     uint floatIndex = gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x;
 
     uint dataSize = uint(inputOutput.data.length);
-    if(floatIndex == 0u)  {
-        for (uint i = 0u; i < dataSize; i += 2u) {
-            if(i + 2u < dataSize) {
-                inputOutput.data[i] = inputOutput.data[i + 2u];
-                inputOutput.data[i + 1u] = inputOutput.data[i + 3u];
+    if(floatIndex == 0u && u_floatsPerVertex != 0u)  {
+        for (uint i = 0u; i < dataSize; i += u_floatsPerVertex) {
+            if(i + u_floatsPerVertex < dataSize) {
+                inputOutput.data[i] = inputOutput.data[i + u_floatsPerVertex];
+                inputOutput.data[i + 1u] = inputOutput.data[i + u_floatsPerVertex + 1u];
             } else {
                 inputOutput.data[i] = u_position.x;
                 inputOutput.data[i + 1u] = u_position.y;
