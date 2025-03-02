@@ -5,9 +5,10 @@ import android.opengl.GLSurfaceView
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
+import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.Planets
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerObject
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerTrail
-import ge.siradze.multiplayergame.game.presentation.engine.objects.wind.Wind
+import ge.siradze.multiplayergame.game.presentation.engine.objects.stars.Wind
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -26,7 +27,8 @@ class GameRender(context: Context) : GLSurfaceView.Renderer {
 
     private val objects: MutableList<GameObject> = mutableListOf(
         player, playerTrail,
-        Wind(context)
+        Wind(context),
+        Planets(context)
     )
 
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {

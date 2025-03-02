@@ -48,12 +48,13 @@ import java.nio.Buffer
 class PlayerData {
 
     class Vertex {
+        private val scale = 0.02f
         private val numberOfFloatsPerVertex = 2
         private val data: FloatArray = floatArrayOf(
             0.0f, 0.5f,
             0.5f, -0.5f,
             -0.5f, -0.5f,
-        ).scale(0.04f, numberOfFloatsPerVertex)
+        ).scale(scale, numberOfFloatsPerVertex)
 
         val middlePoint = data.middlePoint(numberOfFloatsPerVertex)
 
@@ -94,8 +95,8 @@ class PlayerData {
         private var velocity: Float = 0f,
     ) {
         private var gas = false
-        private val gasForce = 0.0005f
-        private var maxSpeed = 0.01f
+        private val gasForce = 0.00005f
+        private var maxSpeed = 0.004f
         private val deceleration = 0.98f
 
         fun update() {

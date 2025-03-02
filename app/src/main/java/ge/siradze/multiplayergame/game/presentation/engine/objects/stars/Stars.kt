@@ -1,4 +1,4 @@
-package ge.siradze.multiplayergame.game.presentation.engine.objects.wind
+package ge.siradze.multiplayergame.game.presentation.engine.objects.stars
 
 import android.content.Context
 import android.opengl.GLES20.GL_FRAGMENT_SHADER
@@ -8,8 +8,6 @@ import android.opengl.GLES20.glDeleteShader
 import android.opengl.GLES20.glDisableVertexAttribArray
 import android.opengl.GLES20.glDrawArrays
 import android.opengl.GLES20.glEnableVertexAttribArray
-import android.opengl.GLES20.glUniform1i
-import android.opengl.GLES20.glUniform2f
 import android.opengl.GLES20.glUseProgram
 import android.opengl.GLES30.GL_VERTEX_SHADER
 import android.opengl.GLES30.glDeleteVertexArrays
@@ -39,25 +37,23 @@ import kotlin.random.Random
 class WindData {
 
     class Vertex(
-        val pointNumber: Int = 300
+        val numberOfPoints: Int = 6000
     ) {
+        // 4 floats per vertex, 2 for position, 2 for velocity
         val numberOfFloatsPerVertex = 4
 
-        private val data: FloatArray = FloatArray(pointNumber * numberOfFloatsPerVertex)
+        private val data: FloatArray = FloatArray(numberOfPoints * numberOfFloatsPerVertex)
 
         val stride = numberOfFloatsPerVertex * Float.SIZE_BYTES
         val bufferSize = data.size * Float.SIZE_BYTES
-
         fun getBuffer(): Buffer = data.toBuffer()
-
 
         init {
             generatePoints()
         }
 
-
         private fun generatePoints() {
-            for (i in 0 until pointNumber) {
+            for (i in 0 until numberOfPoints) {
                 //position
                 data[px(i)] = (Random.nextFloat() - 0.5f) * 4
                 data[py(i)] = (Random.nextFloat() - 0.5f) * 4
@@ -93,17 +89,17 @@ class Wind(private val context: Context): GameObject {
     private val shaders = arrayOf(
         Shader(
             type = GL_VERTEX_SHADER,
-            source = R.raw.wind_vertex,
+            source = R.raw.stars_vertex,
             name = "Wind Vertex"
         ),
         Shader(
             type = GL_FRAGMENT_SHADER,
-            source = R.raw.wind_fragment,
+            source = R.raw.stars_fragment,
             name = "Wind Fragment"
         ),
         Shader(
             type = GL_COMPUTE_SHADER,
-            source = R.raw.wind_compute,
+            source = R.raw.stars_compute,
             name = "Wind Compute"
         )
     )
@@ -157,7 +153,7 @@ class Wind(private val context: Context): GameObject {
             },
             vbo = vbo[0],
             x = vertex.numberOfFloatsPerVertex,
-            y = vertex.pointNumber
+            y = vertex.numberOfPoints
         )
 
 
@@ -168,7 +164,7 @@ class Wind(private val context: Context): GameObject {
         glDrawArrays(
             GL_POINTS,
             0,
-            vertex.pointNumber
+            vertex.numberOfPoints
         )
 
         glDisableVertexAttribArray(shaderLocations.vertex.location)
@@ -180,7 +176,6 @@ class Wind(private val context: Context): GameObject {
         glDeleteBuffers(1, vbo, 0)
         glDeleteVertexArrays(1, vao, 0)
         glDeleteShader(program)
-
     }
 
 
