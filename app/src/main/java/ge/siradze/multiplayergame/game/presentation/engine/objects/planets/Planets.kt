@@ -67,7 +67,7 @@ class PlanetsData {
                 val randomX = Random.nextInt(until = 5) + 1
                 val randomY = Random.nextInt(until = 4) + 1
 
-                data[i * numberOfFloatsPerVertex + 2] = Random.nextFloat() * 100f + 100f
+                data[i * numberOfFloatsPerVertex + 2] = Random.nextFloat() * 300f + 50f
 
                 data[i * numberOfFloatsPerVertex + 3] = textureDimensions.stepX * (randomX - 1)
                 data[i * numberOfFloatsPerVertex + 4] = textureDimensions.stepY * (randomY - 1)

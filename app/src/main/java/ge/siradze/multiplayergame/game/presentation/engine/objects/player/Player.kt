@@ -95,9 +95,9 @@ class PlayerData {
         private var velocity: Float = 0f,
     ) {
         private var gas = false
-        private val gasForce = 0.00008f
+        private val gasForce = 0.00003f
         private var maxSpeed = 0.006f
-        private val deceleration = 0.996f
+        private val deceleration = 0.992f
 
         fun update() {
             if (gas && velocity < maxSpeed) {

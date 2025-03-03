@@ -13,10 +13,14 @@ void main() {
     if(pixel.a == 0.0) {
         discard;
     } else {
-        pixel.a = 0.8;
+
         pixel.r *= color_pass.x;
         pixel.g *= color_pass.y;
         pixel.b *= color_pass.z;
-        gl_FragColor = pixel;
+
+        vec3 luminance = vec3(0.299, 0.587, 0.114);
+        float gray = dot(pixel.rgb, luminance);
+
+        gl_FragColor = vec4(vec3(gray), pixel.a);
     }
 }
