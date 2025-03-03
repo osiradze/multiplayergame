@@ -57,8 +57,8 @@ class WindData {
                 //position
                 data[px(i)] = (Random.nextFloat() - 0.5f) * 4
                 data[py(i)] = (Random.nextFloat() - 0.5f) * 4
-                data[vx(i)] = -0.0007f
-                data[vy(i)] = -0.0007f
+                data[vx(i)] = -0.0001f
+                data[vy(i)] = -0.0001f
             }
         }
 

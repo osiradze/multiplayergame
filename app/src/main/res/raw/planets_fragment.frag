@@ -1,7 +1,8 @@
-precision mediump float;
+precision highp float;
 
 uniform sampler2D u_texture;
 varying vec4 texture_coordinates_pass;
+varying vec3 color_pass;
 
 
 
@@ -13,6 +14,9 @@ void main() {
         discard;
     } else {
         pixel.a = 0.8;
+        pixel.r *= color_pass.x;
+        pixel.g *= color_pass.y;
+        pixel.b *= color_pass.z;
         gl_FragColor = pixel;
     }
 }

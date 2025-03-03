@@ -41,9 +41,10 @@ import kotlin.random.Random
 
 class PlanetsData {
     class Vertex(
-        val numberOfPlanets: Int = 1000
+        val numberOfPlanets: Int = 700
     ) {
-        private val numberOfFloatsPerVertex = 6
+        // 2 position + 1 size + 4 texture coordinates + 3 color
+        private val numberOfFloatsPerVertex = 10
         private val data: FloatArray = FloatArray(numberOfPlanets * numberOfFloatsPerVertex)
         val stride = numberOfFloatsPerVertex * Float.SIZE_BYTES
         val bufferSize = data.size * Float.SIZE_BYTES
@@ -67,10 +68,16 @@ class PlanetsData {
                 val randomX = Random.nextInt(until = 5) + 1
                 val randomY = Random.nextInt(until = 4) + 1
 
-                data[i * numberOfFloatsPerVertex + 2] = textureDimensions.stepX * (randomX - 1)
-                data[i * numberOfFloatsPerVertex + 3] = textureDimensions.stepY * (randomY - 1)
-                data[i * numberOfFloatsPerVertex + 4] = textureDimensions.stepX
-                data[i * numberOfFloatsPerVertex + 5] = textureDimensions.stepY
+                data[i * numberOfFloatsPerVertex + 2] = Random.nextFloat() * 400f + 100f
+
+                data[i * numberOfFloatsPerVertex + 3] = textureDimensions.stepX * (randomX - 1)
+                data[i * numberOfFloatsPerVertex + 4] = textureDimensions.stepY * (randomY - 1)
+                data[i * numberOfFloatsPerVertex + 5] = textureDimensions.stepX
+                data[i * numberOfFloatsPerVertex + 6] = textureDimensions.stepY
+
+                data[i * numberOfFloatsPerVertex + 7] = Random.nextFloat() * 0.5f + 0.5f
+                data[i * numberOfFloatsPerVertex + 8] = Random.nextFloat() * 0.5f + 0.5f
+                data[i * numberOfFloatsPerVertex + 9] = Random.nextFloat() * 0.5f + 0.5f
             }
         }
 
@@ -83,9 +90,16 @@ class PlanetsData {
         val vertex : ShaderLocation = ShaderAttribLocation(
             name = "a_position"
         ),
+        val size : ShaderLocation = ShaderAttribLocation(
+            name = "a_size"
+        ),
         val textureCoordinates : ShaderLocation = ShaderAttribLocation(
             name = "a_texture_coordinates"
         ),
+        val color : ShaderLocation = ShaderAttribLocation(
+            name = "a_color"
+        ),
+
         val ratio: ShaderLocation = RatioShaderLocation(),
         var camera: ShaderLocation = CameraShaderLocation(),
 
@@ -148,10 +162,21 @@ class Planets(val context: Context): GameObject {
         glVertexAttribPointer(shaderLocations.vertex.location, 2, GL_FLOAT, false, vertex.stride, 0)
         glDisableVertexAttribArray(shaderLocations.vertex.location)
 
+        shaderLocations.size.init(program)
+        glEnableVertexAttribArray(shaderLocations.size.location)
+        glVertexAttribPointer(shaderLocations.size.location, 1, GL_FLOAT, false, vertex.stride, 2 * Float.SIZE_BYTES)
+        glDisableVertexAttribArray(shaderLocations.size.location)
+
+
         shaderLocations.textureCoordinates.init(program)
         glEnableVertexAttribArray(shaderLocations.textureCoordinates.location)
-        glVertexAttribPointer(shaderLocations.textureCoordinates.location, 4, GL_FLOAT, false, vertex.stride, 2 * Float.SIZE_BYTES)
+        glVertexAttribPointer(shaderLocations.textureCoordinates.location, 4, GL_FLOAT, false, vertex.stride, 3 * Float.SIZE_BYTES)
         glDisableVertexAttribArray(shaderLocations.vertex.location)
+
+        shaderLocations.color.init(program)
+        glEnableVertexAttribArray(shaderLocations.color.location)
+        glVertexAttribPointer(shaderLocations.color.location, 3, GL_FLOAT, false, vertex.stride, 7 * Float.SIZE_BYTES)
+        glDisableVertexAttribArray(shaderLocations.color.location)
 
         // Uniforms
         shaderLocations.ratio.init(program)
@@ -187,6 +212,8 @@ class Planets(val context: Context): GameObject {
         glBindVertexArray(vao[0])
         glEnableVertexAttribArray(shaderLocations.vertex.location)
         glEnableVertexAttribArray(shaderLocations.textureCoordinates.location)
+        glEnableVertexAttribArray(shaderLocations.size.location)
+        glEnableVertexAttribArray(shaderLocations.color.location)
 
         Camera.bindUniform(shaderLocations.camera.location)
 
@@ -198,6 +225,9 @@ class Planets(val context: Context): GameObject {
 
         glDisableVertexAttribArray(shaderLocations.vertex.location)
         glDisableVertexAttribArray(shaderLocations.textureCoordinates.location)
+        glDisableVertexAttribArray(shaderLocations.size.location)
+        glDisableVertexAttribArray(shaderLocations.color.location)
+
         glBindVertexArray(0)
         glUseProgram(0)
     }

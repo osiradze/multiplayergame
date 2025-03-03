@@ -95,9 +95,9 @@ class PlayerData {
         private var velocity: Float = 0f,
     ) {
         private var gas = false
-        private val gasForce = 0.00005f
-        private var maxSpeed = 0.004f
-        private val deceleration = 0.98f
+        private val gasForce = 0.00008f
+        private var maxSpeed = 0.006f
+        private val deceleration = 0.996f
 
         fun update() {
             if (gas && velocity < maxSpeed) {
@@ -122,7 +122,7 @@ class PlayerData {
                 }
 
                 is UIEvents.onTap -> {
-                    maxSpeed += 0.001f
+                    maxSpeed += 0.0001f
                 }
             }
         }

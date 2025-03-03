@@ -49,7 +49,7 @@ class PlayerTrailData {
     class Vertex {
         // 3 floats per vertex, 2 for position, 1 for alpha
         val numberOfFloatsPerVertex = 3
-        private val data: FloatArray = FloatArray(size = 100 * numberOfFloatsPerVertex) { 0f }.also {
+        private val data: FloatArray = FloatArray(size = 60 * numberOfFloatsPerVertex) { 0f }.also {
            for (i in it.indices) {
                if(i % numberOfFloatsPerVertex == 0) {
                    it[i+2] = i.toFloat() / it.size.toFloat()
