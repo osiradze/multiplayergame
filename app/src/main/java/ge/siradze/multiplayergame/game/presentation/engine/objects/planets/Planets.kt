@@ -22,7 +22,6 @@ import android.opengl.GLES31.GL_DYNAMIC_DRAW
 import android.opengl.GLES31.GL_FLOAT
 import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
-import android.opengl.GLES31.glVertexAttribPointer
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
@@ -62,13 +61,13 @@ class PlanetsData {
         private fun generatePoints() {
             for (i in 0 until numberOfPlanets) {
                 //position
-                data[px(i)] = (Random.nextFloat() - 0.5f) * 40
-                data[py(i)] = (Random.nextFloat() - 0.5f) * 40
+                data[i * numberOfFloatsPerVertex + 0] = (Random.nextFloat() - 0.5f) * 20
+                data[i * numberOfFloatsPerVertex + 1] = (Random.nextFloat() - 0.5f) * 20
 
                 val randomX = Random.nextInt(until = 5) + 1
                 val randomY = Random.nextInt(until = 4) + 1
 
-                data[i * numberOfFloatsPerVertex + 2] = Random.nextFloat() * 400f + 100f
+                data[i * numberOfFloatsPerVertex + 2] = Random.nextFloat() * 100f + 100f
 
                 data[i * numberOfFloatsPerVertex + 3] = textureDimensions.stepX * (randomX - 1)
                 data[i * numberOfFloatsPerVertex + 4] = textureDimensions.stepY * (randomY - 1)
@@ -80,23 +79,19 @@ class PlanetsData {
                 data[i * numberOfFloatsPerVertex + 9] = Random.nextFloat() * 0.5f + 0.5f
             }
         }
-
-        private fun px(i: Int) = i * numberOfFloatsPerVertex
-        private fun py(i: Int) = i * numberOfFloatsPerVertex + 1
-
     }
 
     class ShaderLocations(
-        val vertex : ShaderLocation = ShaderAttribLocation(
+        val vertex : ShaderAttribLocation = ShaderAttribLocation(
             name = "a_position"
         ),
-        val size : ShaderLocation = ShaderAttribLocation(
+        val size : ShaderAttribLocation = ShaderAttribLocation(
             name = "a_size"
         ),
-        val textureCoordinates : ShaderLocation = ShaderAttribLocation(
+        val textureCoordinates : ShaderAttribLocation = ShaderAttribLocation(
             name = "a_texture_coordinates"
         ),
-        val color : ShaderLocation = ShaderAttribLocation(
+        val color : ShaderAttribLocation = ShaderAttribLocation(
             name = "a_color"
         ),
 
@@ -115,7 +110,7 @@ class Planets(val context: Context): GameObject {
     private val vbo: IntArray = IntArray(1)
 
     private val vertex = PlanetsData.Vertex()
-    private val shaderLocations = PlanetsData.ShaderLocations()
+    private val shader = PlanetsData.ShaderLocations()
     private val shaders = arrayOf(
         Shader(
             type = GL_VERTEX_SHADER,
@@ -127,63 +122,19 @@ class Planets(val context: Context): GameObject {
             source = R.raw.planets_fragment,
             name = "Planets Fragment"
         ),
-        /*Shader(
-            type = GL_COMPUTE_SHADER,
-            source = R.raw.wind_compute,
-            name = "Wind Compute"
-        )*/
     )
 
     private val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.planets)
 
     private val textures = IntArray(1)
 
-
     private var program: Int = 0
 
     override fun init() {
         initProgram()
-
-        glGenVertexArrays(1, vao, 0)
-        glBindVertexArray(vao[0])
-
-        glGenBuffers(1, vbo, 0)
-        glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
-
-        glBufferData(
-            GL_ARRAY_BUFFER,
-            vertex.bufferSize,
-            vertex.getBuffer(),
-            GL_DYNAMIC_DRAW
-        )
-
-        shaderLocations.vertex.init(program)
-        glEnableVertexAttribArray(shaderLocations.vertex.location)
-        glVertexAttribPointer(shaderLocations.vertex.location, 2, GL_FLOAT, false, vertex.stride, 0)
-        glDisableVertexAttribArray(shaderLocations.vertex.location)
-
-        shaderLocations.size.init(program)
-        glEnableVertexAttribArray(shaderLocations.size.location)
-        glVertexAttribPointer(shaderLocations.size.location, 1, GL_FLOAT, false, vertex.stride, 2 * Float.SIZE_BYTES)
-        glDisableVertexAttribArray(shaderLocations.size.location)
-
-
-        shaderLocations.textureCoordinates.init(program)
-        glEnableVertexAttribArray(shaderLocations.textureCoordinates.location)
-        glVertexAttribPointer(shaderLocations.textureCoordinates.location, 4, GL_FLOAT, false, vertex.stride, 3 * Float.SIZE_BYTES)
-        glDisableVertexAttribArray(shaderLocations.vertex.location)
-
-        shaderLocations.color.init(program)
-        glEnableVertexAttribArray(shaderLocations.color.location)
-        glVertexAttribPointer(shaderLocations.color.location, 3, GL_FLOAT, false, vertex.stride, 7 * Float.SIZE_BYTES)
-        glDisableVertexAttribArray(shaderLocations.color.location)
-
-        // Uniforms
-        shaderLocations.ratio.init(program)
-        shaderLocations.camera.init(program)
-
+        initData()
+        initLocations()
         bindTexture()
-
     }
 
     private fun initProgram() {
@@ -196,13 +147,56 @@ class Planets(val context: Context): GameObject {
 
     }
 
+    private fun initData() {
+        glGenVertexArrays(1, vao, 0)
+        glBindVertexArray(vao[0])
+
+        glGenBuffers(1, vbo, 0)
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
+
+        glBufferData(
+            GL_ARRAY_BUFFER,
+            vertex.bufferSize,
+            vertex.getBuffer(),
+            GL_DYNAMIC_DRAW
+        )
+    }
+
+
+    private fun initLocations() {
+        // attributes
+        shader.vertex.apply {
+            init(program)
+            load(2, GL_FLOAT, false, vertex.stride, 0)
+        }
+
+        shader.size.apply {
+            init(program)
+            load(1, GL_FLOAT, false, vertex.stride, 2 * Float.SIZE_BYTES)
+        }
+
+        shader.textureCoordinates.apply {
+            init(program)
+            load(4, GL_FLOAT, false, vertex.stride, 3 * Float.SIZE_BYTES)
+        }
+
+        shader.color.apply {
+            init(program)
+            load(3, GL_FLOAT, false, vertex.stride, 7 * Float.SIZE_BYTES)
+        }
+
+        // Uniforms
+        shader.ratio.init(program)
+        shader.camera.init(program)
+    }
+
     private fun bindTexture() {
         glGenTextures(1, textures, 0)
 
         OpenGLUtils.loadTexture(
             bitmap,
             textures[0],
-            shaderLocations.texture.location,
+            shader.texture.location,
             TextureHelper.getTextureOffset(1)
         )
     }
@@ -210,12 +204,13 @@ class Planets(val context: Context): GameObject {
     override fun draw() {
         glUseProgram(program)
         glBindVertexArray(vao[0])
-        glEnableVertexAttribArray(shaderLocations.vertex.location)
-        glEnableVertexAttribArray(shaderLocations.textureCoordinates.location)
-        glEnableVertexAttribArray(shaderLocations.size.location)
-        glEnableVertexAttribArray(shaderLocations.color.location)
 
-        Camera.bindUniform(shaderLocations.camera.location)
+        glEnableVertexAttribArray(shader.vertex.location)
+        glEnableVertexAttribArray(shader.textureCoordinates.location)
+        glEnableVertexAttribArray(shader.size.location)
+        glEnableVertexAttribArray(shader.color.location)
+
+        Camera.bindUniform(shader.camera.location)
 
         glDrawArrays(
             GL_POINTS,
@@ -223,10 +218,10 @@ class Planets(val context: Context): GameObject {
             vertex.numberOfPlanets
         )
 
-        glDisableVertexAttribArray(shaderLocations.vertex.location)
-        glDisableVertexAttribArray(shaderLocations.textureCoordinates.location)
-        glDisableVertexAttribArray(shaderLocations.size.location)
-        glDisableVertexAttribArray(shaderLocations.color.location)
+        glDisableVertexAttribArray(shader.vertex.location)
+        glDisableVertexAttribArray(shader.textureCoordinates.location)
+        glDisableVertexAttribArray(shader.size.location)
+        glDisableVertexAttribArray(shader.color.location)
 
         glBindVertexArray(0)
         glUseProgram(0)
@@ -235,7 +230,7 @@ class Planets(val context: Context): GameObject {
     override fun setRatio(ratio: Float) {
         super.setRatio(ratio)
         glUseProgram(program)
-        glUniform1f(shaderLocations.ratio.location, ratio)
+        glUniform1f(shader.ratio.location, ratio)
     }
 
     override fun release() {

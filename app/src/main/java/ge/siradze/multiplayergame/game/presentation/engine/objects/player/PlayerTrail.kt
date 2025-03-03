@@ -9,7 +9,6 @@ import android.opengl.GLES20.GL_LINE_STRIP
 import android.opengl.GLES20.GL_VERTEX_SHADER
 import android.opengl.GLES20.glDeleteBuffers
 import android.opengl.GLES20.glDeleteProgram
-import android.opengl.GLES20.glLineWidth
 import android.opengl.GLES20.glUniform2f
 import android.opengl.GLES20.glVertexAttribPointer
 import android.opengl.GLES30.glDeleteShader
@@ -64,7 +63,7 @@ class PlayerTrailData {
     }
 
     class ShaderLocations(
-        val vertex : ShaderLocation = ShaderAttribLocation(
+        val vertex : ShaderAttribLocation = ShaderAttribLocation(
             name = "a_position"
         ),
         val ratio: ShaderLocation = RatioShaderLocation(),
@@ -97,13 +96,25 @@ class PlayerTrail(
     private val vbo: IntArray = IntArray(1)
 
     private val vertex = PlayerTrailData.Vertex()
-    private val shaderLocations = PlayerTrailData.ShaderLocations()
+    private val shader = PlayerTrailData.ShaderLocations()
     private val properties = PlayerTrailData.Properties()
 
     private val shaders = arrayOf(
-        Shader(GL_VERTEX_SHADER, R.raw.player_trail_vertex, "Trail Vertex"),
-        Shader(GL_FRAGMENT_SHADER, R.raw.player_trail_fragment, "Trail Fragment"),
-        Shader(GL_COMPUTE_SHADER, R.raw.player_trail_compute, "Trail Compute"),
+        Shader(
+            type = GL_VERTEX_SHADER,
+            source = R.raw.player_trail_vertex,
+            name = "Trail Vertex"
+        ),
+        Shader(
+            type =GL_FRAGMENT_SHADER,
+            source = R.raw.player_trail_fragment,
+            name = "Trail Fragment"
+        ),
+        Shader(
+            type =GL_COMPUTE_SHADER,
+            source = R.raw.player_trail_compute,
+            name = "Trail Compute"
+        ),
     )
     private var program = 0
     private var computeProgram = 0
@@ -111,33 +122,9 @@ class PlayerTrail(
     override fun init() {
         initProgram()
 
-        glGenVertexArrays(1, vao, 0)
-        glBindVertexArray(vao[0])
+        initData()
 
-        glGenBuffers(1, vbo, 0)
-        glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
-        glBufferData(
-            GL_ARRAY_BUFFER,
-            vertex.bufferSize,
-            vertex.getBuffer(),
-            GL_DYNAMIC_DRAW
-        )
-
-        shaderLocations.vertex.init(program)
-        glEnableVertexAttribArray(shaderLocations.vertex.location)
-        glVertexAttribPointer(shaderLocations.vertex.location, 3, GL_FLOAT, false, vertex.stride, 0)
-        glDisableVertexAttribArray(shaderLocations.vertex.location)
-        shaderLocations.ratio.init(program)
-        shaderLocations.camera.init(program)
-        shaderLocations.position.init(computeProgram)
-        shaderLocations.floatsPerVertex.init(computeProgram)
-        glBindBuffer(GL_ARRAY_BUFFER, 0)
-
-    }
-
-    override fun setRatio(ratio: Float) {
-        glUseProgram(program)
-        glUniform1f(shaderLocations.ratio.location, ratio)
+        initLocations()
     }
 
     private fun initProgram() {
@@ -151,6 +138,34 @@ class PlayerTrail(
         glDeleteShader(computeShader)
     }
 
+    private fun initData() {
+        glGenVertexArrays(1, vao, 0)
+        glBindVertexArray(vao[0])
+
+        glGenBuffers(1, vbo, 0)
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
+        glBufferData(
+            GL_ARRAY_BUFFER,
+            vertex.bufferSize,
+            vertex.getBuffer(),
+            GL_DYNAMIC_DRAW
+        )
+
+    }
+
+    private fun initLocations() {
+        shader.vertex.apply {
+            init(program)
+            load(3, GL_FLOAT, false, vertex.stride, 0)
+        }
+
+        shader.ratio.init(program)
+        shader.camera.init(program)
+        shader.position.init(computeProgram)
+        shader.floatsPerVertex.init(computeProgram)
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+    }
+
 
     override fun draw() {
         glBindVertexArray(vao[0])
@@ -160,11 +175,11 @@ class PlayerTrail(
     }
     private fun drawTrail() {
         glUseProgram(program)
-        glEnableVertexAttribArray(shaderLocations.vertex.location)
+        glEnableVertexAttribArray(shader.vertex.location)
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, vbo[0])
-        Camera.bindUniform(shaderLocations.camera.location)
+        Camera.bindUniform(shader.camera.location)
         GLES20.glDrawArrays(GL_LINE_STRIP, 0, vertex.pointNumber)
-        glDisableVertexAttribArray(shaderLocations.vertex.location)
+        glDisableVertexAttribArray(shader.vertex.location)
     }
 
     private fun compute() {
@@ -175,13 +190,25 @@ class PlayerTrail(
             shaderProgram = computeProgram,
             vbo = vbo[0],
             uniforms = {
-                glUniform2f(shaderLocations.position.location, playerProperties.position.x, playerProperties.position.y)
-                glUniform1ui(shaderLocations.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
+                glUniform2f(
+                    shader.position.location,
+                    playerProperties.position.x,
+                    playerProperties.position.y
+                )
+                glUniform1ui(
+                    shader.floatsPerVertex.location,
+                    vertex.numberOfFloatsPerVertex
+                )
             },
             x = 1,
             y = 1,
             z = 1,
         )
+    }
+
+    override fun setRatio(ratio: Float) {
+        glUseProgram(program)
+        glUniform1f(shader.ratio.location, ratio)
     }
 
     override fun release() {

@@ -67,7 +67,7 @@ class PlayerData {
     }
 
     class ShaderLocations(
-        val vertex : ShaderLocation = ShaderAttribLocation(
+        val vertex : ShaderAttribLocation = ShaderAttribLocation(
             name = "a_position"
         ),
         val ratio: ShaderLocation = RatioShaderLocation(),
@@ -159,6 +159,12 @@ class PlayerObject(
     override fun init() {
         initProgram()
 
+        initData()
+
+        initLocations()
+    }
+
+    private fun initData() {
         glGenVertexArrays(1, vao, 0)
         glBindVertexArray(vao[0])
 
@@ -170,7 +176,9 @@ class PlayerObject(
             vertex.getBuffer(),
             GL_STATIC_DRAW
         )
+    }
 
+    private fun initLocations() {
         shaderLocations.vertex.init(program)
         glEnableVertexAttribArray(shaderLocations.vertex.location)
         glVertexAttribPointer(shaderLocations.vertex.location, 2, GL_FLOAT, false, vertex.stride, 0)
@@ -186,12 +194,6 @@ class PlayerObject(
 
         glUniform2f(shaderLocations.ratio.location, vertex.middlePoint.x, vertex.middlePoint.y)
         glBindBuffer(GL_ARRAY_BUFFER, 0)
-
-    }
-
-    override fun setRatio(ratio: Float) {
-        glUseProgram(program)
-        glUniform1f(shaderLocations.ratio.location, ratio)
     }
 
     private fun initProgram() {
@@ -227,6 +229,11 @@ class PlayerObject(
 
     fun onUIEvent(event: UIEvents) {
         properties.onUIEvent(event)
+    }
+
+    override fun setRatio(ratio: Float) {
+        glUseProgram(program)
+        glUniform1f(shaderLocations.ratio.location, ratio)
     }
 
     override fun release() {
