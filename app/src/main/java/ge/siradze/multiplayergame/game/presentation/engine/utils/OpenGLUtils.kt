@@ -6,9 +6,11 @@ import android.opengl.GLES20
 import android.opengl.GLES20.GL_ACTIVE_UNIFORMS
 import android.opengl.GLES20.GL_ACTIVE_UNIFORM_MAX_LENGTH
 import android.opengl.GLES20.GL_TEXTURE0
+import android.opengl.GLES20.glBindBuffer
 import android.opengl.GLES20.glGetActiveUniform
 import android.opengl.GLES30.GL_COMPILE_STATUS
 import android.opengl.GLES30.GL_LINK_STATUS
+import android.opengl.GLES30.GL_MAP_READ_BIT
 import android.opengl.GLES30.GL_NEAREST
 import android.opengl.GLES30.GL_TEXTURE_2D
 import android.opengl.GLES30.GL_TEXTURE_MAG_FILTER
@@ -25,9 +27,12 @@ import android.opengl.GLES30.glGetProgramiv
 import android.opengl.GLES30.glGetShaderInfoLog
 import android.opengl.GLES30.glGetShaderiv
 import android.opengl.GLES30.glLinkProgram
+import android.opengl.GLES30.glMapBufferRange
 import android.opengl.GLES30.glShaderSource
 import android.opengl.GLES30.glTexParameteri
 import android.opengl.GLES30.glUniform1i
+import android.opengl.GLES30.glUnmapBuffer
+import android.opengl.GLES31.GL_SHADER_STORAGE_BUFFER
 import android.opengl.GLUtils
 import android.util.Log
 
@@ -138,6 +143,23 @@ object OpenGLUtils {
 
             println("Uniform #$i: Name = $uniformName, Size = ${size[0]}, Type = ${type[0]}")
         }
+    }
+
+    fun readSSBO(bufferId: Int, size: Int, typeSize: Int): FloatArray {
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferId)
+
+        // Map the buffer to read it on the CPU
+        val mappedBuffer = glMapBufferRange(
+            GL_SHADER_STORAGE_BUFFER, 0, size * typeSize, GL_MAP_READ_BIT
+        ) as java.nio.ByteBuffer
+
+        val result = FloatArray(size)
+        mappedBuffer.asFloatBuffer().get(result) // Copy data into result array
+
+        // Unmap the buffer after reading
+        glUnmapBuffer(GL_SHADER_STORAGE_BUFFER)
+
+        return result
     }
 
 }

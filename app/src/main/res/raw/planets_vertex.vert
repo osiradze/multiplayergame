@@ -5,6 +5,7 @@ attribute float a_size;
 
 uniform float u_ratio;
 uniform vec2 u_camera;
+uniform float u_screen_width;
 
 attribute vec4 a_texture_coordinates;
 varying vec4 texture_coordinates_pass;
@@ -16,7 +17,7 @@ varying vec3 color_pass;
 void main() {
     texture_coordinates_pass = a_texture_coordinates;
     color_pass = a_color;
-    gl_PointSize = a_size;
+    gl_PointSize = a_size * u_screen_width;
 
     vec2 position = vec2(
         a_position.x - u_camera.x,

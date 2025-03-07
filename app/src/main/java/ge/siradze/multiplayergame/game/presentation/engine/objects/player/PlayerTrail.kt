@@ -10,7 +10,6 @@ import android.opengl.GLES20.GL_VERTEX_SHADER
 import android.opengl.GLES20.glDeleteBuffers
 import android.opengl.GLES20.glDeleteProgram
 import android.opengl.GLES20.glUniform2f
-import android.opengl.GLES20.glVertexAttribPointer
 import android.opengl.GLES30.glDeleteShader
 import android.opengl.GLES30.glDeleteVertexArrays
 import android.opengl.GLES30.glDisableVertexAttribArray
@@ -68,8 +67,8 @@ class PlayerTrailData {
         ),
         val ratio: ShaderLocation = RatioShaderLocation(),
         val camera: ShaderLocation = CameraShaderLocation(),
-        val position: ShaderLocation = ShaderUniformLocation(
-            name = "u_position"
+        val playerPosition: ShaderLocation = ShaderUniformLocation(
+            name = "u_player_position"
         ),
         val floatsPerVertex: ShaderLocation = ShaderUniformLocation(
             name = "u_floatsPerVertex"
@@ -161,7 +160,7 @@ class PlayerTrail(
 
         shader.ratio.init(program)
         shader.camera.init(program)
-        shader.position.init(computeProgram)
+        shader.playerPosition.init(computeProgram)
         shader.floatsPerVertex.init(computeProgram)
         glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
@@ -188,10 +187,10 @@ class PlayerTrail(
         }
         ShaderUtils.computeShader(
             shaderProgram = computeProgram,
-            vbo = vbo[0],
+            vbos = vbo,
             uniforms = {
                 glUniform2f(
-                    shader.position.location,
+                    shader.playerPosition.location,
                     playerProperties.position.x,
                     playerProperties.position.y
                 )
@@ -200,6 +199,7 @@ class PlayerTrail(
                     vertex.numberOfFloatsPerVertex
                 )
             },
+            // we are dispatching only one worker.
             x = 1,
             y = 1,
             z = 1,

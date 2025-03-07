@@ -8,7 +8,7 @@ import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.Planets
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerObject
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerTrail
-import ge.siradze.multiplayergame.game.presentation.engine.objects.stars.Wind
+import ge.siradze.multiplayergame.game.presentation.engine.objects.stars.Stars
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -27,7 +27,7 @@ class GameRender(context: Context) : GLSurfaceView.Renderer {
 
     private val objects: MutableList<GameObject> = mutableListOf(
         player, playerTrail,
-        Wind(context),
+        Stars(context),
         Planets(context)
     )
 
@@ -40,6 +40,7 @@ class GameRender(context: Context) : GLSurfaceView.Renderer {
     override fun onSurfaceChanged(p0: GL10?, width: Int, height: Int) {
         objects.forEach {
             it.setRatio(width.toFloat() / height.toFloat())
+            it.onSizeChange(width, height)
         }
     }
 

@@ -21,10 +21,11 @@ import android.opengl.GLES31.glBindVertexArray
 import android.opengl.GLES31.glBufferData
 import android.opengl.GLES31.glGenBuffers
 import android.opengl.GLES31.glGenVertexArrays
-import android.opengl.GLES31.glVertexAttribPointer
 import ge.siradze.multiplayergame.R
+import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
+import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderAttribLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderLocation
@@ -34,13 +35,13 @@ import ge.siradze.multiplayergame.game.presentation.engine.utils.ShaderUtils
 import java.nio.Buffer
 import kotlin.random.Random
 
-class WindData {
+class StarsData {
 
     class Vertex(
         val numberOfPoints: Int = 6000
     ) {
         // 4 floats per vertex, 2 for position, 2 for velocity
-        val numberOfFloatsPerVertex = 4
+        val numberOfFloatsPerVertex = 5
 
         private val data: FloatArray = FloatArray(numberOfPoints * numberOfFloatsPerVertex)
 
@@ -57,8 +58,9 @@ class WindData {
                 //position
                 data[px(i)] = (Random.nextFloat() - 0.5f) * 4
                 data[py(i)] = (Random.nextFloat() - 0.5f) * 4
-                data[vx(i)] = -0.0001f
-                data[vy(i)] = -0.0001f
+                data[vx(i)] = -0.0006f
+                data[vy(i)] = -0.0006f
+                data[vy(i) + 1] = Random.nextFloat() * 0.5f
             }
         }
 
@@ -69,23 +71,27 @@ class WindData {
     }
 
     class ShaderLocations(
-        val vertex : ShaderLocation = ShaderAttribLocation(
+        val vertex : ShaderAttribLocation = ShaderAttribLocation(
             name = "a_position"
+        ),
+        val brightness : ShaderAttribLocation = ShaderAttribLocation(
+            name = "a_brightness"
         ),
         val floatsPerVertex : ShaderLocation = ShaderUniformLocation(
             name = "floats_per_vertex"
-        )
+        ),
+        val camera : ShaderLocation = CameraShaderLocation()
     )
 }
 
-class Wind(private val context: Context): GameObject {
+class Stars(private val context: Context): GameObject {
 
     private val vao: IntArray = IntArray(1)
     private val vbo: IntArray = IntArray(1)
 
 
-    private val vertex = WindData.Vertex()
-    private val shaderLocations = WindData.ShaderLocations()
+    private val vertex = StarsData.Vertex()
+    private val shader = StarsData.ShaderLocations()
     private val shaders = arrayOf(
         Shader(
             type = GL_VERTEX_SHADER,
@@ -122,12 +128,16 @@ class Wind(private val context: Context): GameObject {
             GL_DYNAMIC_DRAW
         )
 
-        shaderLocations.vertex.init(program)
-        glEnableVertexAttribArray(shaderLocations.vertex.location)
-        glVertexAttribPointer(shaderLocations.vertex.location, 2, GL_FLOAT, false, vertex.stride, 0)
-        glDisableVertexAttribArray(shaderLocations.vertex.location)
-
-        shaderLocations.floatsPerVertex.init(computeProgram)
+        shader.vertex.apply {
+            init(program)
+            load(2, GL_FLOAT, false, vertex.stride, 0)
+        }
+        shader.brightness.apply {
+            init(program)
+            load(1, GL_FLOAT, false, vertex.stride, 4 * Float.SIZE_BYTES)
+        }
+        shader.camera.init(computeProgram)
+        shader.floatsPerVertex.init(computeProgram)
 
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindVertexArray(0)
@@ -149,9 +159,10 @@ class Wind(private val context: Context): GameObject {
         ShaderUtils.computeShader(
             shaderProgram = computeProgram,
             uniforms = {
-                glUniform1ui(shaderLocations.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
+                glUniform1ui(shader.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
+                Camera.bindUniform(shader.camera.location)
             },
-            vbo = vbo[0],
+            vbos = vbo,
             x = vertex.numberOfFloatsPerVertex,
             y = vertex.numberOfPoints
         )
@@ -159,7 +170,8 @@ class Wind(private val context: Context): GameObject {
 
         glUseProgram(program)
         glBindVertexArray(vao[0])
-        glEnableVertexAttribArray(shaderLocations.vertex.location)
+        glEnableVertexAttribArray(shader.vertex.location)
+        glEnableVertexAttribArray(shader.brightness.location)
 
         glDrawArrays(
             GL_POINTS,
@@ -167,7 +179,8 @@ class Wind(private val context: Context): GameObject {
             vertex.numberOfPoints
         )
 
-        glDisableVertexAttribArray(shaderLocations.vertex.location)
+        glDisableVertexAttribArray(shader.vertex.location)
+        glDisableVertexAttribArray(shader.brightness.location)
         glBindVertexArray(0)
         glUseProgram(0)
     }

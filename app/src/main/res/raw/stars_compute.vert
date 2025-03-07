@@ -6,6 +6,7 @@ layout (std430, binding = 0) buffer InputOutputBuffer {
 } inputOutput;
 
 uniform uint floats_per_vertex;
+uniform vec2 u_camera;
 float border = 2.0;
 
 void main() {

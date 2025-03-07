@@ -6,6 +6,8 @@ interface GameObject {
 
     fun setRatio(ratio: Float) = Unit
 
+    fun onSizeChange(width: Int, height: Int) = Unit
+
     fun draw()
 
     fun release()

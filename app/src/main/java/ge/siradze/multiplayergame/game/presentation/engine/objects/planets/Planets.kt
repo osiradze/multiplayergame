@@ -18,13 +18,18 @@ import android.opengl.GLES30.glBindVertexArray
 import android.opengl.GLES30.glDeleteVertexArrays
 import android.opengl.GLES30.glGenTextures
 import android.opengl.GLES30.glGenVertexArrays
+import android.opengl.GLES30.glUniform1ui
+import android.opengl.GLES31.GL_COMPUTE_SHADER
 import android.opengl.GLES31.GL_DYNAMIC_DRAW
 import android.opengl.GLES31.GL_FLOAT
+import android.opengl.GLES31.GL_SHADER_STORAGE_BUFFER
 import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
+import android.util.Log
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
+import ge.siradze.multiplayergame.game.presentation.engine.objects.AttributeData
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.RatioShaderLocation
@@ -35,50 +40,37 @@ import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderUniformL
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureDimensions
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureHelper
 import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
+import ge.siradze.multiplayergame.game.presentation.engine.utils.ShaderUtils
 import java.nio.Buffer
-import kotlin.random.Random
 
 class PlanetsData {
     class Vertex(
         val numberOfPlanets: Int = 700
-    ) {
+    ): AttributeData() {
         // 2 position + 1 size + 4 texture coordinates + 3 color
-        private val numberOfFloatsPerVertex = 10
-        private val data: FloatArray = FloatArray(numberOfPlanets * numberOfFloatsPerVertex)
-        val stride = numberOfFloatsPerVertex * Float.SIZE_BYTES
-        val bufferSize = data.size * Float.SIZE_BYTES
+        override val numberOfFloatsPerVertex = 10
+        override val typeSize = Float.SIZE_BYTES
+        override val size = numberOfPlanets * numberOfFloatsPerVertex
+        private val data: FloatArray = FloatArray(size)
 
-        fun getBuffer(): Buffer = data.toBuffer()
+        override fun getBuffer(): Buffer = data.toBuffer()
 
         private val textureDimensions : TextureDimensions = TextureDimensions(4, 5)
 
-
         init {
-            generatePoints()
+            generatePoints(
+                data = data,
+                numberOfPlanets = numberOfPlanets,
+                numberOfFloatsPerVertex = numberOfFloatsPerVertex,
+                textureDimensions = textureDimensions
+            )
         }
+    }
 
-
-        private fun generatePoints() {
-            for (i in 0 until numberOfPlanets) {
-                //position
-                data[i * numberOfFloatsPerVertex + 0] = (Random.nextFloat() - 0.5f) * 20
-                data[i * numberOfFloatsPerVertex + 1] = (Random.nextFloat() - 0.5f) * 20
-
-                val randomX = Random.nextInt(until = 5) + 1
-                val randomY = Random.nextInt(until = 4) + 1
-
-                data[i * numberOfFloatsPerVertex + 2] = Random.nextFloat() * 300f + 50f
-
-                data[i * numberOfFloatsPerVertex + 3] = textureDimensions.stepX * (randomX - 1)
-                data[i * numberOfFloatsPerVertex + 4] = textureDimensions.stepY * (randomY - 1)
-                data[i * numberOfFloatsPerVertex + 5] = textureDimensions.stepX
-                data[i * numberOfFloatsPerVertex + 6] = textureDimensions.stepY
-
-                data[i * numberOfFloatsPerVertex + 7] = Random.nextFloat() * 0.5f + 0.5f
-                data[i * numberOfFloatsPerVertex + 8] = Random.nextFloat() * 0.5f + 0.5f
-                data[i * numberOfFloatsPerVertex + 9] = Random.nextFloat() * 0.5f + 0.5f
-            }
-        }
+    class CollisionData {
+        val data: FloatArray = FloatArray(5)
+        val buffer: Buffer = data.toBuffer()
+        val bufferSize = data.size * Float.SIZE_BYTES
     }
 
     class ShaderLocations(
@@ -95,11 +87,18 @@ class PlanetsData {
             name = "a_color"
         ),
 
+        val screenWidth : ShaderUniformLocation = ShaderUniformLocation(
+            name = "u_screen_width"
+        ),
+
         val ratio: ShaderLocation = RatioShaderLocation(),
         var camera: ShaderLocation = CameraShaderLocation(),
 
         val texture: ShaderLocation = ShaderUniformLocation(
             name = "u_texture"
+        ),
+        val floatsPerVertex: ShaderLocation = ShaderUniformLocation(
+            name = "floats_per_vertex"
         )
     )
 }
@@ -107,7 +106,7 @@ class PlanetsData {
 class Planets(val context: Context): GameObject {
 
     private val vao: IntArray = IntArray(1)
-    private val vbo: IntArray = IntArray(1)
+    private val vbo: IntArray = IntArray(2)
 
     private val vertex = PlanetsData.Vertex()
     private val shader = PlanetsData.ShaderLocations()
@@ -122,13 +121,20 @@ class Planets(val context: Context): GameObject {
             source = R.raw.planets_fragment,
             name = "Planets Fragment"
         ),
+        Shader(
+            type = GL_COMPUTE_SHADER,
+            source = R.raw.planets_compute,
+            name = "Planets Compute"
+        )
     )
 
     private val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.planets)
-
     private val textures = IntArray(1)
 
     private var program: Int = 0
+    private var computeProgram: Int = 0
+
+    private val collisionData = PlanetsData.CollisionData()
 
     override fun init() {
         initProgram()
@@ -140,18 +146,20 @@ class Planets(val context: Context): GameObject {
     private fun initProgram() {
         val vertexShader = shaders[0].create(context) ?: return
         val fragmentShader = shaders[1].create(context) ?: return
+        val computeShader = shaders[2].create(context) ?: return
 
         program = OpenGLUtils.createAndLinkProgram(vertexShader, fragmentShader) ?: return
+        computeProgram = OpenGLUtils.createAndLinkProgram(computeShader) ?: return
         glDeleteShader(vertexShader)
         glDeleteShader(fragmentShader)
-
+        glDeleteShader(computeShader)
     }
 
     private fun initData() {
         glGenVertexArrays(1, vao, 0)
         glBindVertexArray(vao[0])
 
-        glGenBuffers(1, vbo, 0)
+        glGenBuffers(2, vbo, 0)
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
 
         glBufferData(
@@ -160,11 +168,20 @@ class Planets(val context: Context): GameObject {
             vertex.getBuffer(),
             GL_DYNAMIC_DRAW
         )
+
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[1])
+        glBufferData(
+            GL_SHADER_STORAGE_BUFFER,
+            collisionData.bufferSize,
+            collisionData.buffer,
+            GL_DYNAMIC_DRAW
+        )
     }
 
 
     private fun initLocations() {
         // attributes
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
         shader.vertex.apply {
             init(program)
             load(2, GL_FLOAT, false, vertex.stride, 0)
@@ -186,8 +203,11 @@ class Planets(val context: Context): GameObject {
         }
 
         // Uniforms
+        shader.screenWidth.init(program)
         shader.ratio.init(program)
         shader.camera.init(program)
+
+        shader.floatsPerVertex.init(computeProgram)
     }
 
     private fun bindTexture() {
@@ -202,9 +222,16 @@ class Planets(val context: Context): GameObject {
     }
 
     override fun draw() {
-        glUseProgram(program)
         glBindVertexArray(vao[0])
 
+        compute()
+        drawPlanets()
+
+        glBindVertexArray(0)
+    }
+
+    private fun drawPlanets() {
+        glUseProgram(program)
         glEnableVertexAttribArray(shader.vertex.location)
         glEnableVertexAttribArray(shader.textureCoordinates.location)
         glEnableVertexAttribArray(shader.size.location)
@@ -222,15 +249,37 @@ class Planets(val context: Context): GameObject {
         glDisableVertexAttribArray(shader.textureCoordinates.location)
         glDisableVertexAttribArray(shader.size.location)
         glDisableVertexAttribArray(shader.color.location)
-
-        glBindVertexArray(0)
         glUseProgram(0)
+    }
+
+    private fun compute() {
+         ShaderUtils.computeShader(
+             shaderProgram = computeProgram,
+             uniforms = {
+                 glUniform1ui(shader.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
+             },
+             vbos = vbo,
+             x = vertex.numberOfFloatsPerVertex,
+             y = vertex.numberOfPlanets,
+         )
+
+        val collisionData = OpenGLUtils.readSSBO(
+            vbo[1],
+            collisionData.data.size,
+            Float.SIZE_BYTES
+        )
+        Log.i("TAG", "compute: ${collisionData.contentToString()}")
     }
 
     override fun setRatio(ratio: Float) {
         super.setRatio(ratio)
         glUseProgram(program)
         glUniform1f(shader.ratio.location, ratio)
+    }
+
+    override fun onSizeChange(width: Int, height: Int) {
+        glUseProgram(program)
+        glUniform1f(shader.screenWidth.location, width.toFloat() / 2f)
     }
 
     override fun release() {

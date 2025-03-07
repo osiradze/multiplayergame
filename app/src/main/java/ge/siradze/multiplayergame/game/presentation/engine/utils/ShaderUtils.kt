@@ -32,14 +32,16 @@ object ShaderUtils {
     fun computeShader(
         shaderProgram: Int,
         uniforms: () -> Unit = {},
-        vbo: Int,
+        vbos: IntArray,
         x: Int = 1,
         y: Int = 1,
         z: Int = 1,
     ) {
         glUseProgram(shaderProgram)
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, vbo)
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, vbo)
+        vbos.forEachIndexed { index, vbo ->
+            glBindBuffer(GL_SHADER_STORAGE_BUFFER, vbo)
+            glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, vbo)
+        }
         uniforms()
 
         // Dispatch the compute shader

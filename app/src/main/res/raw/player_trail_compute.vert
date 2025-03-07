@@ -6,7 +6,7 @@ layout (std430, binding = 0) buffer InputOutputBuffer {
 } inputOutput;
 
 uniform uint u_index;
-uniform vec2 u_position;
+uniform vec2 u_player_position;
 uniform uint u_floatsPerVertex;
 
 
@@ -21,8 +21,8 @@ void main() {
                 inputOutput.data[i] = inputOutput.data[i + u_floatsPerVertex];
                 inputOutput.data[i + 1u] = inputOutput.data[i + u_floatsPerVertex + 1u];
             } else {
-                inputOutput.data[i] = u_position.x;
-                inputOutput.data[i + 1u] = u_position.y;
+                inputOutput.data[i] = u_player_position.x;
+                inputOutput.data[i + 1u] = u_player_position.y;
             }
         }
     }

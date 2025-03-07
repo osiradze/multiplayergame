@@ -5,10 +5,26 @@ layout (std430, binding = 0) buffer InputOutputBuffer {
     float data[];
 } inputOutput;
 
+layout(std430, binding = 1) buffer ResultBuffer {
+    float[] result;
+} resultBuffer;
+
 uniform uint floats_per_vertex;
-float border = 2.0;
+uniform vec2 player_position;
 
 void main() {
     uint index = gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x;
+
+    if(index % floats_per_vertex == 0u) {
+        float x = inputOutput.data[index];
+        float y = inputOutput.data[index + 1u];
+
+        if(index == 0u) {
+            resultBuffer.result[0] = 1.0f;
+            resultBuffer.result[1] = 2.0f;
+            resultBuffer.result[2] = 3.0f;
+        }
+
+    }
 
 }
