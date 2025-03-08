@@ -12,6 +12,7 @@ import android.opengl.GLES20.glDrawArrays
 import android.opengl.GLES20.glEnableVertexAttribArray
 import android.opengl.GLES20.glGenBuffers
 import android.opengl.GLES20.glUniform1f
+import android.opengl.GLES20.glUniform2f
 import android.opengl.GLES20.glUseProgram
 import android.opengl.GLES30.GL_VERTEX_SHADER
 import android.opengl.GLES30.glBindVertexArray
@@ -29,8 +30,11 @@ import android.util.Log
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.engine.objects.AttributeData
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
+import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerData
 import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.RatioShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
@@ -98,12 +102,18 @@ class PlanetsData {
             name = "u_texture"
         ),
         val floatsPerVertex: ShaderLocation = ShaderUniformLocation(
-            name = "floats_per_vertex"
-        )
+            name = "u_floats_per_vertex"
+        ),
+        val playerPosition: ShaderLocation = ShaderUniformLocation(
+            name = "u_player_position"
+        ),
     )
 }
 
-class Planets(val context: Context): GameObject {
+class Planets(
+    val context: Context,
+    private val playerProperties: PlayerData.Properties
+): GameObject {
 
     private val vao: IntArray = IntArray(1)
     private val vbo: IntArray = IntArray(2)
@@ -169,7 +179,7 @@ class Planets(val context: Context): GameObject {
             GL_DYNAMIC_DRAW
         )
 
-        glBindBuffer(GL_ARRAY_BUFFER, vbo[1])
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, vbo[1])
         glBufferData(
             GL_SHADER_STORAGE_BUFFER,
             collisionData.bufferSize,
@@ -208,6 +218,7 @@ class Planets(val context: Context): GameObject {
         shader.camera.init(program)
 
         shader.floatsPerVertex.init(computeProgram)
+        shader.playerPosition.init(computeProgram)
     }
 
     private fun bindTexture() {
@@ -253,10 +264,18 @@ class Planets(val context: Context): GameObject {
     }
 
     private fun compute() {
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, vbo[1])
+        glBufferData(
+            GL_SHADER_STORAGE_BUFFER,
+            collisionData.bufferSize,
+            collisionData.buffer,
+            GL_DYNAMIC_DRAW
+        )
          ShaderUtils.computeShader(
              shaderProgram = computeProgram,
              uniforms = {
                  glUniform1ui(shader.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
+                 glUniform2f(shader.playerPosition.location, playerProperties.position.x, playerProperties.position.y)
              },
              vbos = vbo,
              x = vertex.numberOfFloatsPerVertex,
@@ -268,7 +287,10 @@ class Planets(val context: Context): GameObject {
             collisionData.data.size,
             Float.SIZE_BYTES
         )
+        playerProperties.addForce(collisionData)
         Log.i("TAG", "compute: ${collisionData.contentToString()}")
+
+
     }
 
     override fun setRatio(ratio: Float) {

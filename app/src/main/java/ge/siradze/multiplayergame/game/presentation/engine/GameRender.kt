@@ -24,11 +24,15 @@ class GameRender(context: Context) : GLSurfaceView.Renderer {
         context  = context,
         player.properties
     )
+    private val planets = Planets(
+        context,
+        player.properties
+    )
 
     private val objects: MutableList<GameObject> = mutableListOf(
         player, playerTrail,
         Stars(context),
-        Planets(context)
+        planets
     )
 
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {

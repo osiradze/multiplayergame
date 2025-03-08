@@ -108,6 +108,11 @@ class PlayerData {
             position.add(direction * velocity)
         }
 
+        fun addForce(force: FloatArray) {
+            direction[0] += force.x
+            direction[1] += force.y
+        }
+
         fun onUIEvent(event: UIEvents) {
             when(event) {
                 UIEvents.OnDown -> {

@@ -9,21 +9,28 @@ layout(std430, binding = 1) buffer ResultBuffer {
     float[] result;
 } resultBuffer;
 
-uniform uint floats_per_vertex;
-uniform vec2 player_position;
+uniform uint u_floats_per_vertex;
+uniform vec2 u_player_position;
+
+float getDistance(vec2 p1, vec2 p2) {
+    return length(p2 - p1);
+}
 
 void main() {
     uint index = gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x;
 
-    if(index % floats_per_vertex == 0u) {
+    if(index % u_floats_per_vertex == 0u) {
         float x = inputOutput.data[index];
         float y = inputOutput.data[index + 1u];
+        float size = inputOutput.data[index + 2u];
 
-        if(index == 0u) {
-            resultBuffer.result[0] = 1.0f;
-            resultBuffer.result[1] = 2.0f;
-            resultBuffer.result[2] = 3.0f;
+
+        float distance = getDistance(u_player_position, vec2(x, y));
+        if(distance < size / 2.0) {
+            resultBuffer.result[0] = u_player_position.x - x;
+            resultBuffer.result[1] = u_player_position.y - y;
         }
+
 
     }
 

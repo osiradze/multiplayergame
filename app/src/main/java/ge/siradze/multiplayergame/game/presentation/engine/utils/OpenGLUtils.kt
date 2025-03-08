@@ -35,6 +35,7 @@ import android.opengl.GLES30.glUnmapBuffer
 import android.opengl.GLES31.GL_SHADER_STORAGE_BUFFER
 import android.opengl.GLUtils
 import android.util.Log
+import java.nio.ByteOrder
 
 object OpenGLUtils {
 
@@ -151,10 +152,12 @@ object OpenGLUtils {
         // Map the buffer to read it on the CPU
         val mappedBuffer = glMapBufferRange(
             GL_SHADER_STORAGE_BUFFER, 0, size * typeSize, GL_MAP_READ_BIT
-        ) as java.nio.ByteBuffer
+        ) as? java.nio.ByteBuffer ?: return floatArrayOf()
 
         val result = FloatArray(size)
+        mappedBuffer.order(ByteOrder.LITTLE_ENDIAN)
         mappedBuffer.asFloatBuffer().get(result) // Copy data into result array
+
 
         // Unmap the buffer after reading
         glUnmapBuffer(GL_SHADER_STORAGE_BUFFER)
