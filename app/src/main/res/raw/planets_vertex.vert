@@ -8,15 +8,19 @@ uniform vec2 u_camera;
 uniform float u_screen_width;
 
 attribute vec4 a_texture_coordinates;
-varying vec4 texture_coordinates_pass;
+varying vec4 v_texture_coordinates;
 
 attribute vec3 a_color;
-varying vec3 color_pass;
+varying vec3 v_color;
+
+attribute float a_collision;
+varying float v_collision;
 
 
 void main() {
-    texture_coordinates_pass = a_texture_coordinates;
-    color_pass = a_color;
+    v_texture_coordinates = a_texture_coordinates;
+    v_color = a_color;
+    v_collision = a_collision;
     gl_PointSize = a_size * u_screen_width;
 
     vec2 position = vec2(

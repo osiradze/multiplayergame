@@ -88,7 +88,7 @@ object OpenGLUtils {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, flipBitmapVertically(bitmaps), 0)
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmaps, 0)
         bitmaps.recycle()
         glUniform1i(locations, offset)
     }

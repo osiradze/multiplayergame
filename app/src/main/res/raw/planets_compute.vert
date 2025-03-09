@@ -29,6 +29,8 @@ void main() {
         if(distance < size / 2.0) {
             resultBuffer.result[0] = u_player_position.x - x;
             resultBuffer.result[1] = u_player_position.y - y;
+            resultBuffer.result[2] = 1.0; // indicates that the player is colliding with the planet
+            inputOutput.data[index + 10u] = 1.0; // indicates that the player is collided with the planet
         }
 
 

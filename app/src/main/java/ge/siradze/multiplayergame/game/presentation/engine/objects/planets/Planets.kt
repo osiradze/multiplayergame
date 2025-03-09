@@ -49,10 +49,10 @@ import java.nio.Buffer
 
 class PlanetsData {
     class Vertex(
-        val numberOfPlanets: Int = 700
+        val numberOfPlanets: Int = 3000
     ): AttributeData() {
-        // 2 position + 1 size + 4 texture coordinates + 3 color
-        override val numberOfFloatsPerVertex = 10
+        // 2 position + 1 size + 4 texture coordinates + 3 color + 1 collision flag
+        override val numberOfFloatsPerVertex = 11
         override val typeSize = Float.SIZE_BYTES
         override val size = numberOfPlanets * numberOfFloatsPerVertex
         private val data: FloatArray = FloatArray(size)
@@ -72,7 +72,7 @@ class PlanetsData {
     }
 
     class CollisionData {
-        val data: FloatArray = FloatArray(5)
+        val data: FloatArray = FloatArray(3)
         val buffer: Buffer = data.toBuffer()
         val bufferSize = data.size * Float.SIZE_BYTES
     }
@@ -107,6 +107,9 @@ class PlanetsData {
         val playerPosition: ShaderLocation = ShaderUniformLocation(
             name = "u_player_position"
         ),
+        val collision : ShaderAttribLocation = ShaderAttribLocation(
+            name = "a_collision"
+        )
     )
 }
 
@@ -212,6 +215,11 @@ class Planets(
             load(3, GL_FLOAT, false, vertex.stride, 7 * Float.SIZE_BYTES)
         }
 
+        shader.collision.apply {
+            init(program)
+            load(1, GL_FLOAT, false, vertex.stride, 10 * Float.SIZE_BYTES)
+        }
+
         // Uniforms
         shader.screenWidth.init(program)
         shader.ratio.init(program)
@@ -247,6 +255,8 @@ class Planets(
         glEnableVertexAttribArray(shader.textureCoordinates.location)
         glEnableVertexAttribArray(shader.size.location)
         glEnableVertexAttribArray(shader.color.location)
+        glEnableVertexAttribArray(shader.collision.location)
+
 
         Camera.bindUniform(shader.camera.location)
 
@@ -260,6 +270,7 @@ class Planets(
         glDisableVertexAttribArray(shader.textureCoordinates.location)
         glDisableVertexAttribArray(shader.size.location)
         glDisableVertexAttribArray(shader.color.location)
+        glDisableVertexAttribArray(shader.collision.location)
         glUseProgram(0)
     }
 
@@ -287,10 +298,9 @@ class Planets(
             collisionData.data.size,
             Float.SIZE_BYTES
         )
-        playerProperties.addForce(collisionData)
-        Log.i("TAG", "compute: ${collisionData.contentToString()}")
-
-
+        if(collisionData[2] == 1f){
+            playerProperties.addForce(collisionData)
+        }
     }
 
     override fun setRatio(ratio: Float) {
