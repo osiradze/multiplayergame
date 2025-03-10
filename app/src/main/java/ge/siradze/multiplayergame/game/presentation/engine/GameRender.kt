@@ -1,6 +1,9 @@
 package ge.siradze.multiplayergame.game.presentation.engine
 
 import android.content.Context
+import android.opengl.GLES20.GL_COLOR_BUFFER_BIT
+import android.opengl.GLES20.glClear
+import android.opengl.GLES20.glClearColor
 import android.opengl.GLSurfaceView
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
@@ -53,6 +56,10 @@ class GameRender(context: Context) : GLSurfaceView.Renderer {
     }
 
     override fun onDrawFrame(p0: GL10?) {
+        // clear screen
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
+        glClear(GL_COLOR_BUFFER_BIT)
+
         Camera.update()
         objects.forEach {
            it.draw()
