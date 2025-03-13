@@ -84,7 +84,10 @@ class StarsData {
     )
 }
 
-class Stars(private val context: Context): GameObject {
+class Stars(
+    private val context: Context,
+    private val camera: Camera
+): GameObject {
 
     private val vao: IntArray = IntArray(1)
     private val vbo: IntArray = IntArray(1)
@@ -160,7 +163,7 @@ class Stars(private val context: Context): GameObject {
             shaderProgram = computeProgram,
             uniforms = {
                 glUniform1ui(shader.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
-                Camera.bindUniform(shader.camera.location)
+                camera.bindUniform(shader.camera.location)
             },
             vbos = vbo,
             x = vertex.numberOfFloatsPerVertex,

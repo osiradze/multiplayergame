@@ -7,6 +7,7 @@ import android.opengl.GLES20.GL_FRAGMENT_SHADER
 import android.opengl.GLES20.GL_POINTS
 import android.opengl.GLES20.glDeleteBuffers
 import android.opengl.GLES20.glDeleteShader
+import android.opengl.GLES20.glDeleteTextures
 import android.opengl.GLES20.glDisableVertexAttribArray
 import android.opengl.GLES20.glDrawArrays
 import android.opengl.GLES20.glEnableVertexAttribArray
@@ -14,7 +15,9 @@ import android.opengl.GLES20.glGenBuffers
 import android.opengl.GLES20.glUniform1f
 import android.opengl.GLES20.glUniform2f
 import android.opengl.GLES20.glUseProgram
+import android.opengl.GLES30.GL_TEXTURE_2D
 import android.opengl.GLES30.GL_VERTEX_SHADER
+import android.opengl.GLES30.glBindTexture
 import android.opengl.GLES30.glBindVertexArray
 import android.opengl.GLES30.glDeleteVertexArrays
 import android.opengl.GLES30.glGenTextures
@@ -45,11 +48,12 @@ import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureDimens
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureHelper
 import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
 import ge.siradze.multiplayergame.game.presentation.engine.utils.ShaderUtils
+import ge.siradze.multiplayergame.game.presentation.engine.utils.TextureUtils
 import java.nio.Buffer
 
 class PlanetsData {
     class Vertex(
-        val numberOfPlanets: Int = 500
+        val numberOfPlanets: Int = 5000
     ): AttributeData() {
         // 2 position + 1 size + 4 texture coordinates + 3 color + 1 collision flag
         override val numberOfFloatsPerVertex = 11
@@ -115,7 +119,8 @@ class PlanetsData {
 
 class Planets(
     val context: Context,
-    private val playerProperties: PlayerData.Properties
+    private val playerProperties: PlayerData.Properties,
+    private val camera: Camera
 ): GameObject {
 
     private val vao: IntArray = IntArray(1)
@@ -232,7 +237,7 @@ class Planets(
     private fun bindTexture() {
         glGenTextures(1, textures, 0)
 
-        OpenGLUtils.loadTexture(
+        TextureUtils.loadTexture(
             bitmap,
             textures[0],
             shader.texture.location,
@@ -256,9 +261,10 @@ class Planets(
         glEnableVertexAttribArray(shader.size.location)
         glEnableVertexAttribArray(shader.color.location)
         glEnableVertexAttribArray(shader.collision.location)
+        glBindTexture(GL_TEXTURE_2D, textures[0])
 
 
-        Camera.bindUniform(shader.camera.location)
+        camera.bindUniform(shader.camera.location)
 
         glDrawArrays(
             GL_POINTS,
@@ -266,6 +272,7 @@ class Planets(
             vertex.numberOfPlanets
         )
 
+        glBindTexture(GL_TEXTURE_2D, 0)
         glDisableVertexAttribArray(shader.vertex.location)
         glDisableVertexAttribArray(shader.textureCoordinates.location)
         glDisableVertexAttribArray(shader.size.location)
@@ -315,8 +322,9 @@ class Planets(
     }
 
     override fun release() {
-        glDeleteBuffers(1, vbo, 0)
-        glDeleteVertexArrays(1, vao, 0)
+        glDeleteBuffers(vbo.size, vbo, 0)
+        glDeleteVertexArrays(vao.size, vao, 0)
+        glDeleteTextures(textures.size, textures, 0)
         glDeleteShader(program)
     }
 

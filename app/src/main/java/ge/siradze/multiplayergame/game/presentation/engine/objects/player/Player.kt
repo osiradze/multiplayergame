@@ -138,7 +138,8 @@ class PlayerData {
 
 
 class PlayerObject(
-    private val context: Context
+    private val context: Context,
+    private val camera: Camera
 ): GameObject {
 
     private val vao: IntArray = IntArray(1)
@@ -219,7 +220,7 @@ class PlayerObject(
         glEnableVertexAttribArray(shaderLocations.vertex.location)
 
         updateAttributes()
-        Camera.bindUniform(shaderLocations.camera.location)
+        camera.bindUniform(shaderLocations.camera.location)
         GLES20.glDrawArrays(GL_LINE_LOOP, 0, vertex.pointNumber)
 
         glDisableVertexAttribArray(shaderLocations.vertex.location)

@@ -6,6 +6,7 @@ import android.opengl.GLES20.GL_DYNAMIC_DRAW
 import android.opengl.GLES20.GL_FLOAT
 import android.opengl.GLES20.GL_FRAGMENT_SHADER
 import android.opengl.GLES20.GL_LINE_STRIP
+import android.opengl.GLES20.GL_POINTS
 import android.opengl.GLES20.GL_VERTEX_SHADER
 import android.opengl.GLES20.glDeleteBuffers
 import android.opengl.GLES20.glDeleteProgram
@@ -47,7 +48,7 @@ class PlayerTrailData {
     class Vertex {
         // 3 floats per vertex, 2 for position, 1 for alpha
         val numberOfFloatsPerVertex = 3
-        private val data: FloatArray = FloatArray(size = 60 * numberOfFloatsPerVertex) { 0f }.also {
+        val data: FloatArray = FloatArray(size = 60 * numberOfFloatsPerVertex) { 0f }.also {
            for (i in it.indices) {
                if(i % numberOfFloatsPerVertex == 0) {
                    it[i+2] = i.toFloat() / it.size.toFloat()
@@ -72,6 +73,9 @@ class PlayerTrailData {
         ),
         val floatsPerVertex: ShaderLocation = ShaderUniformLocation(
             name = "u_floatsPerVertex"
+        ),
+        val dataSize: ShaderUniformLocation = ShaderUniformLocation(
+            name = "u_dataSize"
         )
     )
 
@@ -87,7 +91,8 @@ class PlayerTrailData {
 
 class PlayerTrail(
     private val context: Context,
-    private val playerProperties: PlayerData.Properties
+    private val playerProperties: PlayerData.Properties,
+    private val camera: Camera
 ): GameObject {
 
 
@@ -105,12 +110,12 @@ class PlayerTrail(
             name = "Trail Vertex"
         ),
         Shader(
-            type =GL_FRAGMENT_SHADER,
+            type = GL_FRAGMENT_SHADER,
             source = R.raw.player_trail_fragment,
             name = "Trail Fragment"
         ),
         Shader(
-            type =GL_COMPUTE_SHADER,
+            type = GL_COMPUTE_SHADER,
             source = R.raw.player_trail_compute,
             name = "Trail Compute"
         ),
@@ -162,6 +167,12 @@ class PlayerTrail(
         shader.camera.init(program)
         shader.playerPosition.init(computeProgram)
         shader.floatsPerVertex.init(computeProgram)
+        shader.dataSize.init(computeProgram)
+        glUseProgram(computeProgram)
+        glUniform1ui(
+            shader.dataSize.location,
+            vertex.data.size
+        )
         glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
 
@@ -176,7 +187,7 @@ class PlayerTrail(
         glUseProgram(program)
         glEnableVertexAttribArray(shader.vertex.location)
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, vbo[0])
-        Camera.bindUniform(shader.camera.location)
+        camera.bindUniform(shader.camera.location)
         GLES20.glDrawArrays(GL_LINE_STRIP, 0, vertex.pointNumber)
         glDisableVertexAttribArray(shader.vertex.location)
     }

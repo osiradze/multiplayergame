@@ -5,6 +5,7 @@ layout (std430, binding = 0) buffer InputOutputBuffer {
     float data[];
 } inputOutput;
 
+uniform uint u_dataSize;
 uniform uint u_index;
 uniform vec2 u_player_position;
 uniform uint u_floatsPerVertex;
@@ -14,7 +15,7 @@ uniform uint u_floatsPerVertex;
 void main() {
     uint floatIndex = gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x;
 
-    uint dataSize = uint(inputOutput.data.length);
+    uint dataSize = u_dataSize;
     if(floatIndex == 0u && u_floatsPerVertex != 0u)  {
         for (uint i = 0u; i < dataSize; i += u_floatsPerVertex) {
             if(i + u_floatsPerVertex < dataSize) {

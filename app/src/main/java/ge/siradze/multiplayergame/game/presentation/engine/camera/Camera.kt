@@ -5,10 +5,10 @@ import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerData
 
-object Camera {
+class Camera {
     private var playerProperties: PlayerData.Properties? = null
     private val position: FloatArray = arrayOf(0.0f, 0.0f).toFloatArray()
-    private const val FOLLOW_SPEED = 0.011f
+    private val followSpeed = 0.011f
 
     fun followPlayer(playerProperties: PlayerData.Properties) {
         this.playerProperties = playerProperties
@@ -17,8 +17,8 @@ object Camera {
 
     fun update() {
         playerProperties ?: return
-        position[0] += (playerProperties!!.position.x - position[0]) * FOLLOW_SPEED
-        position[1] += (playerProperties!!.position.y - position[1]) * FOLLOW_SPEED
+        position[0] += (playerProperties!!.position.x - position[0]) * followSpeed
+        position[1] += (playerProperties!!.position.y - position[1]) * followSpeed
     }
 
     fun bindUniform(location: Int) {

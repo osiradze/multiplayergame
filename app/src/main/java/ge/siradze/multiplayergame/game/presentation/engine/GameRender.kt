@@ -19,22 +19,29 @@ class GameRender(context: Context) : GLSurfaceView.Renderer {
 
     var fps = 0
 
+    private val camera: Camera = Camera()
+
     // create player and set camera to follow it
-    private val player = PlayerObject(context).also {
-        Camera.followPlayer(it.properties)
+    private val player = PlayerObject(context, camera).also {
+        camera.followPlayer(it.properties)
     }
     private val playerTrail = PlayerTrail(
         context  = context,
-        player.properties
+        player.properties,
+        camera
     )
     private val planets = Planets(
         context,
-        player.properties
+        player.properties,
+        camera
     )
 
+    private val stars = Stars(context, camera)
+
     private val objects: MutableList<GameObject> = mutableListOf(
-        player, playerTrail,
-        Stars(context),
+        player,
+        playerTrail,
+        stars,
         planets
     )
 
@@ -60,7 +67,7 @@ class GameRender(context: Context) : GLSurfaceView.Renderer {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
         glClear(GL_COLOR_BUFFER_BIT)
 
-        Camera.update()
+        camera.update()
         objects.forEach {
            it.draw()
         }
