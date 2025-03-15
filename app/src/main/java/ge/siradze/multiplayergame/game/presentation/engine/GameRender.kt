@@ -5,6 +5,7 @@ import android.opengl.GLES20.GL_COLOR_BUFFER_BIT
 import android.opengl.GLES20.glClear
 import android.opengl.GLES20.glClearColor
 import android.opengl.GLSurfaceView
+import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
@@ -12,17 +13,25 @@ import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.Plane
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerObject
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerTrail
 import ge.siradze.multiplayergame.game.presentation.engine.objects.stars.Stars
+import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-class GameRender(context: Context) : GLSurfaceView.Renderer {
+class GameRender(
+    context: Context,
+    private val state: GameState
+) : GLSurfaceView.Renderer {
 
     var fps = 0
 
-    private val camera: Camera = Camera()
+    private val textureCounter: TextureCounter = TextureCounter()
+
+    private val camera: Camera = Camera(
+        state
+    )
 
     // create player and set camera to follow it
-    private val player = PlayerObject(context, camera).also {
+    private val player = PlayerObject(state, context, camera).also {
         camera.followPlayer(it.properties)
     }
     private val playerTrail = PlayerTrail(
@@ -31,12 +40,14 @@ class GameRender(context: Context) : GLSurfaceView.Renderer {
         camera
     )
     private val planets = Planets(
-        context,
-        player.properties,
-        camera
+        state = state,
+        context = context,
+        playerProperties = player.properties,
+        camera = camera,
+        textureCounter = textureCounter
     )
 
-    private val stars = Stars(context, camera)
+    private val stars = Stars(state, context, camera)
 
     private val objects: MutableList<GameObject> = mutableListOf(
         player,
@@ -52,8 +63,9 @@ class GameRender(context: Context) : GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceChanged(p0: GL10?, width: Int, height: Int) {
+        val ratio = width.toFloat() / height.toFloat()
         objects.forEach {
-            it.setRatio(width.toFloat() / height.toFloat())
+            it.setRatio(ratio)
             it.onSizeChange(width, height)
         }
     }

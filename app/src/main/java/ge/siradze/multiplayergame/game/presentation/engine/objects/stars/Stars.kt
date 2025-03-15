@@ -22,6 +22,7 @@ import android.opengl.GLES31.glBufferData
 import android.opengl.GLES31.glGenBuffers
 import android.opengl.GLES31.glGenVertexArrays
 import ge.siradze.multiplayergame.R
+import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
@@ -37,6 +38,7 @@ import kotlin.random.Random
 
 class StarsData {
 
+    @Suppress("NOTHING_TO_INLINE")
     class Vertex(
         val numberOfPoints: Int = 6000
     ) {
@@ -85,6 +87,7 @@ class StarsData {
 }
 
 class Stars(
+    state: GameState,
     private val context: Context,
     private val camera: Camera
 ): GameObject {

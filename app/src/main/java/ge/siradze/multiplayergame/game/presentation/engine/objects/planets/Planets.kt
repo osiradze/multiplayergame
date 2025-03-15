@@ -29,8 +29,8 @@ import android.opengl.GLES31.GL_FLOAT
 import android.opengl.GLES31.GL_SHADER_STORAGE_BUFFER
 import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
-import android.util.Log
 import ge.siradze.multiplayergame.R
+import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
@@ -44,8 +44,8 @@ import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderAttribLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderUniformLocation
+import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureDimensions
-import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureHelper
 import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
 import ge.siradze.multiplayergame.game.presentation.engine.utils.ShaderUtils
 import ge.siradze.multiplayergame.game.presentation.engine.utils.TextureUtils
@@ -118,15 +118,19 @@ class PlanetsData {
 }
 
 class Planets(
+    state: GameState,
     val context: Context,
     private val playerProperties: PlayerData.Properties,
-    private val camera: Camera
+    private val camera: Camera,
+    private val textureCounter: TextureCounter,
 ): GameObject {
 
     private val vao: IntArray = IntArray(1)
     private val vbo: IntArray = IntArray(2)
 
-    private val vertex = PlanetsData.Vertex()
+    private val vertex: PlanetsData.Vertex =
+        state.get(PlanetsData.Vertex::class.qualifiedName) as? PlanetsData.Vertex
+            ?: PlanetsData.Vertex().also { state.set(PlanetsData.Vertex::class.qualifiedName, it) }
     private val shader = PlanetsData.ShaderLocations()
     private val shaders = arrayOf(
         Shader(
@@ -241,7 +245,7 @@ class Planets(
             bitmap,
             textures[0],
             shader.texture.location,
-            TextureHelper.getTextureOffset(1)
+            textureCounter.getTextureOffset(1)
         )
     }
 

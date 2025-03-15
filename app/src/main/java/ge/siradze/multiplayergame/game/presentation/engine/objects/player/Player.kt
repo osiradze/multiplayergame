@@ -24,6 +24,7 @@ import android.opengl.GLES31.glBufferData
 import android.opengl.GLES31.glGenBuffers
 import android.opengl.GLES31.glGenVertexArrays
 import ge.siradze.multiplayergame.R
+import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.add
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.middlePoint
@@ -138,8 +139,9 @@ class PlayerData {
 
 
 class PlayerObject(
+    state: GameState,
     private val context: Context,
-    private val camera: Camera
+    private val camera: Camera,
 ): GameObject {
 
     private val vao: IntArray = IntArray(1)
@@ -147,7 +149,12 @@ class PlayerObject(
 
     private val vertex = PlayerData.Vertex()
     private val shaderLocations = PlayerData.ShaderLocations()
-    val properties = PlayerData.Properties()
+    val properties: PlayerData.Properties =
+        state.get(PlayerData.Properties::class.qualifiedName) as? PlayerData.Properties
+            ?: PlayerData.Properties().also {
+            state.set(PlayerData.Properties::class.qualifiedName, it)
+        }
+
 
     private val shaders = arrayOf(
         Shader(

@@ -2,10 +2,7 @@ package ge.siradze.multiplayergame.game.presentation
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.view.View
-import android.view.WindowInsetsController
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -16,7 +13,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,7 +20,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
-import ge.siradze.multiplayergame.game.presentation.engine.GameView
+import ge.siradze.multiplayergame.game.presentation.gameView.GameView
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.gameUi.buttons.GameUI
 import ge.siradze.multiplayergame.ui.theme.MultiplayerGameTheme
@@ -47,7 +43,7 @@ class GameActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel
-        gameView = GameView(context = this)
+        gameView = GameView(context = this, viewModel.state)
         fps()
         enableEdgeToEdge()
         enableFullScreen()
@@ -85,17 +81,6 @@ class GameActivity : ComponentActivity() {
         gameView.release()
     }
 
-    companion object {
-
-        private const val PORT = "port"
-
-        fun start(context: Context, port: Int? = null) {
-            val intent = Intent(context, GameActivity::class.java)
-            intent.putExtra(PORT, port)
-            context.startActivity(intent)
-        }
-    }
-
     @Composable
     fun ComposeGLSurfaceView() {
         AndroidView(
@@ -110,6 +95,18 @@ class GameActivity : ComponentActivity() {
         WindowInsetsControllerCompat(window, window.decorView).apply {
             hide(WindowInsetsCompat.Type.systemBars())
             systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+    }
+
+
+    companion object {
+
+        private const val PORT = "port"
+
+        fun start(context: Context, port: Int? = null) {
+            val intent = Intent(context, GameActivity::class.java)
+            intent.putExtra(PORT, port)
+            context.startActivity(intent)
         }
     }
 

@@ -1,39 +1,18 @@
-package ge.siradze.multiplayergame.game.presentation.engine
+package ge.siradze.multiplayergame.game.presentation.gameView
 
-import android.content.Context
-import android.opengl.GLES31
-import android.opengl.GLSurfaceView
-import android.util.Log
 import android.view.MotionEvent
+import ge.siradze.multiplayergame.game.presentation.engine.GameRender
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 
-
-class GameView (private val context: Context) : GLSurfaceView(context) {
-
-    private val renderer: GameRender = GameRender(context)
-
-
-    init {
-        setEGLContextClientVersion(3)
-
-        setRenderer(renderer)
-
-        renderMode = RENDERMODE_CONTINUOUSLY
-    }
-
-    fun onUIEvent(event: UIEvents) {
-        renderer.onUIEvent(event)
-    }
-
-
-    fun release() {
-        renderer.release()
-    }
+object TouchHelper {
 
     private var lastX = 0f
     private var lastY = 0f
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
+    fun handleEvent(
+        event: MotionEvent,
+        renderer: GameRender
+    ): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
                 val pointerIndex = event.actionIndex
@@ -74,12 +53,4 @@ class GameView (private val context: Context) : GLSurfaceView(context) {
         }
         return true
     }
-
-    fun getFPS(): Int {
-        val fps = renderer.fps
-        renderer.fps = 0
-        return fps
-    }
-
 }
-

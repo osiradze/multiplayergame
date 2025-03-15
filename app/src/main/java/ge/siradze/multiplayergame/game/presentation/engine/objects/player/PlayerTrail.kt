@@ -28,6 +28,7 @@ import android.opengl.GLES31.glGenBuffers
 import android.opengl.GLES31.glGenVertexArrays
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.fillWith
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
@@ -45,15 +46,20 @@ import java.nio.Buffer
 
 class PlayerTrailData {
 
-    class Vertex {
+    class Vertex(
+        val initPosition: FloatArray
+    ) {
         // 3 floats per vertex, 2 for position, 1 for alpha
         val numberOfFloatsPerVertex = 3
         val data: FloatArray = FloatArray(size = 60 * numberOfFloatsPerVertex) { 0f }.also {
-           for (i in it.indices) {
+            it.fillWith(
+                floatArrayOf(initPosition.x, initPosition.y, 0f)
+            )
+            for (i in it.indices) {
                if(i % numberOfFloatsPerVertex == 0) {
                    it[i+2] = i.toFloat() / it.size.toFloat()
                }
-           }
+            }
         }
         val pointNumber = data.size / numberOfFloatsPerVertex
         val stride = numberOfFloatsPerVertex * Float.SIZE_BYTES
@@ -99,7 +105,7 @@ class PlayerTrail(
     private val vao: IntArray = IntArray(1)
     private val vbo: IntArray = IntArray(1)
 
-    private val vertex = PlayerTrailData.Vertex()
+    private val vertex = PlayerTrailData.Vertex(playerProperties.position)
     private val shader = PlayerTrailData.ShaderLocations()
     private val properties = PlayerTrailData.Properties()
 
