@@ -38,7 +38,8 @@ class GameView (
 
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-       return TouchHelper.handleEvent(event, renderer)
+        TouchHelper.handleEvent(event, renderer)
+        return true
     }
 
     override fun performClick(): Boolean {

@@ -19,7 +19,7 @@ import javax.microedition.khronos.opengles.GL10
 
 class GameRender(
     context: Context,
-    private val state: GameState
+    state: GameState
 ) : GLSurfaceView.Renderer {
 
     var fps = 0
@@ -47,7 +47,7 @@ class GameRender(
         textureCounter = textureCounter
     )
 
-    private val stars = Stars(state, context, camera)
+    private val stars = Stars(context, camera)
 
     private val objects: MutableList<GameObject> = mutableListOf(
         player,

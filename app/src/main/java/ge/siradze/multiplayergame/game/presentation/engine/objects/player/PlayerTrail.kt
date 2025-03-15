@@ -6,7 +6,6 @@ import android.opengl.GLES20.GL_DYNAMIC_DRAW
 import android.opengl.GLES20.GL_FLOAT
 import android.opengl.GLES20.GL_FRAGMENT_SHADER
 import android.opengl.GLES20.GL_LINE_STRIP
-import android.opengl.GLES20.GL_POINTS
 import android.opengl.GLES20.GL_VERTEX_SHADER
 import android.opengl.GLES20.glDeleteBuffers
 import android.opengl.GLES20.glDeleteProgram

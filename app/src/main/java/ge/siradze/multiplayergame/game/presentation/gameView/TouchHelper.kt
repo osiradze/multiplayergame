@@ -12,13 +12,13 @@ object TouchHelper {
     fun handleEvent(
         event: MotionEvent,
         renderer: GameRender
-    ): Boolean {
+    ) {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
                 val pointerIndex = event.actionIndex
                 val pointerId = event.getPointerId(pointerIndex)
                 if(pointerId != 0) {
-                    return true
+                    return
                 }
                 lastX = event.getX(pointerIndex)
                 lastY = event.getY(pointerIndex)
@@ -46,11 +46,11 @@ object TouchHelper {
                 val pointerIndex = event.actionIndex
                 val pointerId = event.getPointerId(pointerIndex)
                 if(pointerId != 0) {
-                    return true
+                    return
                 }
                 renderer.onUIEvent(UIEvents.OnUp)
             }
         }
-        return true
+        return
     }
 }
