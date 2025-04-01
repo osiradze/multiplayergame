@@ -53,7 +53,7 @@ import java.nio.Buffer
 
 class PlanetsData {
     class Vertex(
-        val numberOfPlanets: Int = 600
+        val numberOfPlanets: Int = 1600
     ): AttributeData() {
         // 2 position + 1 size + 4 texture coordinates + 3 color + 1 collision flag
         override val numberOfFloatsPerVertex = 11
@@ -63,7 +63,7 @@ class PlanetsData {
 
         override fun getBuffer(): Buffer = data.toBuffer()
 
-        private val textureDimensions : TextureDimensions = TextureDimensions(4, 5)
+        private val textureDimensions : TextureDimensions = TextureDimensions(4, 4)
 
         init {
             generatePoints(
@@ -150,7 +150,7 @@ class Planets(
         )
     )
 
-    private val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.planets_centered)
+    private val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.planets)
     private val textures = IntArray(1)
 
     private var program: Int = 0

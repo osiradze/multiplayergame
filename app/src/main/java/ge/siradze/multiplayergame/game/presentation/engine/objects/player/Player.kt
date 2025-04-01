@@ -23,11 +23,9 @@ import android.opengl.GLES31.glBindVertexArray
 import android.opengl.GLES31.glBufferData
 import android.opengl.GLES31.glGenBuffers
 import android.opengl.GLES31.glGenVertexArrays
-import android.util.Log
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.angleBetweenVectors
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.middlePoint
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.normalize
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.rotate
@@ -113,15 +111,14 @@ class PlayerData {
             }
             position[0] += direction[0] * velocity
             position[1] += direction[1] * velocity
-            var angle = signedAngleBetweenVectors(targetDirection, direction)
-            Log.i("Tag", "onUIEvent: $angle}")
-            direction.normalize()
+            val angle = signedAngleBetweenVectors(targetDirection, direction)
             direction.rotate(-angle * rotateSpeed)
         }
 
         fun addForce(force: FloatArray) {
-            direction[0] += force.x
-            direction[1] += force.y
+            direction[0] += force.x * 20f
+            direction[1] += force.y * 20f
+            direction.normalize()
         }
 
         fun onUIEvent(event: UIEvents) {

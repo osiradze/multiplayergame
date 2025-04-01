@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -59,11 +60,49 @@ fun DragJoySticks (
 ) {
     val offset = remember { mutableStateOf(Offset(0f, 0f)) }
 
+    val pointerInput: suspend PointerInputScope.() -> Unit = {
+        awaitPointerEventScope {
+            val centerX = size.width / 2f
+            val centerY = size.height / 2f
+
+            while (true) {
+                // Wait for down event
+                val event = awaitPointerEvent()
+                val touch = event.changes.firstOrNull() ?: continue
+                val position = touch.position
+                val relativePosition = floatArrayOf(position.x - centerX, position.y - centerY)
+                with(relativePosition) {
+                    if(vectorLength() > 170) {
+                        normalize()
+                        multiply(170f)
+                        offset.value = Offset(x, y)
+                    } else {
+                        offset.value = Offset(x, y)
+                    }
+                }
+                onEvent(UIEvents.OnMove(relativePosition))
+
+                onEvent(UIEvents.OnDown)
+                if (touch.pressed.not()) {
+                    offset.value = Offset(0f, 0f)
+                    onEvent(UIEvents.OnUp)
+                }
+
+                // Consume the event
+                event.changes.forEach { change ->
+                    change.consume()
+                }
+            }
+        }
+    }
+
+
 
     Box(
-        modifier.padding(60.dp)
+        modifier.pointerInput(Unit, pointerInput)
     ){
         Box(modifier = Modifier
+            .padding(60.dp)
             .width(70.dp)
             .height(70.dp)
             .border(
@@ -72,42 +111,6 @@ fun DragJoySticks (
                 shape = RoundedCornerShape(35.dp)
             )
             .align(Alignment.Center)
-            .pointerInput(Unit) {
-                awaitPointerEventScope {
-
-                    val centerX = size.width / 2f
-                    val centerY = size.height / 2f
-
-                    while (true) {
-                        // Wait for down event
-                        val event = awaitPointerEvent()
-                        val touch = event.changes.firstOrNull() ?: continue
-                        val position = touch.position
-                        val relativePosition = floatArrayOf(position.x - centerX, position.y - centerY)
-                        with(relativePosition) {
-                            if(vectorLength() > 170) {
-                                normalize()
-                                multiply(170f)
-                                offset.value = Offset(x, y)
-                            } else {
-                                offset.value = Offset(x, y)
-                            }
-                        }
-                        onEvent(UIEvents.OnMove(relativePosition))
-
-                        onEvent(UIEvents.OnDown)
-                        if (touch.pressed.not()) {
-                            offset.value = Offset(0f, 0f)
-                            onEvent(UIEvents.OnUp)
-                        }
-
-                        // Consume the event
-                        event.changes.forEach { change ->
-                            change.consume()
-                        }
-                    }
-                }
-            }
         )
 
         Box(modifier = Modifier

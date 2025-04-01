@@ -14,7 +14,7 @@ fun PlanetsData.Vertex.generatePoints(
         data[i * numberOfFloatsPerVertex + 1] = (Random.nextFloat() - 0.5f) * 20
 
         //size
-        data[i * numberOfFloatsPerVertex + 2] = Random.nextFloat() * 0.5f + 0.1f
+        data[i * numberOfFloatsPerVertex + 2] = Random.nextFloat() * 0.3f + 0.1f
 
         // texture coordinates
         val randomX = Random.nextInt(until = 5) + 1
