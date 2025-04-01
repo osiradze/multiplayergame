@@ -10,11 +10,11 @@ fun PlanetsData.Vertex.generatePoints(
 ) {
     for (i in 0 until numberOfPlanets) {
         //position
-        data[i * numberOfFloatsPerVertex + 0] = (Random.nextFloat() - 0.5f) * 40
-        data[i * numberOfFloatsPerVertex + 1] = (Random.nextFloat() - 0.5f) * 40
+        data[i * numberOfFloatsPerVertex + 0] = (Random.nextFloat() - 0.5f) * 20
+        data[i * numberOfFloatsPerVertex + 1] = (Random.nextFloat() - 0.5f) * 20
 
         //size
-        data[i * numberOfFloatsPerVertex + 2] = Random.nextFloat() * 0.2f + 0.2f
+        data[i * numberOfFloatsPerVertex + 2] = Random.nextFloat() * 0.5f + 0.1f
 
         // texture coordinates
         val randomX = Random.nextInt(until = 5) + 1

@@ -1,7 +1,5 @@
 package ge.siradze.multiplayergame.game.presentation.engine.extensions
 
-import kotlin.math.cos
-import kotlin.math.sin
 
 fun FloatArray.scale(times: Float, floatsPerVertex: Int): FloatArray {
     return FloatArray(
@@ -50,52 +48,3 @@ fun FloatArray.middlePoint(floatsPerVertex: Int): FloatArray {
     }
     return floatArrayOf(midX / vertexNumber, midY / vertexNumber)
 }
-
-operator fun FloatArray.times(amount: Float): FloatArray {
-    return FloatArray(this.size) { i -> this[i] * amount }
-}
-
-@Suppress("NOTHING_TO_INLINE")
-inline fun FloatArray.add(other: FloatArray) {
-    for (i in this.indices) {
-        set(i, this[i] + other[i])
-    }
-}
-
-@Suppress("NOTHING_TO_INLINE")
-inline fun FloatArray.normalize() {
-    val magnitude = kotlin.math.sqrt(this.sumOf { it.toDouble() * it }).toFloat() // Compute length
-    require(magnitude > 0) { "Cannot normalize a zero vector" }
-    for (i in this.indices) {
-        this[i] /= magnitude
-    }
-}
-
-@Suppress("NOTHING_TO_INLINE")
-inline fun FloatArray.rotate(angleDegrees: Float) {
-    require(size == 2) { "Only 2D vectors can be rotated" }
-
-    val angleRad = Math.toRadians(angleDegrees.toDouble()).toFloat() // Convert to radians
-    val cosA = cos(angleRad)
-    val sinA = sin(angleRad)
-
-    val x = this[0]
-    val y = this[1]
-
-    this[0] = x * cosA - y * sinA // Apply rotation
-    this[1] = x * sinA + y * cosA
-}
-
-fun FloatArray.fillWith(array: FloatArray) {
-    for (i in indices) {
-        val index = if(i >= array.size) {
-            i % array.size
-        } else i
-        set(i, array[index])
-    }
-}
-
-inline val FloatArray.x: Float get () = get(0)
-inline val FloatArray.y: Float get () = get(1)
-inline val FloatArray.z: Float get () = get(2)
-inline val FloatArray.w: Float get () = get(3)

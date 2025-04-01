@@ -37,14 +37,14 @@ class GameView (
     }
 
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
+   /* override fun onTouchEvent(event: MotionEvent): Boolean {
         TouchHelper.handleEvent(event, renderer)
         return true
     }
 
     override fun performClick(): Boolean {
         return super.performClick()
-    }
+    }*/
 
     fun getFPS(): Int {
         val fps = renderer.fps

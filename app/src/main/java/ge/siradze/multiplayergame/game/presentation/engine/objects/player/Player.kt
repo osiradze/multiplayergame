@@ -23,15 +23,16 @@ import android.opengl.GLES31.glBindVertexArray
 import android.opengl.GLES31.glBufferData
 import android.opengl.GLES31.glGenBuffers
 import android.opengl.GLES31.glGenVertexArrays
+import android.util.Log
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.add
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.angleBetweenVectors
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.middlePoint
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.normalize
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.rotate
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.scale
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.times
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.signedAngleBetweenVectors
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
@@ -93,8 +94,12 @@ class PlayerData {
         var direction: FloatArray = floatArrayOf(0.0f, 1.0f).apply {
             normalize()
         },
+        var targetDirection: FloatArray = floatArrayOf(0.0f, 1.0f).apply {
+            normalize()
+        },
         private var velocity: Float = 0f,
     ) {
+        private val rotateSpeed = 0.1f
         private var gas = false
         private val gasForce = 0.0001f
         private var maxSpeed = 0.009f
@@ -106,13 +111,17 @@ class PlayerData {
             } else {
                 velocity *= deceleration
             }
-            position.add(direction * velocity)
+            position[0] += direction[0] * velocity
+            position[1] += direction[1] * velocity
+            var angle = signedAngleBetweenVectors(targetDirection, direction)
+            Log.i("Tag", "onUIEvent: $angle}")
+            direction.normalize()
+            direction.rotate(-angle * rotateSpeed)
         }
 
         fun addForce(force: FloatArray) {
             direction[0] += force.x
             direction[1] += force.y
-            direction.normalize()
         }
 
         fun onUIEvent(event: UIEvents) {
@@ -125,7 +134,9 @@ class PlayerData {
                 }
 
                 is UIEvents.OnMove -> {
-                    direction.rotate(event.x)
+                    targetDirection[0] = event.move[0]
+                    targetDirection[1] = -event.move[1]
+                    //Log.i("Tag", "onUIEvent: ${targetDirection[0]} ${targetDirection[1]}")
                 }
 
                 is UIEvents.onTap -> {

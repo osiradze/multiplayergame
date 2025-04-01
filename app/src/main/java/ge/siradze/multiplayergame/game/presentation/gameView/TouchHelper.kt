@@ -38,7 +38,7 @@ object TouchHelper {
                     val dy = y - lastY
                     lastX = x
                     lastY = y
-                    renderer.onUIEvent(UIEvents.OnMove(dx, dy))
+                    //renderer.onUIEvent(UIEvents.OnMove(dx, dy))
                 }
             }
 
