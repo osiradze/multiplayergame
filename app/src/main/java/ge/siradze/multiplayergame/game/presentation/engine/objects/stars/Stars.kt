@@ -56,12 +56,14 @@ class StarsData {
 
         private fun generatePoints() {
             for (i in 0 until numberOfPoints) {
-                //position
+                // position
                 data[px(i)] = (Random.nextFloat() - 0.5f) * 4
                 data[py(i)] = (Random.nextFloat() - 0.5f) * 4
+                // velocity
                 data[vx(i)] = -0.0006f
                 data[vy(i)] = -0.0006f
-                data[vy(i) + 1] = Random.nextFloat() * 0.5f
+                // brightness
+                data[vy(i) + 1] = Random.nextFloat() * 0.8f
             }
         }
 

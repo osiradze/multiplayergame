@@ -1,4 +1,4 @@
-package ge.siradze.multiplayergame.game.presentation.engine.objects.player
+package ge.siradze.multiplayergame.game.presentation.engine.objects.player.trail
 
 import android.content.Context
 import android.opengl.GLES20
@@ -32,6 +32,7 @@ import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
+import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerData
 import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.RatioShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader

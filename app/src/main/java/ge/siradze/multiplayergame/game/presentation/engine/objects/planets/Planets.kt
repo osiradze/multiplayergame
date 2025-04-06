@@ -32,94 +32,20 @@ import android.opengl.GLES31.glBufferData
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
-import ge.siradze.multiplayergame.game.presentation.engine.objects.AttributeData
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerData
-import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
-import ge.siradze.multiplayergame.game.presentation.engine.shader.RatioShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
-import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderAttribLocation
-import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderLocation
-import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderUniformLocation
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter
-import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureDimensions
 import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
 import ge.siradze.multiplayergame.game.presentation.engine.utils.ShaderUtils
 import ge.siradze.multiplayergame.game.presentation.engine.utils.TextureUtils
-import java.nio.Buffer
 
-class PlanetsData {
-    class Vertex(
-        val numberOfPlanets: Int = 1600
-    ): AttributeData() {
-        // 2 position + 1 size + 4 texture coordinates + 3 color + 1 collision flag
-        override val numberOfFloatsPerVertex = 11
-        override val typeSize = Float.SIZE_BYTES
-        override val size = numberOfPlanets * numberOfFloatsPerVertex
-        private val data: FloatArray = FloatArray(size)
-
-        override fun getBuffer(): Buffer = data.toBuffer()
-
-        private val textureDimensions : TextureDimensions = TextureDimensions(4, 4)
-
-        init {
-            generatePoints(
-                data = data,
-                numberOfPlanets = numberOfPlanets,
-                numberOfFloatsPerVertex = numberOfFloatsPerVertex,
-                textureDimensions = textureDimensions
-            )
-        }
-    }
-
-    class CollisionData {
-        val data: FloatArray = FloatArray(3)
-        val buffer: Buffer = data.toBuffer()
-        val bufferSize = data.size * Float.SIZE_BYTES
-    }
-
-    class ShaderLocations(
-        val vertex : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_position"
-        ),
-        val size : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_size"
-        ),
-        val textureCoordinates : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_texture_coordinates"
-        ),
-        val color : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_color"
-        ),
-
-        val screenWidth : ShaderUniformLocation = ShaderUniformLocation(
-            name = "u_screen_width"
-        ),
-
-        val ratio: ShaderLocation = RatioShaderLocation(),
-        var camera: ShaderLocation = CameraShaderLocation(),
-
-        val texture: ShaderLocation = ShaderUniformLocation(
-            name = "u_texture"
-        ),
-        val floatsPerVertex: ShaderLocation = ShaderUniformLocation(
-            name = "u_floats_per_vertex"
-        ),
-        val playerPosition: ShaderLocation = ShaderUniformLocation(
-            name = "u_player_position"
-        ),
-        val collision : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_collision"
-        )
-    )
-}
 
 class Planets(
     state: GameState,
-    val context: Context,
+    private val context: Context,
     private val playerProperties: PlayerData.Properties,
     private val camera: Camera,
     private val textureCounter: TextureCounter,

@@ -24,11 +24,18 @@ void main() {
         if(v_collision != 1.0) {
             gl_FragColor = pixel;
         } else {
+            discard;
+        }
+
+
+        /**if(v_collision != 1.0) {
+            gl_FragColor = pixel;
+        } else {
             vec3 luminance = vec3(0.299, 0.587, 0.114);
             float gray = dot(pixel.rgb, luminance);
 
             gl_FragColor = vec4(vec3(gray), pixel.a);
-        }
+        }*/
 
     }
 }

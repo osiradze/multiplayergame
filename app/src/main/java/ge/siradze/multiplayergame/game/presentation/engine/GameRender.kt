@@ -10,8 +10,10 @@ import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.Planets
+import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.explosion.PlanetExplosion
+import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.explosion.PlanetExplosionHelper
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerObject
-import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerTrail
+import ge.siradze.multiplayergame.game.presentation.engine.objects.player.trail.PlayerTrail
 import ge.siradze.multiplayergame.game.presentation.engine.objects.stars.Stars
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter
 import javax.microedition.khronos.egl.EGLConfig
@@ -46,6 +48,7 @@ class GameRender(
         camera = camera,
         textureCounter = textureCounter
     )
+    private val planetExplosionHelper = PlanetExplosionHelper(context)
 
     private val stars = Stars(context, camera)
 
@@ -55,9 +58,22 @@ class GameRender(
         stars,
         planets
     )
+    
+    private val temporaryObjects: MutableList<PlanetExplosion> = mutableListOf(
+        PlanetExplosion(
+            context = context,
+            camera = camera,
+            helper = planetExplosionHelper,
+            x = 0,
+            y = 0
+        )
+    )
 
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
         objects.forEach {
+            it.init()
+        }
+        temporaryObjects.forEach {
             it.init()
         }
     }
@@ -65,6 +81,10 @@ class GameRender(
     override fun onSurfaceChanged(p0: GL10?, width: Int, height: Int) {
         val ratio = width.toFloat() / height.toFloat()
         objects.forEach {
+            it.setRatio(ratio)
+            it.onSizeChange(width, height)
+        }
+        temporaryObjects.forEach {
             it.setRatio(ratio)
             it.onSizeChange(width, height)
         }
@@ -80,8 +100,11 @@ class GameRender(
         glClear(GL_COLOR_BUFFER_BIT)
 
         camera.update()
-        objects.forEach {
-           it.draw()
+        //objects.forEach {
+           //it.draw()
+        //}
+        temporaryObjects.forEach {
+            it.draw()
         }
         fps++
     }
