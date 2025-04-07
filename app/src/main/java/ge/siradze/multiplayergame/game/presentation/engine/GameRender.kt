@@ -7,6 +7,8 @@ import android.opengl.GLES20.glClearColor
 import android.opengl.GLSurfaceView
 import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.Planets
@@ -20,11 +22,12 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 class GameRender(
-    context: Context,
+    private val context: Context,
     state: GameState
 ) : GLSurfaceView.Renderer {
 
     var fps = 0
+    var ratio = 1f
 
     private val textureCounter: TextureCounter = TextureCounter()
 
@@ -46,7 +49,20 @@ class GameRender(
         context = context,
         playerProperties = player.properties,
         camera = camera,
-        textureCounter = textureCounter
+        textureCounter = textureCounter,
+        event = {  event ->
+            temporaryObjects.add(
+                PlanetExplosion(
+                    context = context,
+                    camera = camera,
+                    helper = planetExplosionHelper,
+                    x = (event.planet.x * 4f).toInt(),
+                    y = (event.planet.y * 4f).toInt(),
+                    size = event.size,
+                    position = event.position,
+                )
+            )
+        }
     )
     private val planetExplosionHelper = PlanetExplosionHelper(context)
 
@@ -60,31 +76,26 @@ class GameRender(
     )
     
     private val temporaryObjects: MutableList<PlanetExplosion> = mutableListOf(
-        PlanetExplosion(
+     /*   PlanetExplosion(
             context = context,
             camera = camera,
             helper = planetExplosionHelper,
-            x = 0,
-            y = 0
-        )
+            x = 3,
+            y = 2,
+            1.0f,
+            floatArrayOf(1f, 4f)
+        )*/
     )
 
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
         objects.forEach {
             it.init()
         }
-        temporaryObjects.forEach {
-            it.init()
-        }
     }
 
     override fun onSurfaceChanged(p0: GL10?, width: Int, height: Int) {
-        val ratio = width.toFloat() / height.toFloat()
+        ratio = width.toFloat() / height.toFloat()
         objects.forEach {
-            it.setRatio(ratio)
-            it.onSizeChange(width, height)
-        }
-        temporaryObjects.forEach {
             it.setRatio(ratio)
             it.onSizeChange(width, height)
         }
@@ -99,12 +110,18 @@ class GameRender(
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
         glClear(GL_COLOR_BUFFER_BIT)
 
+        if(temporaryObjects.isNotEmpty()) {
+            val tempObject = temporaryObjects.first()
+            tempObject.init()
+            tempObject.setRatio(ratio)
+            objects.add(tempObject)
+            temporaryObjects.removeFirst()
+        }
+
+
         camera.update()
-        //objects.forEach {
-           //it.draw()
-        //}
-        temporaryObjects.forEach {
-            it.draw()
+        objects.forEach {
+           it.draw()
         }
         fps++
     }
@@ -113,5 +130,14 @@ class GameRender(
         objects.forEach {
             it.release()
         }
+    }
+
+
+    sealed class Event {
+        class CreateExplosion(
+            val position: FloatArray,
+            val size: Float,
+            val planet: FloatArray,
+        ) : Event()
     }
 }

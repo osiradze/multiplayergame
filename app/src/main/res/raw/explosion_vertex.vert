@@ -6,16 +6,19 @@ varying vec3 v_color;
 
 uniform float u_ratio;
 uniform vec2 u_camera;
+uniform vec2 u_position;
 
 
 void main() {
     v_color = a_color;
-    gl_PointSize = 20.0;
+    gl_PointSize = 10.0;
 
-    vec2 position = vec2(
-        a_position.x - u_camera.x,
-        (a_position.y - u_camera.y) * u_ratio
+    vec2 position = a_position + u_position;
+    position = vec2(
+    position.x - u_camera.x,
+        (position.y - u_camera.y) * u_ratio
     );
+
 
     gl_Position = vec4(
         position.x,

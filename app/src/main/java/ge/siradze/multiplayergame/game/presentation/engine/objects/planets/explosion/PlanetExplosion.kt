@@ -14,6 +14,7 @@ import android.opengl.GLES20.glDrawArrays
 import android.opengl.GLES20.glEnableVertexAttribArray
 import android.opengl.GLES20.glGenBuffers
 import android.opengl.GLES20.glUniform1f
+import android.opengl.GLES20.glUniform2f
 import android.opengl.GLES20.glUseProgram
 import android.opengl.GLES30.glBindVertexArray
 import android.opengl.GLES30.glDeleteVertexArrays
@@ -22,7 +23,10 @@ import android.opengl.GLES31.GL_DYNAMIC_DRAW
 import android.opengl.GLES31.GL_FLOAT
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.multiply
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.engine.objects.AttributeData
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
@@ -30,6 +34,7 @@ import ge.siradze.multiplayergame.game.presentation.engine.shader.RatioShaderLoc
 import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderAttribLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderLocation
+import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderUniformLocation
 import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
 import java.nio.Buffer
 
@@ -38,15 +43,17 @@ class PlanetExplosionData {
         helper: PlanetExplosionHelper,
         x: Int,
         y: Int,
+        size: Float
     ): AttributeData() {
-        val data = helper.data[x][y]
+        private val pointNumber = (helper.pointNumber * size).toInt()
+        val data: FloatArray = helper.data[x][y].copyOfRange(0, pointNumber * helper.numberOfFloatsPerPoint).apply {
+            multiply(size)
+        }
 
         override val numberOfFloatsPerVertex: Int = helper.numberOfFloatsPerPoint
         override val typeSize: Int = Float.SIZE_BYTES
-        override val size: Int = helper.numberOfFloatsPerPoint * helper.pointNumber
-        val numberOfVertex = helper.pointNumber
-
-
+        override val size: Int = helper.numberOfFloatsPerPoint * pointNumber
+        val numberOfVertex = pointNumber
 
         override fun getBuffer(): Buffer = data.toBuffer()
     }
@@ -54,8 +61,14 @@ class PlanetExplosionData {
     class ShaderLocations (
         val vertex: ShaderAttribLocation = ShaderAttribLocation(name = "a_position"),
         val color: ShaderAttribLocation = ShaderAttribLocation(name = "a_color"),
+
+        // Uniforms
         val ratio: ShaderLocation = RatioShaderLocation(),
         var camera: ShaderLocation = CameraShaderLocation(),
+
+        val position: ShaderLocation = ShaderUniformLocation(
+            name = "u_position"
+        ),
     )
 }
 
@@ -65,12 +78,14 @@ class PlanetExplosion(
     helper: PlanetExplosionHelper,
     x: Int,
     y: Int,
+    size: Float,
+    private val position: FloatArray
 ): GameObject {
     private val vao: IntArray = IntArray(1)
     private val vbo: IntArray = IntArray(1)
 
     private val vertex: PlanetExplosionData.Vertex =
-        PlanetExplosionData.Vertex(helper, x, y)
+        PlanetExplosionData.Vertex(helper, x, y, size)
 
     private val shader = PlanetExplosionData.ShaderLocations()
 
@@ -126,6 +141,11 @@ class PlanetExplosion(
         // Uniforms
         shader.ratio.init(program)
         shader.camera.init(program)
+        glUseProgram(program)
+        shader.position.apply {
+            init(program)
+        }
+        glUniform2f(shader.position.location, position.x, position.y)
     }
 
     override fun draw() {

@@ -42,18 +42,18 @@ class PlayerData {
             name = "a_position"
         ),
         val ratio: ShaderLocation = RatioShaderLocation(),
-        var camera: ShaderLocation = CameraShaderLocation(),
+        val camera: ShaderLocation = CameraShaderLocation(),
 
-        var middlePoint : ShaderLocation = ShaderUniformLocation(
+        val middlePoint : ShaderLocation = ShaderUniformLocation(
             name = "u_middlePoint"
         ),
-        var position: ShaderLocation = ShaderUniformLocation(
+        val position: ShaderLocation = ShaderUniformLocation(
             name = "u_position"
         ),
-        var direction: ShaderLocation = ShaderUniformLocation(
+        val direction: ShaderLocation = ShaderUniformLocation(
             name = "u_direction"
         ),
-        var velocity: ShaderLocation = ShaderUniformLocation(
+        val velocity: ShaderLocation = ShaderUniformLocation(
             name = "u_velocity"
         ),
     )

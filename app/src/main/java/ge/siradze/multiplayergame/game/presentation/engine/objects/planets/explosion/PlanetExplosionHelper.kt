@@ -69,7 +69,7 @@ class PlanetExplosionHelper(
             }
             // check if it's transparent
             val alpha = Color.alpha(pixel) / 255f
-            //if(alpha < 0.1f) continue
+            if(alpha < 0.1f) continue
 
             // get color values
             val red = Color.red(pixel) / 255f
@@ -77,15 +77,15 @@ class PlanetExplosionHelper(
             val blue = Color.blue(pixel) / 255f
 
             // set color values to data
-            val startPosition = counter * 5
-            data[x][y][startPosition + 0] = randomX.toFloat() / bitmap.width
-            data[x][y][startPosition + 1] = randomY.toFloat()  / bitmap.height
+            val startPosition = counter * numberOfFloatsPerPoint
+            data[x][y][startPosition + 0] = randomX.toFloat() / bitmap.width - 0.5f
+            data[x][y][startPosition + 1] = -(randomY.toFloat() / bitmap.height - 0.5f)
             data[x][y][startPosition + 2] = red
             data[x][y][startPosition + 3] = green
             data[x][y][startPosition + 4] = blue
             counter += 1
         }
-        data[x][y][counter * 5] = counter.toFloat()
+        data[x][y][counter * numberOfFloatsPerPoint] = counter.toFloat()
 
     }
 

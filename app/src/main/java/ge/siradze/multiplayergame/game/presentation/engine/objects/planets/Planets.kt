@@ -31,6 +31,7 @@ import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.GameState
+import ge.siradze.multiplayergame.game.presentation.engine.GameRender
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
@@ -49,6 +50,7 @@ class Planets(
     private val playerProperties: PlayerData.Properties,
     private val camera: Camera,
     private val textureCounter: TextureCounter,
+    private val event: (GameRender.Event.CreateExplosion) -> Unit
 ): GameObject {
 
     private val vao: IntArray = IntArray(1)
@@ -235,8 +237,16 @@ class Planets(
             collisionData.data.size,
             Float.SIZE_BYTES
         )
-        if(collisionData[2] == 1f){
-            playerProperties.addForce(collisionData)
+        if(collisionData[0] == 1f){
+            event(
+                GameRender.Event.CreateExplosion(
+                    position = floatArrayOf(collisionData[1], collisionData[2]),
+                    size = collisionData[3],
+                    planet = floatArrayOf(collisionData[4],  collisionData[5])
+                )
+            )
+            //playerProperties.addForce(collisionData)
+
         }
     }
 

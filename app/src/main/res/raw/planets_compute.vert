@@ -27,13 +27,19 @@ void main() {
         float x = inputOutput.data[index];
         float y = inputOutput.data[index + 1u];
         float size = inputOutput.data[index + 2u];
+        float textureCoordX = inputOutput.data[index + 3u];
+        float textureCoordY = inputOutput.data[index + 4u];
 
 
         float distance = getDistance(u_player_position, vec2(x, y));
         if(distance < size / 2.2) {
-            resultBuffer.result[0] = u_player_position.x - x;
-            resultBuffer.result[1] = u_player_position.y - y;
-            resultBuffer.result[2] = 1.0; // indicates that the player is colliding with the planet
+            resultBuffer.result[0] = 1.0; // indicates that the player is colliding with the planet
+            resultBuffer.result[1] = x;
+            resultBuffer.result[2] = y;
+            resultBuffer.result[3] = size;
+            resultBuffer.result[4] = textureCoordX;
+            resultBuffer.result[5] = textureCoordY;
+
             inputOutput.data[index + 10u] = 1.0; // indicates that the player is collided with the planet
         }
 

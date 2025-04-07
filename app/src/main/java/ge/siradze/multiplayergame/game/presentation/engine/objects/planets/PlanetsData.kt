@@ -43,8 +43,8 @@ class PlanetsData {
                 data[i * numberOfFloatsPerVertex + 2] = Random.nextFloat() * planetMaxSize + planetMinSize
 
                 // texture coordinates
-                val randomX = Random.nextInt(until = 5) + 1
-                val randomY = Random.nextInt(until = 4) + 1
+                val randomX = Random.nextInt(until = textureDimensions.columns) + 1
+                val randomY = Random.nextInt(until = textureDimensions.rows) + 1
 
                 data[i * numberOfFloatsPerVertex + 3] = textureDimensions.stepX * (randomX - 1)
                 data[i * numberOfFloatsPerVertex + 4] = textureDimensions.stepY * (randomY - 1)
@@ -61,7 +61,7 @@ class PlanetsData {
 
     // For getting data from GPU about collision
     class CollisionData {
-        val data: FloatArray = FloatArray(3)
+        val data: FloatArray = FloatArray(6)
         val buffer: Buffer = data.toBuffer()
         val bufferSize = data.size * Float.SIZE_BYTES
     }
