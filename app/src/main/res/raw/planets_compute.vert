@@ -1,9 +1,5 @@
-/*
- Running as many work as there is planet, and each work will be working with each planet.
-*/
-
-
 #version 310 es
+
 layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
 layout (std430, binding = 0) buffer InputOutputBuffer {
@@ -41,11 +37,13 @@ void main() {
         resultBuffer.result[1] = x;
         resultBuffer.result[2] = y;
         resultBuffer.result[3] = size;
+
         resultBuffer.result[4] = textureCoordX;
         resultBuffer.result[5] = textureCoordY;
-        resultBuffer.result[6] = inputOutput.data[index + 6u]; // colorR
-        resultBuffer.result[7] = inputOutput.data[index + 7u]; // colorG
-        resultBuffer.result[8] = inputOutput.data[index + 8u]; // colorB
+
+        resultBuffer.result[6] = inputOutput.data[index + 7u]; // colorR
+        resultBuffer.result[7] = inputOutput.data[index + 8u]; // colorG
+        resultBuffer.result[8] = inputOutput.data[index + 9u]; // colorB
 
         inputOutput.data[index + 10u] = 1.0; // indicates that the player is collided with the planet
     }

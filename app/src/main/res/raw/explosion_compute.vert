@@ -23,10 +23,10 @@ void main() {
     inputOutput.data[index + 1u] += inputOutput.data[index + 6u];
 
     if(inputOutput.data[index + 5u] > 0.001){
-        inputOutput.data[index + 5u] *= 0.99;
+        inputOutput.data[index + 5u] *= 0.98;
     }
     if(inputOutput.data[index + 6u] > 0.001){
-        inputOutput.data[index + 6u] *= 0.99;
+        inputOutput.data[index + 6u] *= 0.98;
     }
 
     float distance = getDistance(u_player_position, vec2(x, y));
