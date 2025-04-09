@@ -1,33 +1,22 @@
 package ge.siradze.multiplayergame.game.presentation.engine.extensions
 
 
-fun FloatArray.scale(times: Float, floatsPerVertex: Int): FloatArray {
-    return FloatArray(
-        init = { i ->
-            if(i % floatsPerVertex == 0 || i % floatsPerVertex == 1) {
-                get(i) * times
-            } else {
-                get(i)
-            }
-        },
-        size = size
-
-    )
+fun FloatArray.scale(times: Float, floatsPerVertex: Int) {
+    for (i in indices) {
+        if (i % floatsPerVertex == 0 || i % floatsPerVertex == 1) {
+            set(i, this[i] * times)
+        }
+    }
 }
 
-fun FloatArray.transform(x: Float, y: Float, floatsPerVertex: Int): FloatArray {
-    return FloatArray(
-        init = { i ->
-            if(i % floatsPerVertex == 0) {
-                get(i) + x
-            } else if (i % floatsPerVertex == 1)  {
-                get(i) + y
-            } else {
-                get(i)
-            }
-        },
-        size = size
-    )
+fun FloatArray.transform(x: Float, y: Float, floatsPerVertex: Int) {
+    for (i in indices) {
+        if (i % floatsPerVertex == 0) {
+            set(i, this[i] + x)
+        } else if (i % floatsPerVertex == 1) {
+            set(i, this[i] + y)
+        }
+    }
 }
 
 fun FloatArray.middlePoint(floatsPerVertex: Int): FloatArray {

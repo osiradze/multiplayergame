@@ -18,6 +18,7 @@ import ge.siradze.multiplayergame.game.presentation.engine.objects.player.Player
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.trail.PlayerTrail
 import ge.siradze.multiplayergame.game.presentation.engine.objects.stars.Stars
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter
+import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureDimensions
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -27,9 +28,11 @@ class GameRender(
 ) : GLSurfaceView.Renderer {
 
     var fps = 0
-    var ratio = 1f
+    private var ratio = 1f
 
     private val textureCounter: TextureCounter = TextureCounter()
+    private val planetTextureDimensions = TextureDimensions(4, 4)
+    private val planetExplosionHelper = PlanetExplosionHelper(context, planetTextureDimensions)
 
     private val camera: Camera = Camera(
         state
@@ -50,21 +53,24 @@ class GameRender(
         playerProperties = player.properties,
         camera = camera,
         textureCounter = textureCounter,
-        event = {  event ->
+        textureDimensions = planetTextureDimensions,
+        event = { event ->
             temporaryObjects.add(
                 PlanetExplosion(
                     context = context,
                     camera = camera,
                     helper = planetExplosionHelper,
-                    x = (event.planet.x * 4f).toInt(),
-                    y = (event.planet.y * 4f).toInt(),
+                    x = (event.planet.x * planetTextureDimensions.columns).toInt(),
+                    y = (event.planet.y * planetTextureDimensions.rows).toInt(),
                     size = event.size,
                     position = event.position,
+                    playerProperties = player.properties,
+                    color = event.color
                 )
             )
-        }
+        },
+
     )
-    private val planetExplosionHelper = PlanetExplosionHelper(context)
 
     private val stars = Stars(context, camera)
 
@@ -75,17 +81,7 @@ class GameRender(
         planets
     )
     
-    private val temporaryObjects: MutableList<PlanetExplosion> = mutableListOf(
-     /*   PlanetExplosion(
-            context = context,
-            camera = camera,
-            helper = planetExplosionHelper,
-            x = 3,
-            y = 2,
-            1.0f,
-            floatArrayOf(1f, 4f)
-        )*/
-    )
+    private val temporaryObjects: MutableList<PlanetExplosion> = mutableListOf()
 
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
         objects.forEach {
@@ -110,6 +106,16 @@ class GameRender(
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
         glClear(GL_COLOR_BUFFER_BIT)
 
+        createObject()
+
+        camera.update()
+        objects.forEach {
+           it.draw()
+        }
+        fps++
+    }
+
+    private fun createObject() {
         if(temporaryObjects.isNotEmpty()) {
             val tempObject = temporaryObjects.first()
             tempObject.init()
@@ -117,13 +123,6 @@ class GameRender(
             objects.add(tempObject)
             temporaryObjects.removeFirst()
         }
-
-
-        camera.update()
-        objects.forEach {
-           it.draw()
-        }
-        fps++
     }
 
     fun release() {
@@ -138,6 +137,7 @@ class GameRender(
             val position: FloatArray,
             val size: Float,
             val planet: FloatArray,
+            val color: FloatArray
         ) : Event()
     }
 }

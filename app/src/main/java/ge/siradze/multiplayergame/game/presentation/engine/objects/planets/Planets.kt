@@ -39,6 +39,7 @@ import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerData
 import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter
+import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureDimensions
 import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
 import ge.siradze.multiplayergame.game.presentation.engine.utils.ShaderUtils
 import ge.siradze.multiplayergame.game.presentation.engine.utils.TextureUtils
@@ -50,6 +51,7 @@ class Planets(
     private val playerProperties: PlayerData.Properties,
     private val camera: Camera,
     private val textureCounter: TextureCounter,
+    private val textureDimensions: TextureDimensions,
     private val event: (GameRender.Event.CreateExplosion) -> Unit
 ): GameObject {
 
@@ -58,7 +60,7 @@ class Planets(
 
     private val vertex: PlanetsData.Vertex =
         state.get(PlanetsData.Vertex::class.qualifiedName) as? PlanetsData.Vertex
-            ?: PlanetsData.Vertex().also { state.set(PlanetsData.Vertex::class.qualifiedName, it) }
+            ?: PlanetsData.Vertex(textureDimensions = textureDimensions).also { state.set(PlanetsData.Vertex::class.qualifiedName, it) }
     private val shader = PlanetsData.ShaderLocations()
     private val shaders = arrayOf(
         Shader(
@@ -221,6 +223,7 @@ class Planets(
             collisionData.buffer,
             GL_DYNAMIC_DRAW
         )
+         // Running as many work as there is planet, and each work will be working with each planet.
          ShaderUtils.computeShader(
              shaderProgram = computeProgram,
              uniforms = {
@@ -228,8 +231,7 @@ class Planets(
                  glUniform2f(shader.playerPosition.location, playerProperties.position.x, playerProperties.position.y)
              },
              vbos = vbo,
-             x = vertex.numberOfFloatsPerVertex,
-             y = vertex.numberOfPlanets,
+             x = vertex.numberOfPlanets,
          )
 
         val collisionData = OpenGLUtils.readSSBO(
@@ -242,11 +244,10 @@ class Planets(
                 GameRender.Event.CreateExplosion(
                     position = floatArrayOf(collisionData[1], collisionData[2]),
                     size = collisionData[3],
-                    planet = floatArrayOf(collisionData[4],  collisionData[5])
+                    planet = floatArrayOf(collisionData[4],  collisionData[5]),
+                    color = floatArrayOf(collisionData[6], collisionData[7], collisionData[8])
                 )
             )
-            //playerProperties.addForce(collisionData)
-
         }
     }
 

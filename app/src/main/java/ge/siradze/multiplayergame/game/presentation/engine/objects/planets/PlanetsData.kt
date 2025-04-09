@@ -17,9 +17,9 @@ class PlanetsData {
     class Vertex(
         val numberOfPlanets: Int = 1600,
         private val area: FloatArray = floatArrayOf(30f, 30f),
-        private val planetMinSize: Float = 0.1f,
-        private val planetMaxSize: Float = 0.4f,
-        private val textureDimensions: TextureDimensions = TextureDimensions(4, 4)
+        private val planetMinSize: Float = 0.2f,
+        private val planetMaxSize: Float = 0.2f,
+        private val textureDimensions: TextureDimensions
     ): AttributeData() {
         // 2 position + 1 size + 4 texture coordinates + 3 color + 1 collision flag
         override val numberOfFloatsPerVertex = 11
@@ -61,7 +61,7 @@ class PlanetsData {
 
     // For getting data from GPU about collision
     class CollisionData {
-        val data: FloatArray = FloatArray(6)
+        val data: FloatArray = FloatArray(9)
         val buffer: Buffer = data.toBuffer()
         val bufferSize = data.size * Float.SIZE_BYTES
     }

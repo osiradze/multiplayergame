@@ -21,7 +21,7 @@ inline fun FloatArray.add(other: FloatArray) {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-fun FloatArray.normalize() {
+inline fun FloatArray.normalize() {
     val length = sqrt(this[0] * this[0] + this[1] * this[1])
     if (length != 0f) {
         this[0] /= length
@@ -58,7 +58,7 @@ fun FloatArray.fillWith(array: FloatArray) {
 }
 
 fun FloatArray.vectorLength(): Float {
-    return kotlin.math.sqrt(x * x + y * y)
+    return sqrt(x * x + y * y)
 }
 
 fun signedAngleBetweenVectors(v1: FloatArray, v2: FloatArray): Float {

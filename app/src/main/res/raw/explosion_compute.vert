@@ -5,10 +5,6 @@ layout (std430, binding = 0) buffer InputOutputBuffer {
     float data[];
 } inputOutput;
 
-layout(std430, binding = 1) buffer ResultBuffer {
-    float[] result;
-} resultBuffer;
-
 uniform uint u_floats_per_vertex;
 uniform vec2 u_player_position;
 
@@ -17,27 +13,27 @@ float getDistance(vec2 p1, vec2 p2) {
 }
 
 void main() {
-    uint index = gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x;
+    uint index = gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x * u_floats_per_vertex;
 
-    if(index % u_floats_per_vertex == 0u) {
-        if(inputOutput.data[index + 10u] == 1.0) {
-            // If the planet is already collided with, skip the collision check
-            return;
-        }
-        float x = inputOutput.data[index];
-        float y = inputOutput.data[index + 1u];
-        float size = inputOutput.data[index + 2u];
+    float x = inputOutput.data[index];
+    float y = inputOutput.data[index + 1u];
 
+    // addVelocity
+    inputOutput.data[index] += inputOutput.data[index + 5u];
+    inputOutput.data[index + 1u] += inputOutput.data[index + 6u];
 
-        float distance = getDistance(u_player_position, vec2(x, y));
-        if(distance < size / 2.2) {
-            resultBuffer.result[0] = u_player_position.x - x;
-            resultBuffer.result[1] = u_player_position.y - y;
-            resultBuffer.result[2] = 1.0; // indicates that the player is colliding with the planet
-            inputOutput.data[index + 10u] = 1.0; // indicates that the player is collided with the planet
-        }
+    if(inputOutput.data[index + 5u] > 0.001){
+        inputOutput.data[index + 5u] *= 0.99;
+    }
+    if(inputOutput.data[index + 6u] > 0.001){
+        inputOutput.data[index + 6u] *= 0.99;
+    }
 
-
+    float distance = getDistance(u_player_position, vec2(x, y));
+    if(distance < 0.4) {
+        float powDistance = pow(distance, 2.0);
+        inputOutput.data[index + 5u] = (x - u_player_position.x) / powDistance / 1000.0;
+        inputOutput.data[index + 6u] = (y - u_player_position.y) / powDistance / 1000.0;
     }
 
 }

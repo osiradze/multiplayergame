@@ -19,13 +19,15 @@ import java.nio.Buffer
 class PlayerData {
 
     class Vertex {
-        private val scale = 0.01f
+        private val scale = 0.02f
         private val numberOfFloatsPerVertex = 2
         private val data: FloatArray = floatArrayOf(
             0.0f, 0.5f,
             0.5f, -0.5f,
             -0.5f, -0.5f,
-        ).scale(scale, numberOfFloatsPerVertex)
+        ).apply{
+            scale(scale, numberOfFloatsPerVertex)
+        }
 
         val middlePoint = data.middlePoint(numberOfFloatsPerVertex)
 
@@ -70,9 +72,9 @@ class PlayerData {
     ) {
         private val rotateSpeed = 0.1f
         private var gas = false
-        private val gasForce = 0.0001f
+        private val gasForce = 0.0002f
         private var maxSpeed = 0.009f
-        private val deceleration = 0.992f
+        private val deceleration = 0.98f
 
         fun update() {
             if (gas && velocity < maxSpeed) {
@@ -87,9 +89,9 @@ class PlayerData {
         }
 
         fun addForce(force: FloatArray) {
-          /*  direction[0] += force.x * 20f
+            direction[0] += force.x * 20f
             direction[1] += force.y * 20f
-            direction.normalize()*/
+            direction.normalize()
         }
 
         fun onUIEvent(event: UIEvents) {

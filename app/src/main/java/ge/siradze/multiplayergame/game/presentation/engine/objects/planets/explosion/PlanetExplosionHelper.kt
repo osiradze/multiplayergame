@@ -11,11 +11,11 @@ import androidx.core.graphics.get
 
 class PlanetExplosionHelper(
     context: Context,
-    private val dims: TextureDimensions = TextureDimensions(4, 4),
+    private val dims: TextureDimensions
 ) {
-    val pointNumber: Int = 1000
+    val pointNumber: Int = 2000
 
-    val numberOfFloatsPerPoint = 5 // x, y, r, g, b
+    val numberOfFloatsPerPoint = 7 // x, y, r, g, b, vx, vy
     // adding 1 for counter
     val data: Array<Array<FloatArray>> = Array(dims.columns) { Array(dims.rows) { FloatArray((pointNumber * numberOfFloatsPerPoint) + 1) } }
 
@@ -78,11 +78,18 @@ class PlanetExplosionHelper(
 
             // set color values to data
             val startPosition = counter * numberOfFloatsPerPoint
+            // set position values
             data[x][y][startPosition + 0] = randomX.toFloat() / bitmap.width - 0.5f
             data[x][y][startPosition + 1] = -(randomY.toFloat() / bitmap.height - 0.5f)
+
+            // set color values
             data[x][y][startPosition + 2] = red
             data[x][y][startPosition + 3] = green
             data[x][y][startPosition + 4] = blue
+
+            // set velocity values
+            data[x][y][startPosition + 5] = 0f
+            data[x][y][startPosition + 6] = 0f
             counter += 1
         }
         data[x][y][counter * numberOfFloatsPerPoint] = counter.toFloat()
