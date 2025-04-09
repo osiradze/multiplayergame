@@ -2,7 +2,6 @@ package ge.siradze.multiplayergame.game.presentation.gameView
 
 import android.content.Context
 import android.opengl.GLSurfaceView
-import android.view.MotionEvent
 import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents

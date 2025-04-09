@@ -6,7 +6,6 @@ import android.os.VibratorManager
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator.VIBRATION_EFFECT_SUPPORT_YES
-import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 
 interface FeedbackSounds {

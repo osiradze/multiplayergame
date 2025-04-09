@@ -18,7 +18,6 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="35">
         <activity
-            android:screenOrientation="portrait"
             android:name=".game.presentation.GameActivity"
             android:exported="false"
             android:label="@string/title_activity_game"
