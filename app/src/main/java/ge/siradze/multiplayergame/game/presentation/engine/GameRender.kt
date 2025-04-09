@@ -26,7 +26,8 @@ import javax.microedition.khronos.opengles.GL10
 class GameRender(
     private val context: Context,
     state: GameState,
-    feedbackSounds: FeedbackSounds
+    feedbackSounds: FeedbackSounds,
+    private val uiEffect: (UIEffect) -> Unit,
 ) : GLSurfaceView.Renderer {
 
     var fps = 0
@@ -71,6 +72,7 @@ class GameRender(
                 )
             )
             feedbackSounds.vibrate(10)
+            uiEffect(UIEffect.PointUp)
         },
 
     )
@@ -135,12 +137,16 @@ class GameRender(
     }
 
 
-    sealed class Event {
+    sealed class InGameEvents {
         class CreateExplosion(
             val position: FloatArray,
             val size: Float,
             val planet: FloatArray,
             val color: FloatArray
-        ) : Event()
+        ) : InGameEvents()
+    }
+
+    sealed class UIEffect {
+        data object PointUp : UIEffect()
     }
 }

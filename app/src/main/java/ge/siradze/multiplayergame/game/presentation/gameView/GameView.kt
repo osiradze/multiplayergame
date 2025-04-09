@@ -11,13 +11,15 @@ import ge.siradze.multiplayergame.game.presentation.vibrator.FeedbackSounds
 class GameView (
     context: Context,
     state: GameState,
-    feedbackSounds: FeedbackSounds
+    feedbackSounds: FeedbackSounds,
+    uiEffect: (GameRender.UIEffect) -> Unit,
 ) : GLSurfaceView(context) {
 
     private val renderer: GameRender = GameRender(
         context = context,
         state = state,
-        feedbackSounds = feedbackSounds
+        feedbackSounds = feedbackSounds,
+        uiEffect = uiEffect,
     )
 
 

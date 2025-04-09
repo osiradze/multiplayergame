@@ -52,7 +52,7 @@ class Planets(
     private val camera: Camera,
     private val textureCounter: TextureCounter,
     private val textureDimensions: TextureDimensions,
-    private val event: (GameRender.Event.CreateExplosion) -> Unit
+    private val event: (GameRender.InGameEvents.CreateExplosion) -> Unit
 ): GameObject {
 
     private val vao: IntArray = IntArray(1)
@@ -241,7 +241,7 @@ class Planets(
         )
         if(collisionData[0] == 1f){
             event(
-                GameRender.Event.CreateExplosion(
+                GameRender.InGameEvents.CreateExplosion(
                     position = floatArrayOf(collisionData[1], collisionData[2]),
                     size = collisionData[3],
                     planet = floatArrayOf(collisionData[4],  collisionData[5]),

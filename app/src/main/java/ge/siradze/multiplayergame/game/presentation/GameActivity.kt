@@ -7,11 +7,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +25,7 @@ import androidx.lifecycle.lifecycleScope
 import ge.siradze.multiplayergame.game.presentation.gameView.GameView
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.gameUi.buttons.GameUI
+import ge.siradze.multiplayergame.game.presentation.gameUi.points.PointsView
 import ge.siradze.multiplayergame.game.presentation.vibrator.FeedbackSoundsImpl
 import ge.siradze.multiplayergame.ui.theme.MultiplayerGameTheme
 import kotlinx.coroutines.delay
@@ -45,22 +48,32 @@ class GameActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel
-        gameView = GameView(context = this, viewModel.state, feedbackSounds)
+        gameView = GameView(context = this, viewModel.state, feedbackSounds, viewModel::onUIEffect)
         fps()
         enableEdgeToEdge()
         enableFullScreen()
         setContent {
             MultiplayerGameTheme {
+                val uiState = viewModel.uiState.collectAsState()
                 Scaffold(contentWindowInsets = WindowInsets(0,0,0,0)) { innerPadding ->
                     Box(Modifier.padding(innerPadding)) {
                         ComposeGLSurfaceView()
                         GameUI { event ->
                             handleUIEvents(event)
                         }
-                        Box(modifier = Modifier.align(Alignment.BottomStart).padding(10.dp)) { Text(text = fps.intValue.toString()) }
+                        FPS()
+                        PointsView(uiState.value)
                     }
                 }
             }
+        }
+    }
+
+
+    @Composable
+    fun BoxScope.FPS() {
+        Box(modifier = Modifier.align(Alignment.BottomStart).padding(10.dp)) {
+            Text(text = fps.intValue.toString())
         }
     }
 
