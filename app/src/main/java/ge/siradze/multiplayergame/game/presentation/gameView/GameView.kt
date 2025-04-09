@@ -6,16 +6,19 @@ import android.view.MotionEvent
 import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
+import ge.siradze.multiplayergame.game.presentation.vibrator.FeedbackSounds
 
 
 class GameView (
     context: Context,
-    state: GameState
+    state: GameState,
+    feedbackSounds: FeedbackSounds
 ) : GLSurfaceView(context) {
 
     private val renderer: GameRender = GameRender(
         context = context,
-        state = state
+        state = state,
+        feedbackSounds = feedbackSounds
     )
 
 

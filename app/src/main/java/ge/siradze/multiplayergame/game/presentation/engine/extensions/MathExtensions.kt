@@ -29,6 +29,7 @@ inline fun FloatArray.normalize() {
     }
 }
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun FloatArray.isZeroVector(): Boolean {
     return all { it == 0f }
 }

@@ -23,6 +23,8 @@ import androidx.lifecycle.lifecycleScope
 import ge.siradze.multiplayergame.game.presentation.gameView.GameView
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.gameUi.buttons.GameUI
+import ge.siradze.multiplayergame.game.presentation.vibrator.FeedbackSounds
+import ge.siradze.multiplayergame.game.presentation.vibrator.FeedbackSoundsImpl
 import ge.siradze.multiplayergame.ui.theme.MultiplayerGameTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -38,12 +40,13 @@ class GameActivity : ComponentActivity() {
     private lateinit var gameView : GameView
 
     private var fps = mutableIntStateOf(0)
+    private val feedbackSounds = FeedbackSoundsImpl(this)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel
-        gameView = GameView(context = this, viewModel.state)
+        gameView = GameView(context = this, viewModel.state, feedbackSounds)
         fps()
         enableEdgeToEdge()
         enableFullScreen()

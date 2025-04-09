@@ -19,12 +19,14 @@ import ge.siradze.multiplayergame.game.presentation.engine.objects.player.trail.
 import ge.siradze.multiplayergame.game.presentation.engine.objects.stars.Stars
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureDimensions
+import ge.siradze.multiplayergame.game.presentation.vibrator.FeedbackSounds
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 class GameRender(
     private val context: Context,
-    state: GameState
+    state: GameState,
+    feedbackSounds: FeedbackSounds
 ) : GLSurfaceView.Renderer {
 
     var fps = 0
@@ -68,6 +70,7 @@ class GameRender(
                     color = event.color
                 )
             )
+            feedbackSounds.vibrate(10)
         },
 
     )
@@ -121,7 +124,7 @@ class GameRender(
             tempObject.init()
             tempObject.setRatio(ratio)
             objects.add(tempObject)
-            temporaryObjects.removeFirst()
+            temporaryObjects.removeAt(0)
         }
     }
 
