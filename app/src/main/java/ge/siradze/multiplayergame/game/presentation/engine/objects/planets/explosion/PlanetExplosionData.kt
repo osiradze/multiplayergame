@@ -7,6 +7,7 @@ import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.engine.objects.AttributeData
 import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
+import ge.siradze.multiplayergame.game.presentation.engine.shader.DeltaTimeShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.RatioShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderAttribLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderLocation
@@ -60,5 +61,7 @@ class PlanetExplosionData {
         val playerPosition: ShaderLocation = ShaderUniformLocation(
             name = "u_player_position"
         ),
+
+        val deltaTime: DeltaTimeShaderLocation = DeltaTimeShaderLocation(),
     )
 }

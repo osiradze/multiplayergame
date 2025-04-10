@@ -1,5 +1,6 @@
 package ge.siradze.multiplayergame.game.presentation.engine.objects.player
 
+import ge.siradze.multiplayergame.game.presentation.engine.EngineGlobals
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.middlePoint
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.normalize
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.rotate
@@ -70,10 +71,10 @@ class PlayerData {
         },
         private var velocity: Float = 0f,
     ) {
-        private val rotateSpeed = 0.1f
+        private val rotateSpeed = 20f * EngineGlobals.deltaTime
         private var gas = false
-        private val gasForce = 0.0002f
-        private var maxSpeed = 0.009f
+        private val gasForce = 0.05f * EngineGlobals.deltaTime
+        private var maxSpeed = 0.9f * EngineGlobals.deltaTime
         private val deceleration = 0.98f
 
         fun update() {
@@ -109,7 +110,7 @@ class PlayerData {
                 }
 
                 is UIEvents.onTap -> {
-                    maxSpeed += 0.0001f
+                    //maxSpeed += 0.0001f
                 }
             }
         }

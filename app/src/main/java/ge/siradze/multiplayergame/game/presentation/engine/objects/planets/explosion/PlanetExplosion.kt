@@ -24,6 +24,7 @@ import android.opengl.GLES31.GL_COMPUTE_SHADER
 import android.opengl.GLES31.GL_DYNAMIC_DRAW
 import android.opengl.GLES31.GL_FLOAT
 import ge.siradze.multiplayergame.R
+import ge.siradze.multiplayergame.game.presentation.engine.EngineGlobals
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
@@ -119,6 +120,7 @@ class PlanetExplosion(
 
         shader.floatsPerVertex.init(computeProgram)
         shader.playerPosition.init(computeProgram)
+        shader.deltaTime.init(computeProgram)
     }
 
     override fun draw() {
@@ -137,6 +139,7 @@ class PlanetExplosion(
             uniforms = {
                 glUniform1ui(shader.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
                 glUniform2f(shader.playerPosition.location, playerProperties.position.x, playerProperties.position.y)
+                glUniform1f(shader.deltaTime.location, EngineGlobals.deltaTime)
             },
             vbos = vbo,
             x = vertex.pointNumber,
