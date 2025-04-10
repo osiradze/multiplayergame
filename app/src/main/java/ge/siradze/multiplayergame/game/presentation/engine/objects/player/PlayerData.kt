@@ -90,8 +90,8 @@ class PlayerData {
         }
 
         fun addForce(force: FloatArray) {
-            direction[0] += force.x * 20f
-            direction[1] += force.y * 20f
+            direction[0] += (position.x - force.x) * 10f
+            direction[1] += (position.y - force.y) * 10f
             direction.normalize()
         }
 

@@ -29,6 +29,7 @@ import android.opengl.GLES31.GL_FLOAT
 import android.opengl.GLES31.GL_SHADER_STORAGE_BUFFER
 import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
+import android.util.Log
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender
@@ -235,6 +236,7 @@ class Planets(
              x = vertex.numberOfPlanets,
          )
 
+        val old = System.currentTimeMillis()
         val collisionData = OpenGLUtils.readSSBO(
             vbo[1],
             collisionData.data.size,
@@ -249,6 +251,8 @@ class Planets(
                     color = floatArrayOf(collisionData[6], collisionData[7], collisionData[8])
                 )
             )
+            //Log.i("TAG", "compute: $collisionData")
+            //Log.i("TAG", "compute: ${System.currentTimeMillis() - old}")
         }
     }
 

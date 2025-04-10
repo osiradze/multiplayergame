@@ -48,15 +48,10 @@ class GameRender(
         player.properties,
         camera
     )
-    private val planets = Planets(
-        state = state,
-        numberOfPlanets = NUMBER_OF_PLANETS,
-        context = context,
-        playerProperties = player.properties,
-        camera = camera,
-        textureCounter = textureCounter,
-        textureDimensions = planetTextureDimensions,
-        event = { event ->
+    private val explosionCreation: (InGameEvents.CreateExplosion) -> Unit = { event ->
+        // We need to create Planet explosion in another thread,
+        // because it take a lot of time to process vertex data
+        Thread {
             temporaryObjects.add(
                 PlanetExplosion(
                     context = context,
@@ -69,11 +64,22 @@ class GameRender(
                     color = event.color
                 )
             )
-            feedbackSounds.vibrate(10)
-            uiEffect(UIEffect.PointUp)
-        },
-
+        }.start()
+        feedbackSounds.vibrate(10)
+        uiEffect(UIEffect.PointUp)
+    }
+    private val planets = Planets(
+        state = state,
+        numberOfPlanets = NUMBER_OF_PLANETS,
+        context = context,
+        playerProperties = player.properties,
+        camera = camera,
+        textureCounter = textureCounter,
+        textureDimensions = planetTextureDimensions,
+        event = explosionCreation
     )
+
+
 
     private val stars = Stars(context, camera)
 
