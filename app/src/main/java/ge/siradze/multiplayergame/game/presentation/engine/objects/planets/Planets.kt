@@ -47,6 +47,7 @@ import ge.siradze.multiplayergame.game.presentation.engine.utils.TextureUtils
 
 class Planets(
     state: GameState,
+    private val numberOfPlanets: Int,
     private val context: Context,
     private val playerProperties: PlayerData.Properties,
     private val camera: Camera,
@@ -60,7 +61,7 @@ class Planets(
 
     private val vertex: PlanetsData.Vertex =
         state.get(PlanetsData.Vertex::class.qualifiedName) as? PlanetsData.Vertex
-            ?: PlanetsData.Vertex(textureDimensions = textureDimensions).also { state.set(PlanetsData.Vertex::class.qualifiedName, it) }
+            ?: PlanetsData.Vertex(numberOfPlanets, textureDimensions = textureDimensions).also { state.set(PlanetsData.Vertex::class.qualifiedName, it) }
     private val shader = PlanetsData.ShaderLocations()
     private val shaders = arrayOf(
         Shader(

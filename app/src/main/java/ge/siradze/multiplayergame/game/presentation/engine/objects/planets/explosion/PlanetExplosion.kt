@@ -38,8 +38,7 @@ class PlanetExplosion(
     private val context: Context,
     private val camera: Camera,
     helper: PlanetExplosionHelper,
-    x: Int,
-    y: Int,
+    planet: FloatArray,
     size: Float,
     position: FloatArray,
     color: FloatArray,
@@ -49,7 +48,7 @@ class PlanetExplosion(
     private val vbo: IntArray = IntArray(1)
 
     private val vertex: PlanetExplosionData.Vertex =
-        PlanetExplosionData.Vertex(helper, x, y, size, position, color)
+        PlanetExplosionData.Vertex(helper, planet, size, position, color)
 
     private val shader = PlanetExplosionData.ShaderLocations()
 

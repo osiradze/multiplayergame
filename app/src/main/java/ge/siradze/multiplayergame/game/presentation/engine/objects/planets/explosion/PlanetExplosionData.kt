@@ -16,14 +16,18 @@ import java.nio.Buffer
 class PlanetExplosionData {
     class Vertex(
         helper: PlanetExplosionHelper,
-        x: Int,
-        y: Int,
+        planet: FloatArray,
         size: Float,
         position: FloatArray,
         color: FloatArray
     ): AttributeData() {
         val pointNumber = (helper.pointNumber * size).toInt()
-        val data: FloatArray = helper.data[x][y].copyOfRange(0, pointNumber * helper.numberOfFloatsPerPoint).apply {
+        val data: FloatArray = helper.data[
+            (planet.x * helper.textureDimensions.columns).toInt()
+        ][
+            (planet.y * helper.textureDimensions.columns).toInt()
+        ]
+            .copyOfRange(0, pointNumber * helper.numberOfFloatsPerPoint).apply {
             multiply(size)
             transform(position.x, position.y, helper.numberOfFloatsPerPoint)
             for(i in 0 until pointNumber) {

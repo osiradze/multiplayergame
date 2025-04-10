@@ -15,7 +15,7 @@ import kotlin.random.Random
 
 class PlanetsData {
     class Vertex(
-        val numberOfPlanets: Int = 1600,
+        val numberOfPlanets: Int,
         private val area: FloatArray = floatArrayOf(30f, 30f),
         private val planetMinSize: Float = 0.2f,
         private val planetMaxSize: Float = 0.2f,

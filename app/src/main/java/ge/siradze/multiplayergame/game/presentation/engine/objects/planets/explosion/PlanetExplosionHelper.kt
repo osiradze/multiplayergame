@@ -11,17 +11,17 @@ import androidx.core.graphics.get
 
 class PlanetExplosionHelper(
     context: Context,
-    private val dims: TextureDimensions
+    val textureDimensions: TextureDimensions
 ) {
     val pointNumber: Int = 2000
 
     val numberOfFloatsPerPoint = 7 // x, y, r, g, b, vx, vy
     // adding 1 for counter
-    val data: Array<Array<FloatArray>> = Array(dims.columns) { Array(dims.rows) { FloatArray((pointNumber * numberOfFloatsPerPoint) + 1) } }
+    val data: Array<Array<FloatArray>> = Array(textureDimensions.columns) { Array(textureDimensions.rows) { FloatArray((pointNumber * numberOfFloatsPerPoint) + 1) } }
 
     private val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.planets)
-    private val bitmapArray = Array(dims.columns) {  x ->
-        Array(dims.rows) { y ->
+    private val bitmapArray = Array(textureDimensions.columns) { x ->
+        Array(textureDimensions.rows) { y ->
             cutBitmap (
                 bitmap = bitmap,
                 x = x,
@@ -31,8 +31,8 @@ class PlanetExplosionHelper(
     }
 
     init {
-        for (i in 0 until dims.columns) {
-            for (j in 0 until dims.rows) {
+        for (i in 0 until textureDimensions.columns) {
+            for (j in 0 until textureDimensions.rows) {
                 generatePointsFor(x = i, y = j)
             }
         }
@@ -44,8 +44,8 @@ class PlanetExplosionHelper(
         x: Int,
         y: Int,
     ): Bitmap {
-        val width = bitmap.width / dims.columns
-        val height = bitmap.height / dims.rows
+        val width = bitmap.width / textureDimensions.columns
+        val height = bitmap.height / textureDimensions.rows
         return Bitmap.createBitmap(bitmap, x * width, y * height, width, height)
     }
 

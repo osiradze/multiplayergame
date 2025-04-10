@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -12,10 +13,10 @@ import androidx.compose.ui.unit.sp
 import ge.siradze.multiplayergame.game.presentation.GameVM
 
 @Composable
-fun BoxScope.PointsView(uiState: GameVM.UiState) {
+fun BoxScope.PointsView(uiState: State<GameVM.UiState>) {
     Text(
         color = Color.White,
-        text = uiState.points.toString(),
+        text = uiState.value.points.toString(),
         fontSize = 20.sp,
         modifier = Modifier
             .align(Alignment.TopCenter)

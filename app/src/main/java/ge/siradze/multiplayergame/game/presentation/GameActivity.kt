@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Alignment
@@ -40,29 +41,33 @@ class GameActivity : ComponentActivity() {
     }
 
     private lateinit var gameView : GameView
-
-    private var fps = mutableIntStateOf(0)
     private val feedbackSounds = FeedbackSoundsImpl(this)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel
-        gameView = GameView(context = this, viewModel.state, feedbackSounds, viewModel::onUIEffect)
-        fps()
+        gameView = GameView(
+            context = this,
+            lifecycleScope = lifecycleScope,
+            state = viewModel.state,
+            feedbackSounds = feedbackSounds,
+            uiEffect = viewModel::onUIEffect
+        )
         enableEdgeToEdge()
         enableFullScreen()
         setContent {
             MultiplayerGameTheme {
                 val uiState = viewModel.uiState.collectAsState()
+                val fpsState = gameView.fpsState.collectAsState()
                 Scaffold(contentWindowInsets = WindowInsets(0,0,0,0)) { innerPadding ->
                     Box(Modifier.padding(innerPadding)) {
                         ComposeGLSurfaceView()
                         GameUI { event ->
                             handleUIEvents(event)
                         }
-                        FPS()
-                        PointsView(uiState.value)
+                        FPS(fpsState)
+                        PointsView(uiState)
                     }
                 }
             }
@@ -71,18 +76,9 @@ class GameActivity : ComponentActivity() {
 
 
     @Composable
-    fun BoxScope.FPS() {
+    fun BoxScope.FPS(fps: State<Int>) {
         Box(modifier = Modifier.align(Alignment.BottomStart).padding(10.dp)) {
-            Text(text = fps.intValue.toString())
-        }
-    }
-
-    private fun fps() {
-        lifecycleScope.launch {
-            while (true) {
-                delay(1000)
-                fps.intValue = gameView.getFPS()
-            }
+            Text(text = fps.value.toString())
         }
     }
 

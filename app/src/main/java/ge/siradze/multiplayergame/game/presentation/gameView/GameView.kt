@@ -2,18 +2,28 @@ package ge.siradze.multiplayergame.game.presentation.gameView
 
 import android.content.Context
 import android.opengl.GLSurfaceView
+import androidx.lifecycle.LifecycleCoroutineScope
 import ge.siradze.multiplayergame.game.presentation.GameState
+import ge.siradze.multiplayergame.game.presentation.engine.EngineGlobals
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.vibrator.FeedbackSounds
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 
 class GameView (
     context: Context,
+    private val lifecycleScope: LifecycleCoroutineScope,
     state: GameState,
     feedbackSounds: FeedbackSounds,
     uiEffect: (GameRender.UIEffect) -> Unit,
 ) : GLSurfaceView(context) {
+
+    private val _fpsState: MutableStateFlow<Int> = MutableStateFlow(EngineGlobals.fps)
+    val fpsState = _fpsState.asStateFlow()
 
     private val renderer: GameRender = GameRender(
         context = context,
@@ -22,13 +32,24 @@ class GameView (
         uiEffect = uiEffect,
     )
 
-
     init {
         setEGLContextClientVersion(3)
 
         setRenderer(renderer)
 
         renderMode = RENDERMODE_CONTINUOUSLY
+        updateFps()
+    }
+
+    private fun updateFps() {
+        lifecycleScope.launch {
+            while (true) {
+                delay(1000)
+                EngineGlobals.deltaTime = 1f / EngineGlobals.fps
+                _fpsState.emit(EngineGlobals.fps)
+                EngineGlobals.fps = 0
+            }
+        }
     }
 
     fun onUIEvent(event: UIEvents) {
@@ -39,22 +60,5 @@ class GameView (
     fun release() {
         renderer.release()
     }
-
-
-   /* override fun onTouchEvent(event: MotionEvent): Boolean {
-        TouchHelper.handleEvent(event, renderer)
-        return true
-    }
-
-    override fun performClick(): Boolean {
-        return super.performClick()
-    }*/
-
-    fun getFPS(): Int {
-        val fps = renderer.fps
-        renderer.fps = 0
-        return fps
-    }
-
 }
 

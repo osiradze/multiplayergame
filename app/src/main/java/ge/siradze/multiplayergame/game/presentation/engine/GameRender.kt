@@ -30,7 +30,6 @@ class GameRender(
     private val uiEffect: (UIEffect) -> Unit,
 ) : GLSurfaceView.Renderer {
 
-    var fps = 0
     private var ratio = 1f
 
     private val textureCounter: TextureCounter = TextureCounter()
@@ -52,6 +51,7 @@ class GameRender(
     )
     private val planets = Planets(
         state = state,
+        numberOfPlanets = NUMBER_OF_PLANETS,
         context = context,
         playerProperties = player.properties,
         camera = camera,
@@ -63,8 +63,7 @@ class GameRender(
                     context = context,
                     camera = camera,
                     helper = planetExplosionHelper,
-                    x = (event.planet.x * planetTextureDimensions.columns).toInt(),
-                    y = (event.planet.y * planetTextureDimensions.rows).toInt(),
+                    planet = event.planet,
                     size = event.size,
                     position = event.position,
                     playerProperties = player.properties,
@@ -117,7 +116,7 @@ class GameRender(
         objects.forEach {
            it.draw()
         }
-        fps++
+        EngineGlobals.fps++
     }
 
     private fun createObject() {
@@ -127,6 +126,13 @@ class GameRender(
             tempObject.setRatio(ratio)
             objects.add(tempObject)
             temporaryObjects.removeAt(0)
+            if(objects.size > MAX_EXPLOSION) {
+                objects.find { it is PlanetExplosion }?.let {
+                    objects.remove(it)
+                    it.release()
+                }
+            }
+
         }
     }
 
@@ -148,5 +154,10 @@ class GameRender(
 
     sealed class UIEffect {
         data object PointUp : UIEffect()
+    }
+
+    companion object {
+        const val MAX_EXPLOSION = 60
+        const val NUMBER_OF_PLANETS = 1000
     }
 }
