@@ -7,9 +7,6 @@ import android.opengl.GLES20.glClearColor
 import android.opengl.GLSurfaceView
 import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
-import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.Planets
 import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.explosion.PlanetExplosion
@@ -19,6 +16,7 @@ import ge.siradze.multiplayergame.game.presentation.engine.objects.player.trail.
 import ge.siradze.multiplayergame.game.presentation.engine.objects.stars.Stars
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureDimensions
+import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.vibrator.FeedbackSounds
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -31,6 +29,7 @@ class GameRender(
 ) : GLSurfaceView.Renderer {
 
     private var ratio = 1f
+    private var lastFrameTime: Long = System.nanoTime()
 
     private val textureCounter: TextureCounter = TextureCounter()
     private val planetTextureDimensions = TextureDimensions(4, 4)
@@ -88,6 +87,7 @@ class GameRender(
     private val temporaryObjects: MutableList<PlanetExplosion> = mutableListOf()
 
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
+        lastFrameTime = System.nanoTime()
         objects.forEach {
             it.init()
         }
@@ -109,6 +109,11 @@ class GameRender(
         // clear screen
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
         glClear(GL_COLOR_BUFFER_BIT)
+
+        val currentTime = System.nanoTime()
+        EngineGlobals.deltaTime = (currentTime - lastFrameTime) / 1_000_000_000f
+        lastFrameTime = currentTime
+
 
         createObject()
 

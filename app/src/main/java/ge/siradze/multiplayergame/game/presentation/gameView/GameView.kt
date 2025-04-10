@@ -45,7 +45,6 @@ class GameView (
         lifecycleScope.launch {
             while (true) {
                 delay(1000)
-                EngineGlobals.deltaTime = 1f / EngineGlobals.fps
                 _fpsState.emit(EngineGlobals.fps)
                 EngineGlobals.fps = 0
             }

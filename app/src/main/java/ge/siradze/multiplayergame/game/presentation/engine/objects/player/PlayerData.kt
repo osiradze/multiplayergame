@@ -71,10 +71,10 @@ class PlayerData {
         },
         private var velocity: Float = 0f,
     ) {
-        private val rotateSpeed = 20f * EngineGlobals.deltaTime
+        private val rotateSpeed = 15f
         private var gas = false
-        private val gasForce = 0.05f * EngineGlobals.deltaTime
-        private var maxSpeed = 0.9f * EngineGlobals.deltaTime
+        private val gasForce = 0.05f
+        private val maxSpeed = 0.9f
         private val deceleration = 0.98f
 
         fun update() {
@@ -83,10 +83,10 @@ class PlayerData {
             } else {
                 velocity *= deceleration
             }
-            position[0] += direction[0] * velocity
-            position[1] += direction[1] * velocity
+            position[0] += direction[0] * velocity * EngineGlobals.deltaTime
+            position[1] += direction[1] * velocity * EngineGlobals.deltaTime
             val angle = signedAngleBetweenVectors(targetDirection, direction)
-            direction.rotate(-angle * rotateSpeed)
+            direction.rotate(-angle * rotateSpeed * EngineGlobals.deltaTime)
         }
 
         fun addForce(force: FloatArray) {
