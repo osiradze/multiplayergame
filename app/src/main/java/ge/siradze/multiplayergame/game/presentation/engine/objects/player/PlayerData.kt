@@ -69,7 +69,7 @@ class PlayerData {
         private var targetDirection: FloatArray = floatArrayOf(0.0f, 1.0f).apply {
             normalize()
         },
-        private var velocity: Float = 0f,
+        var velocity: Float = 0f,
     ) {
         // pushes or pulls particles
         var push: Boolean = true
@@ -77,7 +77,7 @@ class PlayerData {
         private val rotateSpeed = 15f
         private var gas = false
         private val gasForce = 0.05f
-        private val maxSpeed = 0.9f
+        private val maxSpeed = 1.2f
         private val deceleration = 0.98f
 
         fun update() {

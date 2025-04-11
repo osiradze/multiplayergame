@@ -20,7 +20,7 @@ class PlanetExplosionData {
         planet: FloatArray,
         size: Float,
         position: FloatArray,
-        color: FloatArray
+        color: FloatArray,
     ): AttributeData() {
         val pointNumber = (helper.pointNumber * size).toInt()
         val data: FloatArray = helper.data[
@@ -32,6 +32,7 @@ class PlanetExplosionData {
             multiply(size)
             transform(position.x, position.y, helper.numberOfFloatsPerPoint)
             for(i in 0 until pointNumber) {
+                // set color
                 this[i * helper.numberOfFloatsPerPoint + 2] *= color[0]
                 this[i * helper.numberOfFloatsPerPoint + 3] *= color[1]
                 this[i * helper.numberOfFloatsPerPoint + 4] *= color[2]

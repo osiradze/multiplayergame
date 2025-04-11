@@ -27,6 +27,7 @@ import android.opengl.GLES31.GL_FLOAT
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.engine.EngineGlobals
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.multiply
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
@@ -50,7 +51,13 @@ class PlanetExplosion(
     private val vbo: IntArray = IntArray(1)
 
     private val vertex: PlanetExplosionData.Vertex =
-        PlanetExplosionData.Vertex(helper, planet, size, position, color)
+        PlanetExplosionData.Vertex(
+            helper = helper,
+            planet = planet,
+            size = size,
+            position = position,
+            color = color,
+        )
 
     private val shader = PlanetExplosionData.ShaderLocations()
 
