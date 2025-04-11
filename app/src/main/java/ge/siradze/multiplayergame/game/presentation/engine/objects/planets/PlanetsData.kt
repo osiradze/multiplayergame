@@ -21,8 +21,8 @@ class PlanetsData {
         private val planetMaxSize: Float = 0.2f,
         private val textureDimensions: TextureDimensions
     ): AttributeData() {
-        // 2 position + 1 size + 4 texture coordinates + 3 color + 1 collision flag
-        override val numberOfFloatsPerVertex = 11
+        // 2 position + 1 size + 4 texture coordinates + 3 color + 1 collision flag + 1 isDestroyed flag
+        override val numberOfFloatsPerVertex = 12
         override val typeSize = Float.SIZE_BYTES
         override val size = numberOfPlanets * numberOfFloatsPerVertex
         private val data: FloatArray = FloatArray(size)
@@ -98,6 +98,12 @@ class PlanetsData {
         ),
         val collision : ShaderAttribLocation = ShaderAttribLocation(
             name = "a_collision"
-        )
+        ),
+        val isDestroyed : ShaderAttribLocation = ShaderAttribLocation(
+            name = "a_isDestroyed"
+        ),
+        val push: ShaderUniformLocation = ShaderUniformLocation(
+            name = "u_push"
+        ),
     )
 }

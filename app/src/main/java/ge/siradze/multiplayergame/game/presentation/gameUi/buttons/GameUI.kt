@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,14 +43,19 @@ fun GameUI(
             .fillMaxSize()
             .padding(bottom = 40.dp)
     ) {
+        RadioButtonJoyStick (
+            modifier = Modifier.align(Alignment.BottomStart),
+            onEvent = onEvent
+        )
         DragJoySticks(
             modifier = Modifier.align(Alignment.BottomEnd),
             onEvent = onEvent
         )
-        PressJoySticks(
+        /*PressJoySticks(
             modifier = Modifier.align(Alignment.BottomStart),
             onEvent = onEvent
-        )
+        )*/
+
     }
 }
 
@@ -130,8 +136,29 @@ fun PressJoySticks (
     onEvent: (UIEvents) -> Unit = {}
 ) {
 
+    val pressedState = remember { mutableStateOf(true) }
+
+
+
     Box(
-        modifier.padding(60.dp)
+        modifier.padding(60.dp).pointerInput(Unit) {
+            detectTapGestures(
+                onPress = {
+                    // Touch Down event
+                    pressedState.value = true
+                    onEvent(UIEvents.OnDown)
+
+                    // Wait for release
+                    val released = tryAwaitRelease()
+
+                    // Touch Up event
+                    if (released) {
+                        pressedState.value = false
+                        onEvent(UIEvents.OnUp)
+                    }
+                }
+            )
+        }
     ){
         Box(modifier = Modifier
             .width(70.dp)
@@ -142,32 +169,33 @@ fun PressJoySticks (
                 shape = RoundedCornerShape(35.dp)
             )
             .align(Alignment.Center)
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onPress = {
-                        // Touch Down event
-                        onEvent(UIEvents.OnDown)
-
-                        // Wait for release
-                        val released = tryAwaitRelease()
-
-                        // Touch Up event
-                        if (released) {
-                            onEvent(UIEvents.OnUp)
-                        }
-                    }
-                )
-            }
         )
-
+        val innerCircleAlpha = if(pressedState.value) { 0f } else { 0.5f }
         Box(modifier = Modifier
             .width(50.dp)
             .height(50.dp)
             .clip(CircleShape)
-            .background(Color.White.copy(alpha = 0.5f))
+            .background(Color.White.copy(alpha = innerCircleAlpha))
             .align(Alignment.Center)
         )
     }
+}
+
+@Composable
+fun RadioButtonJoyStick(
+    modifier: Modifier = Modifier,
+    onEvent: (UIEvents) -> Unit = {}
+) {
+    val checked = remember { mutableStateOf(true) }
+
+    Switch(
+        modifier = modifier.padding(60.dp),
+        checked = checked.value,
+        onCheckedChange = {
+            onEvent(UIEvents.Switch(it))
+            checked.value = it
+        }
+    )
 }
 
 @Preview

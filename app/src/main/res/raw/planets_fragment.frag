@@ -3,7 +3,7 @@ precision highp float;
 uniform sampler2D u_texture;
 varying vec4 v_texture_coordinates;
 varying vec3 v_color;
-varying float v_collision;
+varying float v_isDestroyed;
 
 
 
@@ -21,7 +21,7 @@ void main() {
         pixel.g *= v_color.y;
         pixel.b *= v_color.z;
 
-        if(v_collision != 1.0) {
+        if(v_isDestroyed != 1.0) {
             gl_FragColor = pixel;
         } else {
             discard;

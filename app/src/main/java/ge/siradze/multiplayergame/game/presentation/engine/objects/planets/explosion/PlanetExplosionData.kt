@@ -1,6 +1,5 @@
 package ge.siradze.multiplayergame.game.presentation.engine.objects.planets.explosion
 
-import android.util.Log
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.multiply
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.transform
@@ -29,14 +28,14 @@ class PlanetExplosionData {
         ][
             (planet.y * helper.textureDimensions.columns).toInt()
         ]
-            .copyOfRange(0, pointNumber * helper.numberOfFloatsPerPoint).apply {
-                multiply(size)
-                transform(position.x, position.y, helper.numberOfFloatsPerPoint)
-                for(i in 0 until pointNumber) {
-                    this[i * helper.numberOfFloatsPerPoint + 2] *= color[0]
-                    this[i * helper.numberOfFloatsPerPoint + 3] *= color[1]
-                    this[i * helper.numberOfFloatsPerPoint + 4] *= color[2]
-                }
+        .copyOfRange(0, pointNumber * helper.numberOfFloatsPerPoint).apply {
+            multiply(size)
+            transform(position.x, position.y, helper.numberOfFloatsPerPoint)
+            for(i in 0 until pointNumber) {
+                this[i * helper.numberOfFloatsPerPoint + 2] *= color[0]
+                this[i * helper.numberOfFloatsPerPoint + 3] *= color[1]
+                this[i * helper.numberOfFloatsPerPoint + 4] *= color[2]
+            }
         }
 
         override val numberOfFloatsPerVertex: Int = helper.numberOfFloatsPerPoint
@@ -50,6 +49,7 @@ class PlanetExplosionData {
     class ShaderLocations (
         val vertex: ShaderAttribLocation = ShaderAttribLocation(name = "a_position"),
         val color: ShaderAttribLocation = ShaderAttribLocation(name = "a_color"),
+        val isDead: ShaderAttribLocation = ShaderAttribLocation(name = "a_isDead"),
 
         // Uniforms
         val ratio: ShaderLocation = RatioShaderLocation(),
@@ -64,5 +64,9 @@ class PlanetExplosionData {
         ),
 
         val deltaTime: DeltaTimeShaderLocation = DeltaTimeShaderLocation(),
+
+        val push: ShaderUniformLocation = ShaderUniformLocation(
+            name = "u_push"
+        ),
     )
 }

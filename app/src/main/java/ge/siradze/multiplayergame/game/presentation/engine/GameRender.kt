@@ -57,10 +57,10 @@ class GameRender(
                     context = context,
                     camera = camera,
                     helper = planetExplosionHelper,
+                    playerProperties = player.properties,
                     planet = event.planet,
                     size = event.size,
                     position = event.position,
-                    playerProperties = player.properties,
                     color = event.color
                 )
             )

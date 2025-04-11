@@ -71,6 +71,9 @@ class PlayerData {
         },
         private var velocity: Float = 0f,
     ) {
+        // pushes or pulls particles
+        var push: Boolean = true
+
         private val rotateSpeed = 15f
         private var gas = false
         private val gasForce = 0.05f
@@ -109,8 +112,8 @@ class PlayerData {
                     targetDirection[1] = -event.move[1]
                 }
 
-                is UIEvents.onTap -> {
-                    //maxSpeed += 0.0001f
+                is UIEvents.Switch -> {
+                    push = event.isOn
                 }
             }
         }

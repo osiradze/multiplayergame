@@ -14,6 +14,7 @@ import android.opengl.GLES20.glDrawArrays
 import android.opengl.GLES20.glEnableVertexAttribArray
 import android.opengl.GLES20.glGenBuffers
 import android.opengl.GLES20.glUniform1f
+import android.opengl.GLES20.glUniform1i
 import android.opengl.GLES20.glUniform2f
 import android.opengl.GLES20.glUseProgram
 import android.opengl.GLES30.glBindVertexArray
@@ -38,12 +39,12 @@ import ge.siradze.multiplayergame.game.presentation.engine.utils.ShaderUtils
 class PlanetExplosion(
     private val context: Context,
     private val camera: Camera,
+    private val playerProperties: PlayerData.Properties,
     helper: PlanetExplosionHelper,
     planet: FloatArray,
     size: Float,
     position: FloatArray,
     color: FloatArray,
-    private val playerProperties: PlayerData.Properties,
 ): GameObject {
     private val vao: IntArray = IntArray(1)
     private val vbo: IntArray = IntArray(1)
@@ -113,6 +114,11 @@ class PlanetExplosion(
             load(3, GL_FLOAT, false, vertex.stride, 2 * vertex.typeSize)
         }
 
+        shader.isDead.apply {
+            init(program)
+            load(1, GL_FLOAT, false, vertex.stride, 7 * vertex.typeSize)
+        }
+
         // Uniforms
         shader.ratio.init(program)
         shader.camera.init(program)
@@ -121,6 +127,7 @@ class PlanetExplosion(
         shader.floatsPerVertex.init(computeProgram)
         shader.playerPosition.init(computeProgram)
         shader.deltaTime.init(computeProgram)
+        shader.push.init(computeProgram)
     }
 
     override fun draw() {
@@ -140,6 +147,7 @@ class PlanetExplosion(
                 glUniform1ui(shader.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
                 glUniform2f(shader.playerPosition.location, playerProperties.position.x, playerProperties.position.y)
                 glUniform1f(shader.deltaTime.location, EngineGlobals.deltaTime)
+                glUniform1i(shader.push.location, if (playerProperties.push) 1 else 0)
             },
             vbos = vbo,
             x = vertex.pointNumber,
@@ -152,6 +160,7 @@ class PlanetExplosion(
         glUseProgram(program)
         glEnableVertexAttribArray(shader.vertex.location)
         glEnableVertexAttribArray(shader.color.location)
+        glEnableVertexAttribArray(shader.isDead.location)
         camera.bindUniform(shader.camera.location)
 
         glDrawArrays(
@@ -162,6 +171,7 @@ class PlanetExplosion(
 
         glDisableVertexAttribArray(shader.vertex.location)
         glDisableVertexAttribArray(shader.color.location)
+        glDisableVertexAttribArray(shader.isDead.location)
         glBindBuffer(GL_ARRAY_BUFFER, 0)
 
     }

@@ -13,6 +13,7 @@ import android.opengl.GLES20.glDrawArrays
 import android.opengl.GLES20.glEnableVertexAttribArray
 import android.opengl.GLES20.glGenBuffers
 import android.opengl.GLES20.glUniform1f
+import android.opengl.GLES20.glUniform1i
 import android.opengl.GLES20.glUniform2f
 import android.opengl.GLES20.glUseProgram
 import android.opengl.GLES30.GL_TEXTURE_2D
@@ -29,7 +30,6 @@ import android.opengl.GLES31.GL_FLOAT
 import android.opengl.GLES31.GL_SHADER_STORAGE_BUFFER
 import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
-import android.util.Log
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender
@@ -160,6 +160,10 @@ class Planets(
             init(program)
             load(1, GL_FLOAT, false, vertex.stride, 10 * Float.SIZE_BYTES)
         }
+        shader.isDestroyed.apply {
+            init(program)
+            load(1, GL_FLOAT, false, vertex.stride, 11 * Float.SIZE_BYTES)
+        }
 
         // Uniforms
         shader.screenWidth.init(program)
@@ -168,6 +172,7 @@ class Planets(
 
         shader.floatsPerVertex.init(computeProgram)
         shader.playerPosition.init(computeProgram)
+        shader.push.init(computeProgram)
     }
 
     private fun bindTexture() {
@@ -197,6 +202,7 @@ class Planets(
         glEnableVertexAttribArray(shader.size.location)
         glEnableVertexAttribArray(shader.color.location)
         glEnableVertexAttribArray(shader.collision.location)
+        glEnableVertexAttribArray(shader.isDestroyed.location)
         glBindTexture(GL_TEXTURE_2D, textures[0])
 
 
@@ -214,6 +220,7 @@ class Planets(
         glDisableVertexAttribArray(shader.size.location)
         glDisableVertexAttribArray(shader.color.location)
         glDisableVertexAttribArray(shader.collision.location)
+        glDisableVertexAttribArray(shader.isDestroyed.location)
         glUseProgram(0)
     }
 
@@ -231,26 +238,33 @@ class Planets(
              uniforms = {
                  glUniform1ui(shader.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
                  glUniform2f(shader.playerPosition.location, playerProperties.position.x, playerProperties.position.y)
+                 glUniform1i(shader.push.location, if (playerProperties.push) 1 else 0)
              },
              vbos = vbo,
              x = vertex.numberOfPlanets,
          )
 
-        val old = System.currentTimeMillis()
         val collisionData = OpenGLUtils.readSSBO(
             vbo[1],
             collisionData.data.size,
             Float.SIZE_BYTES
         )
         if(collisionData[0] == 1f){
-            event(
-                GameRender.InGameEvents.CreateExplosion(
-                    position = floatArrayOf(collisionData[1], collisionData[2]),
-                    size = collisionData[3],
-                    planet = floatArrayOf(collisionData[4],  collisionData[5]),
-                    color = floatArrayOf(collisionData[6], collisionData[7], collisionData[8])
+            if(playerProperties.push){
+                event(
+                    GameRender.InGameEvents.CreateExplosion(
+                        position = floatArrayOf(collisionData[1], collisionData[2]),
+                        size = collisionData[3],
+                        planet = floatArrayOf(collisionData[4],  collisionData[5]),
+                        color = floatArrayOf(collisionData[6], collisionData[7], collisionData[8])
+                    )
                 )
-            )
+            }  else {
+                playerProperties.addForce(
+                    floatArrayOf(collisionData[1], collisionData[2])
+                )
+            }
+
             //Log.i("TAG", "compute: $collisionData")
             //Log.i("TAG", "compute: ${System.currentTimeMillis() - old}")
         }

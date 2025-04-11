@@ -29,7 +29,7 @@ object ShaderUtils {
         return shaderCode.toString()
     }
 
-    fun computeShader(
+    inline fun computeShader(
         shaderProgram: Int,
         uniforms: () -> Unit = {},
         vbos: IntArray,

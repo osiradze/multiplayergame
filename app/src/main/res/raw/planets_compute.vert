@@ -12,6 +12,7 @@ layout(std430, binding = 1) buffer ResultBuffer {
 
 uniform uint u_floats_per_vertex;
 uniform vec2 u_player_position;
+uniform bool u_push;
 
 float getDistance(vec2 p1, vec2 p2) {
     return length(p2 - p1);
@@ -20,7 +21,7 @@ float getDistance(vec2 p1, vec2 p2) {
 void main() {
     uint index = (gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x) * u_floats_per_vertex;
 
-    if(inputOutput.data[index + 10u] == 1.0) {
+    if(inputOutput.data[index + 11u] == 1.0) {
         // If the planet is already collided with, skip the collision check
         return;
     }
@@ -32,7 +33,7 @@ void main() {
 
 
     float distance = getDistance(u_player_position, vec2(x, y));
-    if(distance < size / 2.2) {
+    if(distance < size / 2.5) {
         resultBuffer.result[0] = 1.0; // indicates that the player is colliding with the planet
         resultBuffer.result[1] = x;
         resultBuffer.result[2] = y;
@@ -46,6 +47,9 @@ void main() {
         resultBuffer.result[8] = inputOutput.data[index + 9u]; // colorB
 
         inputOutput.data[index + 10u] = 1.0; // indicates that the player is collided with the planet
+        if(u_push){
+            inputOutput.data[index + 11u] = 1.0; // indicates that the planet is destroyed
+        }
     }
 
 

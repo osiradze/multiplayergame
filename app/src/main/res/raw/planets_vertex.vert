@@ -13,14 +13,14 @@ varying vec4 v_texture_coordinates;
 attribute vec3 a_color;
 varying vec3 v_color;
 
-attribute float a_collision;
-varying float v_collision;
+attribute float a_isDestroyed;
+varying float v_isDestroyed;
 
 
 void main() {
     v_texture_coordinates = a_texture_coordinates;
     v_color = a_color;
-    v_collision = a_collision;
+    v_isDestroyed = a_isDestroyed;
     gl_PointSize = a_size * u_screen_width;
 
     vec2 position = vec2(
