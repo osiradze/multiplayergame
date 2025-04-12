@@ -16,7 +16,7 @@ void main() {
     }
     v_isDead = a_isDead;
     v_color = a_color;
-    gl_PointSize = 5.0;
+    gl_PointSize = 3.0;
 
     vec2 position = vec2(
         a_position.x - u_camera.x,

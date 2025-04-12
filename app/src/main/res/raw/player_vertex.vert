@@ -4,6 +4,9 @@ attribute vec2 a_position;
 uniform float u_ratio;
 uniform vec2 u_camera;
 
+attribute vec2 a_texture_coordinates;
+varying vec2 v_texture_coordinates;
+
 
 uniform vec2 u_position;
 uniform vec2 u_middlePoint;
@@ -34,6 +37,7 @@ vec2 rotateAround(vec2 point, vec2 center, float angle) {
 
 
 void main() {
+    v_texture_coordinates = a_texture_coordinates;
     float angle = angleBetween(u_direction, vec2(0.0, 1.0)); // 0.0, 1.0 because the player is facing up by default
     if (u_direction.x > 0.0) {
         angle = -angle;

@@ -57,7 +57,7 @@ void main() {
         float powDistance = pow(distance, 1.5);
         vec2 vector;
         float power;
-        float randValue = 0.4 + rand(vec2(g, r)) * 0.05;
+        float randValue = 0.4 + rand(vec2(g, r)) * 0.1;
         if(u_push) {
             power = 0.7f;
             vector = vec2(x - u_player_position.x, y - u_player_position.y);

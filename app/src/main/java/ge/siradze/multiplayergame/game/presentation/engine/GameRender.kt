@@ -41,7 +41,7 @@ class GameRender(
     )
 
     // create player and set camera to follow it
-    private val player = PlayerObject(state, context, camera).also {
+    private val player = PlayerObject(state, context, camera, textureCounter).also {
         camera.followPlayer(it.properties)
     }
     private val playerTrail = PlayerTrail(

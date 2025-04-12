@@ -3,6 +3,7 @@ package ge.siradze.multiplayergame.game.presentation.engine.utils
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.opengl.GLES20
+import android.opengl.GLES20.GL_LINEAR
 import android.opengl.GLES20.GL_TEXTURE0
 import android.opengl.GLES30.GL_NEAREST
 import android.opengl.GLES30.GL_TEXTURE_2D
@@ -21,22 +22,23 @@ object TextureUtils {
      * @param offset Offset for GL_TEXTURE0 to GL_TEXTURE32 all object should share 32 capacity
      */
     fun loadTexture(
-        bitmaps: Bitmap,
+        bitmap: Bitmap,
         textureId: Int,
         locations: Int,
         offset: Int,
-    ) {
-        val firstGlTexture = GL_TEXTURE0 + offset
-        glActiveTexture(firstGlTexture)
+    ): Int {
+        val texture = GL_TEXTURE0 + offset
+        glActiveTexture(texture)
         glBindTexture(GL_TEXTURE_2D, textureId)
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmaps, 0)
-        bitmaps.recycle()
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+        bitmap.recycle()
         glUniform1i(locations, offset)
         glBindTexture(GL_TEXTURE_2D, 0)
+        return texture
     }
 
 

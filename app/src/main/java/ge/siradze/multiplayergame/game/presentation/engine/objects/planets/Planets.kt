@@ -48,12 +48,12 @@ import ge.siradze.multiplayergame.game.presentation.engine.utils.TextureUtils
 
 class Planets(
     state: GameState,
-    private val numberOfPlanets: Int,
+    numberOfPlanets: Int,
     private val context: Context,
     private val playerProperties: PlayerData.Properties,
     private val camera: Camera,
     private val textureCounter: TextureCounter,
-    private val textureDimensions: TextureDimensions,
+    textureDimensions: TextureDimensions,
     private val event: (GameRender.InGameEvents.CreateExplosion) -> Unit
 ): GameObject {
 
@@ -84,6 +84,7 @@ class Planets(
 
     private val bitmap = BitmapFactory.decodeResource(context.resources, textureDimensions.bitmapRes)
     private val textures = IntArray(1)
+    private var texture: Int = 0
 
     private var program: Int = 0
     private var computeProgram: Int = 0
@@ -178,7 +179,7 @@ class Planets(
     private fun bindTexture() {
         glGenTextures(1, textures, 0)
 
-        TextureUtils.loadTexture(
+        texture = TextureUtils.loadTexture(
             bitmap,
             textures[0],
             shader.texture.location,

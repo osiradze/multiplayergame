@@ -20,17 +20,24 @@ import java.nio.Buffer
 class PlayerData {
 
     class Vertex {
-        private val scale = 0.02f
-        private val numberOfFloatsPerVertex = 2
+        private val scale = 0.07f
+        private val numberOfFloatsPerVertex = 4
         private val data: FloatArray = floatArrayOf(
-            0.0f, 0.5f,
-            0.5f, -0.5f,
-            -0.5f, -0.5f,
+            // positions (x,y)  // texture coords (s,t)
+            // First triangle
+            -0.5f, -0.5f,       0.0f, 0.0f,     // bottom left
+            0.5f, -0.5f,       1.0f, 0.0f,     // bottom right
+            0.5f,  0.5f,       1.0f, 1.0f,     // top right
+
+            // Second triangle
+            -0.5f, -0.5f,       0.0f, 0.0f,     // bottom left
+            0.5f,  0.5f,       1.0f, 1.0f,     // top right
+            -0.5f,  0.5f,       0.0f, 1.0f      // top left
         ).apply{
             scale(scale, numberOfFloatsPerVertex)
         }
 
-        val middlePoint = data.middlePoint(numberOfFloatsPerVertex)
+        val middlePoint = floatArrayOf(0f, 0f)
 
         val pointNumber = data.size / numberOfFloatsPerVertex
         val stride = numberOfFloatsPerVertex * Float.SIZE_BYTES
@@ -43,6 +50,9 @@ class PlayerData {
     class ShaderLocations(
         val vertex : ShaderAttribLocation = ShaderAttribLocation(
             name = "a_position"
+        ),
+        val textureCoordinates : ShaderAttribLocation = ShaderAttribLocation(
+            name = "a_texture_coordinates"
         ),
         val ratio: ShaderLocation = RatioShaderLocation(),
         val camera: ShaderLocation = CameraShaderLocation(),
@@ -59,6 +69,10 @@ class PlayerData {
         val velocity: ShaderLocation = ShaderUniformLocation(
             name = "u_velocity"
         ),
+
+        val texture: ShaderLocation = ShaderUniformLocation(
+            name = "u_texture"
+        ),
     )
 
     class Properties(
@@ -74,10 +88,10 @@ class PlayerData {
         // pushes or pulls particles
         var push: Boolean = true
 
-        private val rotateSpeed = 15f
+        private val rotateSpeed = 10f
         private var gas = false
-        private val gasForce = 0.05f
-        private val maxSpeed = 1.2f
+        private val gasForce = 0.01f
+        private val maxSpeed = 1.0f
         private val deceleration = 0.98f
 
         fun update() {
