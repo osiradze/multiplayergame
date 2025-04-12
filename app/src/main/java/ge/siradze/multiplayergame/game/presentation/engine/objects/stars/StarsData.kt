@@ -1,5 +1,6 @@
 package ge.siradze.multiplayergame.game.presentation.engine.objects.stars
 
+import ge.siradze.multiplayergame.game.presentation.engine.EngineGlobals
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
 import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderAttribLocation
@@ -33,10 +34,12 @@ class StarsData {
                 data[px(i)] = (Random.nextFloat() - 0.5f) * 4
                 data[py(i)] = (Random.nextFloat() - 0.5f) * 4
                 // velocity
-                data[vx(i)] = -0.001f
-                data[vy(i)] = -0.001f
+                data[vx(i)] = -0.02f * EngineGlobals.deltaTime
+                data[vy(i)] = -0.02f * EngineGlobals.deltaTime
                 // brightness
                 data[vy(i) + 1] = Random.nextFloat() * 0.9f
+
+
             }
         }
 

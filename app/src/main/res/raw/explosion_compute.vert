@@ -46,17 +46,23 @@ void main() {
     }
 
     float distance = getDistance(u_player_position, vec2(x, y));
-    if(distance < 1.0) {
+    float actDistance;
+    if(u_push) {
+        actDistance = 1.0;
+    } else {
+        actDistance = 0.5;
+    }
+    if(distance < actDistance) {
         // set velocity
-        float powDistance = pow(distance, 2.0);
+        float powDistance = pow(distance, 1.5);
         vec2 vector;
         float power;
-        float randValue = 0.4 + rand(vec2(g, r)) * 0.1;
+        float randValue = 0.4 + rand(vec2(g, r)) * 0.05;
         if(u_push) {
-            power = 0.2f;
+            power = 0.7f;
             vector = vec2(x - u_player_position.x, y - u_player_position.y);
         } else {
-            power = 0.5f;
+            power = 0.3f;
             randValue = 1.0f;
             vector = vec2(u_player_position.x - x, u_player_position.y - y);
         }

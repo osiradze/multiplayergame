@@ -11,6 +11,7 @@ import android.opengl.GLES20.glEnableVertexAttribArray
 import android.opengl.GLES20.glUseProgram
 import android.opengl.GLES30.GL_VERTEX_SHADER
 import android.opengl.GLES30.glDeleteVertexArrays
+import android.opengl.GLES30.glUniform1ui
 import android.opengl.GLES31.GL_ARRAY_BUFFER
 import android.opengl.GLES31.GL_COMPUTE_SHADER
 import android.opengl.GLES31.GL_DYNAMIC_DRAW
@@ -25,6 +26,7 @@ import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
 import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
+import ge.siradze.multiplayergame.game.presentation.engine.utils.ShaderUtils
 
 
 class Stars(
@@ -101,7 +103,7 @@ class Stars(
     }
 
     override fun draw() {
-       /* ShaderUtils.computeShader(
+        ShaderUtils.computeShader(
             shaderProgram = computeProgram,
             uniforms = {
                 glUniform1ui(shader.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
@@ -109,7 +111,7 @@ class Stars(
             },
             vbos = vbo,
             x = vertex.numberOfPoints,
-        )*/
+        )
 
 
         glUseProgram(program)

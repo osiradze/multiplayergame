@@ -5,6 +5,7 @@ import android.opengl.GLES20.GL_COLOR_BUFFER_BIT
 import android.opengl.GLES20.glClear
 import android.opengl.GLES20.glClearColor
 import android.opengl.GLSurfaceView
+import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
@@ -32,7 +33,7 @@ class GameRender(
     private var lastFrameTime: Long = System.nanoTime()
 
     private val textureCounter: TextureCounter = TextureCounter()
-    private val planetTextureDimensions = TextureDimensions(4, 4)
+    private val planetTextureDimensions = TextureDimensions(4, 4, R.drawable.planets3)
     private val planetExplosionHelper = PlanetExplosionHelper(context, planetTextureDimensions)
 
     private val camera: Camera = Camera(

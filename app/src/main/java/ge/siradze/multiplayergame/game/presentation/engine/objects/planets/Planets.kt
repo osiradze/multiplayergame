@@ -82,7 +82,7 @@ class Planets(
         )
     )
 
-    private val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.planets)
+    private val bitmap = BitmapFactory.decodeResource(context.resources, textureDimensions.bitmapRes)
     private val textures = IntArray(1)
 
     private var program: Int = 0
