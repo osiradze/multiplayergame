@@ -1,16 +1,19 @@
-<img src="screens/1.png" alt="Alt text for the image" width="100" />
-<img src="screens/2.png" alt="Alt text for the image" width="100" />
-<img src="screens/3.png" alt="Alt text for the image" width="100" />
-<img src="screens/4.png" alt="Alt text for the image" width="100" />
-<img src="screens/5.png" alt="Alt text for the image" width="100" />
-<img src="screens/6.png" alt="Alt text for the image" width="100" />
-<img src="screens/7.png" alt="Alt text for the image" width="100" />
-<img src="screens/8.png" alt="Alt text for the image" width="100" />
-
 # 🎮 2D Android Game: An Exploration of OpenGL and Jetpack Compose
 
 This project represents my personal journey in developing a 2D game for Android, driven by a curiosity to integrate the low-level control of OpenGL ES with the modern UI paradigms offered by Jetpack Compose.
 It's an ongoing effort to create a performant and maintainable application while adhering to a clean architectural style.
+
+<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+  <img src="screens/1.png" alt="Alt text for the image" width="100" />
+  <img src="screens/2.png" alt="Alt text for the image" width="100" />
+  <img src="screens/3.png" alt="Alt text for the image" width="100" />
+  <img src="screens/4.png" alt="Alt text for the image" width="100" />
+  <img src="screens/5.png" alt="Alt text for the image" width="100" />
+  <img src="screens/6.png" alt="Alt text for the image" width="100" />
+  <img src="screens/7.png" alt="Alt text for the image" width="100" />
+  <img src="screens/8.png" alt="Alt text for the image" width="100" />
+</div>
+
 
 ## Key Aspects
 
