@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.util.Log
-import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureDimensions
 import androidx.core.graphics.get
 
@@ -13,7 +12,7 @@ class PlanetExplosionHelper(
     context: Context,
     val textureDimensions: TextureDimensions
 ) {
-    val pointNumber: Int = 8000
+    val pointNumber: Int = 2000
 
     val numberOfFloatsPerPoint = 8 // 2 - position.  3 - color. 2 - velocity. 1 - isDead
     // adding 1 for counter

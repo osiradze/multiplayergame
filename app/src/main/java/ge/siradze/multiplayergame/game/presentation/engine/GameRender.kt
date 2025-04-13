@@ -33,8 +33,12 @@ class GameRender(
     private var lastFrameTime: Long = System.nanoTime()
 
     private val textureCounter: TextureCounter = TextureCounter()
-    private val planetTextureDimensions = TextureDimensions(4, 4, R.drawable.planets3)
+
+    private val planetTextureDimensions = TextureDimensions(6, 6, R.drawable.planets2)
     private val planetExplosionHelper = PlanetExplosionHelper(context, planetTextureDimensions)
+
+    private val evilPlanetTextureDimensions = TextureDimensions(4, 4, R.drawable.evilplanets)
+    private val evilPlanetExplosionHelper = PlanetExplosionHelper(context, evilPlanetTextureDimensions)
 
     private val camera: Camera = Camera(
         state
@@ -69,7 +73,30 @@ class GameRender(
         feedbackSounds.vibrate(10)
         uiEffect(UIEffect.PointUp)
     }
+
+    private val evilExplosionCreation: (InGameEvents.CreateExplosion) -> Unit = { event ->
+        // We need to create Planet explosion in another thread,
+        // because it take a lot of time to process vertex data
+        Thread {
+            temporaryObjects.add(
+                PlanetExplosion(
+                    context = context,
+                    camera = camera,
+                    helper = evilPlanetExplosionHelper,
+                    playerProperties = player.properties,
+                    planet = event.planet,
+                    size = event.size,
+                    position = event.position,
+                    color = event.color
+                )
+            )
+        }.start()
+        feedbackSounds.vibrate(10)
+        uiEffect(UIEffect.PointUp)
+    }
+
     private val planets = Planets(
+        name = "Planets",
         state = state,
         numberOfPlanets = NUMBER_OF_PLANETS,
         context = context,
@@ -80,6 +107,18 @@ class GameRender(
         event = explosionCreation
     )
 
+    private val evilPlanets = Planets(
+        name = "Evil Planets",
+        state = state,
+        numberOfPlanets = NUMBER_OF_PLANETS,
+        context = context,
+        playerProperties = player.properties,
+        camera = camera,
+        textureCounter = textureCounter,
+        textureDimensions = evilPlanetTextureDimensions,
+        event = evilExplosionCreation
+    )
+
 
 
     private val stars = Stars(context, camera)
@@ -88,7 +127,8 @@ class GameRender(
         player,
         playerTrail,
         stars,
-        planets
+        planets,
+        evilPlanets
     )
     
     private val temporaryObjects: MutableList<PlanetExplosion> = mutableListOf()
@@ -170,6 +210,6 @@ class GameRender(
 
     companion object {
         const val MAX_EXPLOSION = 60
-        const val NUMBER_OF_PLANETS = 1000
+        const val NUMBER_OF_PLANETS = 500
     }
 }

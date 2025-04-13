@@ -7,6 +7,7 @@ import ge.siradze.multiplayergame.game.presentation.engine.extensions.rotate
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.scale
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.signedAngleBetweenVectors
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.vectorLength
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
@@ -16,11 +17,12 @@ import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderUniformLocation
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import java.nio.Buffer
+import kotlin.math.pow
 
 class PlayerData {
 
     class Vertex {
-        private val scale = 0.07f
+        private val scale = 0.04f
         private val numberOfFloatsPerVertex = 4
         private val data: FloatArray = floatArrayOf(
             // positions (x,y)  // texture coords (s,t)
@@ -100,8 +102,10 @@ class PlayerData {
             } else {
                 velocity *= deceleration
             }
-            position[0] += direction[0] * velocity * EngineGlobals.deltaTime
-            position[1] += direction[1] * velocity * EngineGlobals.deltaTime
+            val vectorLength = targetDirection.vectorLength().toDouble().pow(0.5).toFloat() * 0.1f
+
+            position[0] += direction[0] * velocity * EngineGlobals.deltaTime * vectorLength
+            position[1] += direction[1] * velocity * EngineGlobals.deltaTime * vectorLength
             val angle = signedAngleBetweenVectors(targetDirection, direction)
             direction.rotate(-angle * rotateSpeed * EngineGlobals.deltaTime)
         }
