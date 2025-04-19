@@ -22,7 +22,7 @@ import kotlin.math.pow
 class PlayerData {
 
     class Vertex {
-        private val scale = 0.04f
+        private val scale = 0.1f
         private val numberOfFloatsPerVertex = 4
         private val data: FloatArray = floatArrayOf(
             // positions (x,y)  // texture coords (s,t)
@@ -107,7 +107,7 @@ class PlayerData {
             position[0] += direction[0] * velocity * EngineGlobals.deltaTime * vectorLength
             position[1] += direction[1] * velocity * EngineGlobals.deltaTime * vectorLength
             val angle = signedAngleBetweenVectors(targetDirection, direction)
-            direction.rotate(-angle * rotateSpeed * EngineGlobals.deltaTime)
+            direction.rotate(-angle * rotateSpeed * vectorLength * EngineGlobals.deltaTime)
         }
 
         fun addForce(force: FloatArray) {

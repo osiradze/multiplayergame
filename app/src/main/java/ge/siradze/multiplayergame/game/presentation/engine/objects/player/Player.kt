@@ -135,6 +135,7 @@ class PlayerObject(
 
     private fun bindTexture() {
         glGenTextures(1, textures, 0)
+        glUseProgram(program)
 
         texture = TextureUtils.loadTexture(
             bitmap,
@@ -152,8 +153,9 @@ class PlayerObject(
         glEnableVertexAttribArray(shader.vertex.location)
         glEnableVertexAttribArray(shader.textureCoordinates.location)
 
-        glBindTexture(GL_TEXTURE_2D, textures[0])
         glActiveTexture(texture)
+        glBindTexture(GL_TEXTURE_2D, textures[0])
+
 
         updateAttributes()
         camera.bindUniform(shader.camera.location)

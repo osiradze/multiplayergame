@@ -23,10 +23,10 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 class GameRender(
-    private val context: Context,
-    state: GameState,
-    feedbackSounds: FeedbackSounds,
-    private val uiEffect: (UIEffect) -> Unit,
+    val context: Context,
+    val state: GameState,
+    val feedbackSounds: FeedbackSounds,
+    val uiEffect: (UIEffect) -> Unit,
 ) : GLSurfaceView.Renderer {
 
     private var ratio = 1f
@@ -34,18 +34,15 @@ class GameRender(
 
     private val textureCounter: TextureCounter = TextureCounter()
 
-    private val planetTextureDimensions = TextureDimensions(6, 6, R.drawable.planets2)
-    private val planetExplosionHelper = PlanetExplosionHelper(context, planetTextureDimensions)
+    private val planetTextureDimensions = TextureDimensions(6, 6, R.drawable.planets)
+    val planetExplosionHelper = PlanetExplosionHelper(context, planetTextureDimensions)
 
-    private val evilPlanetTextureDimensions = TextureDimensions(4, 4, R.drawable.evilplanets)
-    private val evilPlanetExplosionHelper = PlanetExplosionHelper(context, evilPlanetTextureDimensions)
-
-    private val camera: Camera = Camera(
+    val camera: Camera = Camera(
         state
     )
 
     // create player and set camera to follow it
-    private val player = PlayerObject(state, context, camera, textureCounter).also {
+    val player = PlayerObject(state, context, camera, textureCounter).also {
         camera.followPlayer(it.properties)
     }
     private val playerTrail = PlayerTrail(
@@ -53,47 +50,6 @@ class GameRender(
         player.properties,
         camera
     )
-    private val explosionCreation: (InGameEvents.CreateExplosion) -> Unit = { event ->
-        // We need to create Planet explosion in another thread,
-        // because it take a lot of time to process vertex data
-        Thread {
-            temporaryObjects.add(
-                PlanetExplosion(
-                    context = context,
-                    camera = camera,
-                    helper = planetExplosionHelper,
-                    playerProperties = player.properties,
-                    planet = event.planet,
-                    size = event.size,
-                    position = event.position,
-                    color = event.color
-                )
-            )
-        }.start()
-        feedbackSounds.vibrate(10)
-        uiEffect(UIEffect.PointUp)
-    }
-
-    private val evilExplosionCreation: (InGameEvents.CreateExplosion) -> Unit = { event ->
-        // We need to create Planet explosion in another thread,
-        // because it take a lot of time to process vertex data
-        Thread {
-            temporaryObjects.add(
-                PlanetExplosion(
-                    context = context,
-                    camera = camera,
-                    helper = evilPlanetExplosionHelper,
-                    playerProperties = player.properties,
-                    planet = event.planet,
-                    size = event.size,
-                    position = event.position,
-                    color = event.color
-                )
-            )
-        }.start()
-        feedbackSounds.vibrate(10)
-        uiEffect(UIEffect.PointUp)
-    }
 
     private val planets = Planets(
         name = "Planets",
@@ -107,31 +63,17 @@ class GameRender(
         event = explosionCreation
     )
 
-    private val evilPlanets = Planets(
-        name = "Evil Planets",
-        state = state,
-        numberOfPlanets = NUMBER_OF_PLANETS,
-        context = context,
-        playerProperties = player.properties,
-        camera = camera,
-        textureCounter = textureCounter,
-        textureDimensions = evilPlanetTextureDimensions,
-        event = evilExplosionCreation
-    )
-
-
-
     private val stars = Stars(context, camera)
 
     private val objects: MutableList<GameObject> = mutableListOf(
-        player,
-        playerTrail,
         stars,
         planets,
-        evilPlanets
+        player,
+        playerTrail,
+        //evilPlanets,
     )
     
-    private val temporaryObjects: MutableList<PlanetExplosion> = mutableListOf()
+    val temporaryObjects: MutableList<PlanetExplosion> = mutableListOf()
 
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
         lastFrameTime = System.nanoTime()
@@ -209,7 +151,7 @@ class GameRender(
     }
 
     companion object {
-        const val MAX_EXPLOSION = 60
-        const val NUMBER_OF_PLANETS = 500
+        const val MAX_EXPLOSION = 50
+        const val NUMBER_OF_PLANETS = 100
     }
 }

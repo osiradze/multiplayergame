@@ -26,7 +26,7 @@ class PlanetExplosionData {
         val data: FloatArray = helper.data[
             (planet.x * helper.textureDimensions.columns).toInt()
         ][
-            (planet.y * helper.textureDimensions.columns).toInt()
+            (planet.y * helper.textureDimensions.rows).toInt()
         ]
         .copyOfRange(0, pointNumber * helper.numberOfFloatsPerPoint).apply {
             multiply(size)

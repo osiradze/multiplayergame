@@ -179,6 +179,7 @@ class Planets(
 
     private fun bindTexture() {
         glGenTextures(1, textures, 0)
+        glUseProgram(program)
 
         texture = TextureUtils.loadTexture(
             bitmap,

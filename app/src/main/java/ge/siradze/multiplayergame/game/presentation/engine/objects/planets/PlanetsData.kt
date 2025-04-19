@@ -17,8 +17,8 @@ class PlanetsData {
     class Vertex(
         val numberOfPlanets: Int,
         private val area: FloatArray = floatArrayOf(20f, 20f),
-        private val planetMinSize: Float = 0.2f,
-        private val planetMaxSize: Float = 0.2f,
+        private val planetMinSize: Float = 0.6f,
+        private val planetMaxSize: Float = 0.4f,
         private val textureDimensions: TextureDimensions
     ): AttributeData() {
         // 2 position + 1 size + 4 texture coordinates + 3 color + 1 collision flag + 1 isDestroyed flag
