@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.opengl.GLES20.GL_ARRAY_BUFFER
 import android.opengl.GLES20.GL_FRAGMENT_SHADER
+import android.opengl.GLES20.GL_LINEAR
+import android.opengl.GLES20.GL_LINE_STRIP
 import android.opengl.GLES20.GL_POINTS
 import android.opengl.GLES20.glDeleteBuffers
 import android.opengl.GLES20.glDeleteShader
@@ -12,6 +14,7 @@ import android.opengl.GLES20.glDisableVertexAttribArray
 import android.opengl.GLES20.glDrawArrays
 import android.opengl.GLES20.glEnableVertexAttribArray
 import android.opengl.GLES20.glGenBuffers
+import android.opengl.GLES20.glLineWidth
 import android.opengl.GLES20.glUniform1f
 import android.opengl.GLES20.glUniform1i
 import android.opengl.GLES20.glUniform2f
@@ -171,6 +174,7 @@ class Planets(
         shader.screenWidth.init(program)
         shader.ratio.init(program)
         shader.camera.init(program)
+        shader.drawLine.init(program)
 
         shader.floatsPerVertex.init(computeProgram)
         shader.playerPosition.init(computeProgram)
@@ -185,7 +189,8 @@ class Planets(
             bitmap,
             textures[0],
             shader.texture.location,
-            textureCounter.getTextureOffset(1)
+            textureCounter.getTextureOffset(1),
+            GL_LINEAR
         )
     }
 
@@ -193,7 +198,9 @@ class Planets(
         glBindVertexArray(vao[0])
 
         compute()
+        drawLines()
         drawPlanets()
+
 
         glBindVertexArray(0)
     }
@@ -225,6 +232,22 @@ class Planets(
         glDisableVertexAttribArray(shader.collision.location)
         glDisableVertexAttribArray(shader.isDestroyed.location)
         glUseProgram(0)
+    }
+
+    private fun drawLines() {
+        glUseProgram(program)
+        glLineWidth(1.0f)
+        glEnableVertexAttribArray(shader.vertex.location)
+        glEnableVertexAttribArray(shader.isDestroyed.location)
+        glUniform1i(shader.drawLine.location, 1)
+        glDrawArrays(
+            GL_LINE_STRIP,
+            0,
+            vertex.numberOfPlanets
+        )
+        glUniform1i(shader.drawLine.location, 0)
+        glDisableVertexAttribArray(shader.vertex.location)
+        glDisableVertexAttribArray(shader.isDestroyed.location)
     }
 
     private fun compute() {

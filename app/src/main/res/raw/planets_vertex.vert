@@ -16,12 +16,15 @@ varying vec3 v_color;
 attribute float a_isDestroyed;
 varying float v_isDestroyed;
 
+uniform bool u_drawLine;
 
 void main() {
-    v_texture_coordinates = a_texture_coordinates;
-    v_color = a_color;
-    v_isDestroyed = a_isDestroyed;
-    gl_PointSize = a_size * u_screen_width;
+    if(u_drawLine != true) {
+        v_texture_coordinates = a_texture_coordinates;
+        v_color = a_color;
+        v_isDestroyed = a_isDestroyed;
+        gl_PointSize = a_size * u_screen_width;
+    }
 
     vec2 position = vec2(
         a_position.x - u_camera.x,

@@ -8,6 +8,7 @@ import android.opengl.GLES20.GL_FRAGMENT_SHADER
 import android.opengl.GLES20.GL_TRIANGLES
 import android.opengl.GLES20.GL_VERTEX_SHADER
 import android.opengl.GLES20.glActiveTexture
+import android.opengl.GLES20.glDrawArrays
 import android.opengl.GLES20.glUniform2f
 import android.opengl.GLES20.glVertexAttribPointer
 import android.opengl.GLES30.GL_STATIC_DRAW
@@ -159,7 +160,7 @@ class PlayerObject(
 
         updateAttributes()
         camera.bindUniform(shader.camera.location)
-        GLES20.glDrawArrays(GL_TRIANGLES, 0, vertex.pointNumber)
+        glDrawArrays(GL_TRIANGLES, 0, vertex.pointNumber)
 
         glBindTexture(GL_TEXTURE_2D, 0)
         glDisableVertexAttribArray(shader.vertex.location)

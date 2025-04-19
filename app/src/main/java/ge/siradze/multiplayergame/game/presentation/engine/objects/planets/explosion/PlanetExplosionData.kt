@@ -22,7 +22,8 @@ class PlanetExplosionData {
         position: FloatArray,
         color: FloatArray,
     ): AttributeData() {
-        val pointNumber = (helper.pointNumber * size).toInt()
+        val availableSize = if(size > 1f) 1f else size
+        val pointNumber = (helper.pointNumber * availableSize).toInt()
         val data: FloatArray = helper.data[
             (planet.x * helper.textureDimensions.columns).toInt()
         ][

@@ -26,44 +26,19 @@ object TextureUtils {
         textureId: Int,
         locations: Int,
         offset: Int,
+        filterType : Int = GL_NEAREST
     ): Int {
         val texture = GL_TEXTURE0 + offset
         glActiveTexture(texture)
         glBindTexture(GL_TEXTURE_2D, textureId)
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterType)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterType)
 
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
         bitmap.recycle()
         glUniform1i(locations, offset)
         return texture
-    }
-
-
-    /**
-     * Loads textures to the GPU
-     * @param offset Offset for GL_TEXTURE0 to GL_TEXTURE32 all object should share 32 capacity
-     */
-    fun loadTextures(
-        bitmaps: Array<Bitmap>,
-        textureIds: IntArray,
-        locations: Array<Int>,
-        offset: Int,
-    ) {
-        val firstGlTexture = GL_TEXTURE0 + offset
-        for (i in bitmaps.indices) {
-            glActiveTexture(firstGlTexture + i)
-            glBindTexture(GL_TEXTURE_2D, textureIds[i])
-
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-
-            GLUtils.texImage2D(GL_TEXTURE_2D, 0, flipBitmapVertically(bitmaps[i]), 0)
-            bitmaps[i].recycle()
-            glUniform1i(locations[i], i + offset)
-        }
-
     }
 
     private fun flipBitmapVertically(bitmap: Bitmap): Bitmap {

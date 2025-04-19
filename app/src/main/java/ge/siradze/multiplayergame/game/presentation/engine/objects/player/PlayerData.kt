@@ -22,7 +22,7 @@ import kotlin.math.pow
 class PlayerData {
 
     class Vertex {
-        private val scale = 0.1f
+        private val scale = 0.08f
         private val numberOfFloatsPerVertex = 4
         private val data: FloatArray = floatArrayOf(
             // positions (x,y)  // texture coords (s,t)
@@ -88,7 +88,7 @@ class PlayerData {
         var velocity: Float = 0f,
     ) {
         // pushes or pulls particles
-        var push: Boolean = true
+        var push: Boolean = false
 
         private val rotateSpeed = 10f
         private var gas = false

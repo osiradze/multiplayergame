@@ -17,8 +17,8 @@ class PlanetsData {
     class Vertex(
         val numberOfPlanets: Int,
         private val area: FloatArray = floatArrayOf(20f, 20f),
-        private val planetMinSize: Float = 0.6f,
-        private val planetMaxSize: Float = 0.4f,
+        private val planetMinSize: Float = 0.7f,
+        private val planetMaxSize: Float = 0.7f,
         private val textureDimensions: TextureDimensions
     ): AttributeData() {
         // 2 position + 1 size + 4 texture coordinates + 3 color + 1 collision flag + 1 isDestroyed flag
@@ -34,10 +34,14 @@ class PlanetsData {
         }
 
         private fun generatePoints() {
+            val lastPlanetPosition = floatArrayOf(0f,0f)
             for (i in 0 until numberOfPlanets) {
+
                 //position
-                data[i * numberOfFloatsPerVertex + 0] = (Random.nextFloat() - 0.5f) * area.x
-                data[i * numberOfFloatsPerVertex + 1] = (Random.nextFloat() - 0.5f) * area.y
+                data[i * numberOfFloatsPerVertex + 0] = lastPlanetPosition.x + (Random.nextFloat()) * 4f
+                data[i * numberOfFloatsPerVertex + 1] = lastPlanetPosition.y + (Random.nextFloat()) * 4f - 2f
+                lastPlanetPosition[0] = data[i * numberOfFloatsPerVertex + 0]
+                lastPlanetPosition[1] = data[i * numberOfFloatsPerVertex + 1]
 
                 //size
                 data[i * numberOfFloatsPerVertex + 2] = Random.nextFloat() * planetMaxSize + planetMinSize
@@ -52,9 +56,9 @@ class PlanetsData {
                 data[i * numberOfFloatsPerVertex + 6] = textureDimensions.stepY
 
                 // color
-                data[i * numberOfFloatsPerVertex + 7] = Random.nextFloat() * 0.5f + 0.5f
-                data[i * numberOfFloatsPerVertex + 8] = Random.nextFloat() * 0.5f + 0.5f
-                data[i * numberOfFloatsPerVertex + 9] = Random.nextFloat() * 0.5f + 0.5f
+                data[i * numberOfFloatsPerVertex + 7] = Random.nextFloat() // 0.5f + 0.5f
+                data[i * numberOfFloatsPerVertex + 8] = Random.nextFloat() //* 0.5f + 0.5f
+                data[i * numberOfFloatsPerVertex + 9] = Random.nextFloat() //* 0.5f + 0.5f
             }
         }
     }
@@ -104,6 +108,9 @@ class PlanetsData {
         ),
         val push: ShaderUniformLocation = ShaderUniformLocation(
             name = "u_push"
+        ),
+        val drawLine : ShaderUniformLocation = ShaderUniformLocation(
+            name = "u_drawLine"
         ),
     )
 }

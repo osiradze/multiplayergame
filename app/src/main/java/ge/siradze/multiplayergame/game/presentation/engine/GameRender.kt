@@ -34,7 +34,7 @@ class GameRender(
 
     private val textureCounter: TextureCounter = TextureCounter()
 
-    private val planetTextureDimensions = TextureDimensions(6, 6, R.drawable.planets)
+    private val planetTextureDimensions = TextureDimensions(2, 3, R.drawable.planets3)
     val planetExplosionHelper = PlanetExplosionHelper(context, planetTextureDimensions)
 
     val camera: Camera = Camera(
@@ -70,7 +70,6 @@ class GameRender(
         planets,
         player,
         playerTrail,
-        //evilPlanets,
     )
     
     val temporaryObjects: MutableList<PlanetExplosion> = mutableListOf()
@@ -152,6 +151,6 @@ class GameRender(
 
     companion object {
         const val MAX_EXPLOSION = 50
-        const val NUMBER_OF_PLANETS = 100
+        const val NUMBER_OF_PLANETS = 50
     }
 }
