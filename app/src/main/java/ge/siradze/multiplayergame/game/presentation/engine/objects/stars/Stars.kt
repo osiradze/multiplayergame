@@ -8,10 +8,10 @@ import android.opengl.GLES20.glDeleteShader
 import android.opengl.GLES20.glDisableVertexAttribArray
 import android.opengl.GLES20.glDrawArrays
 import android.opengl.GLES20.glEnableVertexAttribArray
+import android.opengl.GLES20.glUniform1f
 import android.opengl.GLES20.glUseProgram
 import android.opengl.GLES30.GL_VERTEX_SHADER
 import android.opengl.GLES30.glDeleteVertexArrays
-import android.opengl.GLES30.glUniform1ui
 import android.opengl.GLES31.GL_ARRAY_BUFFER
 import android.opengl.GLES31.GL_COMPUTE_SHADER
 import android.opengl.GLES31.GL_DYNAMIC_DRAW
@@ -26,7 +26,6 @@ import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
 import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
-import ge.siradze.multiplayergame.game.presentation.engine.utils.ShaderUtils
 
 
 class Stars(
@@ -58,7 +57,6 @@ class Stars(
         )
     )
     private var program = 0
-    private var computeProgram = 0
 
     override fun init() {
         initProgram()
@@ -80,12 +78,17 @@ class Stars(
             init(program)
             load(2, GL_FLOAT, false, vertex.stride, 0)
         }
+        shader.cameraSpeed.apply {
+            init(program)
+            load(1, GL_FLOAT, false, vertex.stride, 2 * Float.SIZE_BYTES)
+        }
         shader.brightness.apply {
             init(program)
-            load(1, GL_FLOAT, false, vertex.stride, 4 * Float.SIZE_BYTES)
+            load(1, GL_FLOAT, false, vertex.stride, 3 * Float.SIZE_BYTES)
         }
-        shader.camera.init(computeProgram)
-        shader.floatsPerVertex.init(computeProgram)
+
+        shader.camera.init(program)
+        shader.ratio.init(program)
 
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindVertexArray(0)
@@ -94,30 +97,20 @@ class Stars(
     private fun initProgram() {
         val vertexShader = shaders[0].create(context) ?: return
         val fragmentShader = shaders[1].create(context) ?: return
-        val computeShader = shaders[2].create(context) ?: return
 
         program = OpenGLUtils.createAndLinkProgram(vertexShader, fragmentShader) ?: return
-        computeProgram = OpenGLUtils.createAndLinkProgram(computeShader) ?: return
         glDeleteShader(vertexShader)
         glDeleteShader(fragmentShader)
     }
 
     override fun draw() {
-        ShaderUtils.computeShader(
-            shaderProgram = computeProgram,
-            uniforms = {
-                glUniform1ui(shader.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
-                camera.bindUniform(shader.camera.location)
-            },
-            vbos = vbo,
-            x = vertex.numberOfPoints,
-        )
-
-
         glUseProgram(program)
         glBindVertexArray(vao[0])
         glEnableVertexAttribArray(shader.vertex.location)
+        glEnableVertexAttribArray(shader.cameraSpeed.location)
         glEnableVertexAttribArray(shader.brightness.location)
+
+        camera.bindUniform(shader.camera.location)
 
         glDrawArrays(
             GL_POINTS,
@@ -126,9 +119,16 @@ class Stars(
         )
 
         glDisableVertexAttribArray(shader.vertex.location)
+        glDisableVertexAttribArray(shader.cameraSpeed.location)
         glDisableVertexAttribArray(shader.brightness.location)
         glBindVertexArray(0)
         glUseProgram(0)
+    }
+
+    override fun setRatio(ratio: Float) {
+        super.setRatio(ratio)
+        glUseProgram(program)
+        glUniform1f(shader.ratio.location, ratio)
     }
 
     override fun release() {
