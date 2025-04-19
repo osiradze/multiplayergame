@@ -16,9 +16,8 @@ import kotlin.random.Random
 class PlanetsData {
     class Vertex(
         val numberOfPlanets: Int,
-        private val area: FloatArray = floatArrayOf(20f, 20f),
-        private val planetMinSize: Float = 0.7f,
-        private val planetMaxSize: Float = 0.7f,
+        private val planetMinSize: Float = 0.5f,
+        private val planetMaxSize: Float = 0.5f,
         private val textureDimensions: TextureDimensions
     ): AttributeData() {
         // 2 position + 1 size + 4 texture coordinates + 3 color + 1 collision flag + 1 isDestroyed flag
