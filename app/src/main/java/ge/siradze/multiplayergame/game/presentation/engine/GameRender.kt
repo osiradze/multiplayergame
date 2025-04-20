@@ -9,6 +9,7 @@ import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
+import ge.siradze.multiplayergame.game.presentation.engine.objects.asteroids.Asteroids
 import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.Planets
 import ge.siradze.multiplayergame.game.presentation.engine.objects.explosion.Explosion
 import ge.siradze.multiplayergame.game.presentation.engine.objects.explosion.ExplosionHelper
@@ -34,9 +35,6 @@ class GameRender(
 
     private val textureCounter: TextureCounter = TextureCounter()
 
-    private val planetTextureDimensions = TextureDimensions(2, 3, R.drawable.planets3)
-    val planetExplosionHelper = ExplosionHelper(context, planetTextureDimensions)
-
     val camera: Camera = Camera(
         state
     )
@@ -59,7 +57,16 @@ class GameRender(
         playerProperties = player.properties,
         camera = camera,
         textureCounter = textureCounter,
-        textureDimensions = planetTextureDimensions,
+        event = explosionCreation
+    )
+
+    private val asteroids = Asteroids(
+        name = "Asteroids",
+        state = state,
+        context = context,
+        playerProperties = player.properties,
+        camera = camera,
+        textureCounter = textureCounter,
         event = explosionCreation
     )
 
@@ -68,6 +75,7 @@ class GameRender(
     private val objects: MutableList<GameObject> = mutableListOf(
         stars,
         planets,
+        asteroids,
         player,
         playerTrail,
     )
@@ -141,7 +149,8 @@ class GameRender(
             val position: FloatArray,
             val size: Float,
             val planet: FloatArray,
-            val color: FloatArray
+            val color: FloatArray,
+            val explosionHelper: ExplosionHelper
         ) : InGameEvents()
     }
 

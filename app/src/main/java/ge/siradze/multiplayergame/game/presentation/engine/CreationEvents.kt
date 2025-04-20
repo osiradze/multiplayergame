@@ -11,7 +11,7 @@ val GameRender.explosionCreation get() =  { event: GameRender.InGameEvents.Creat
             Explosion(
                 context = context,
                 camera = camera,
-                helper = planetExplosionHelper,
+                helper = event.explosionHelper,
                 playerProperties = player.properties,
                 planet = event.planet,
                 size = event.size,

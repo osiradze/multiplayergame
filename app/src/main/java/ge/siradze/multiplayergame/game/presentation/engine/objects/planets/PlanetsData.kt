@@ -89,6 +89,7 @@ class PlanetsData {
             name = "a_color"
         ),
 
+        // required to convert pixel size to world units
         val screenWidth : ShaderUniformLocation = ShaderUniformLocation(
             name = "u_screen_width"
         ),

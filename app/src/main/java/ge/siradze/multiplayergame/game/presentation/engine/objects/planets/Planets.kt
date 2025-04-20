@@ -40,6 +40,7 @@ import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
+import ge.siradze.multiplayergame.game.presentation.engine.objects.explosion.ExplosionHelper
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerData
 import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter
@@ -57,16 +58,20 @@ class Planets(
     private val playerProperties: PlayerData.Properties,
     private val camera: Camera,
     private val textureCounter: TextureCounter,
-    textureDimensions: TextureDimensions,
     private val event: (GameRender.InGameEvents.CreateExplosion) -> Unit
 ): GameObject {
+
+    private val textureDimensions = TextureDimensions(2, 3, R.drawable.planets3)
+    private val explosionHelper = ExplosionHelper(context, textureDimensions)
+
 
     private val vao: IntArray = IntArray(1)
     private val vbo: IntArray = IntArray(2)
 
-    private val vertex: PlanetsData.Vertex =
-        state.get(PlanetsData.Vertex::class.qualifiedName + name) as? PlanetsData.Vertex
-            ?: PlanetsData.Vertex(numberOfPlanets, textureDimensions = textureDimensions).also { state.set(PlanetsData.Vertex::class.qualifiedName, it) }
+    private val vertex: PlanetsData.Vertex = state.get(PlanetsData.Vertex::class.qualifiedName + name) as? PlanetsData.Vertex ?:
+        PlanetsData.Vertex(numberOfPlanets, textureDimensions = textureDimensions).also {
+            state.set(PlanetsData.Vertex::class.qualifiedName, it)
+        }
     private val shader = PlanetsData.ShaderLocations()
     private val shaders = arrayOf(
         Shader(
@@ -161,10 +166,6 @@ class Planets(
             load(3, GL_FLOAT, false, vertex.stride, 7 * Float.SIZE_BYTES)
         }
 
-        shader.collision.apply {
-            init(program)
-            load(1, GL_FLOAT, false, vertex.stride, 10 * Float.SIZE_BYTES)
-        }
         shader.isDestroyed.apply {
             init(program)
             load(1, GL_FLOAT, false, vertex.stride, 11 * Float.SIZE_BYTES)
@@ -207,11 +208,11 @@ class Planets(
 
     private fun drawPlanets() {
         glUseProgram(program)
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
         glEnableVertexAttribArray(shader.vertex.location)
         glEnableVertexAttribArray(shader.textureCoordinates.location)
         glEnableVertexAttribArray(shader.size.location)
         glEnableVertexAttribArray(shader.color.location)
-        glEnableVertexAttribArray(shader.collision.location)
         glEnableVertexAttribArray(shader.isDestroyed.location)
         glBindTexture(GL_TEXTURE_2D, textures[0])
 
@@ -229,7 +230,6 @@ class Planets(
         glDisableVertexAttribArray(shader.textureCoordinates.location)
         glDisableVertexAttribArray(shader.size.location)
         glDisableVertexAttribArray(shader.color.location)
-        glDisableVertexAttribArray(shader.collision.location)
         glDisableVertexAttribArray(shader.isDestroyed.location)
         glUseProgram(0)
     }
@@ -270,11 +270,17 @@ class Planets(
              x = vertex.numberOfPlanets,
          )
 
+        handleCollisionData()
+    }
+
+    private fun handleCollisionData() {
+        // read data from GPU
         val collisionData = OpenGLUtils.readSSBO(
             vbo[1],
             collisionData.data.size,
             Float.SIZE_BYTES
         )
+        // check if collision happened
         if(collisionData[0] == 1f){
             if(playerProperties.push){
                 event(
@@ -282,7 +288,8 @@ class Planets(
                         position = floatArrayOf(collisionData[1], collisionData[2]),
                         size = collisionData[3],
                         planet = floatArrayOf(collisionData[4],  collisionData[5]),
-                        color = floatArrayOf(collisionData[6], collisionData[7], collisionData[8])
+                        color = floatArrayOf(collisionData[6], collisionData[7], collisionData[8]),
+                        explosionHelper = explosionHelper
                     )
                 )
             }  else {
@@ -290,9 +297,6 @@ class Planets(
                     floatArrayOf(collisionData[1], collisionData[2])
                 )
             }
-
-            //Log.i("TAG", "compute: $collisionData")
-            //Log.i("TAG", "compute: ${System.currentTimeMillis() - old}")
         }
     }
 
