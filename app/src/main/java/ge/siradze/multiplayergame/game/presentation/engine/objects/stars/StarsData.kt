@@ -1,12 +1,10 @@
 package ge.siradze.multiplayergame.game.presentation.engine.objects.stars
 
-import ge.siradze.multiplayergame.game.presentation.engine.EngineGlobals
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
 import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.RatioShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderAttribLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderLocation
-import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderUniformLocation
 import java.nio.Buffer
 import kotlin.random.Random
 
@@ -26,7 +24,7 @@ class StarsData {
         fun getBuffer(): Buffer = data.toBuffer()
 
         private val cameraSpeeds = floatArrayOf(
-            0.2f, 0.4f, 0.6f,
+            0.2f, 0.2f, 0.2f, 0.4f, 0.4f, 0.6f,
         )
 
         init {

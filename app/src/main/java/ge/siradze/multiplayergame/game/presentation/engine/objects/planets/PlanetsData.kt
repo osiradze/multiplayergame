@@ -37,7 +37,7 @@ class PlanetsData {
             for (i in 0 until numberOfPlanets) {
 
                 //position
-                data[i * numberOfFloatsPerVertex + 0] = lastPlanetPosition.x + (Random.nextFloat()) * 4f
+                data[i * numberOfFloatsPerVertex + 0] = lastPlanetPosition.x + (Random.nextFloat()) * 2f + 2f
                 data[i * numberOfFloatsPerVertex + 1] = lastPlanetPosition.y + (Random.nextFloat()) * 4f - 2f
                 lastPlanetPosition[0] = data[i * numberOfFloatsPerVertex + 0]
                 lastPlanetPosition[1] = data[i * numberOfFloatsPerVertex + 1]
@@ -55,9 +55,9 @@ class PlanetsData {
                 data[i * numberOfFloatsPerVertex + 6] = textureDimensions.stepY
 
                 // color
-                data[i * numberOfFloatsPerVertex + 7] = Random.nextFloat() // 0.5f + 0.5f
-                data[i * numberOfFloatsPerVertex + 8] = Random.nextFloat() //* 0.5f + 0.5f
-                data[i * numberOfFloatsPerVertex + 9] = Random.nextFloat() //* 0.5f + 0.5f
+                data[i * numberOfFloatsPerVertex + 7] = Random.nextFloat() * 0.5f + 0.5f
+                data[i * numberOfFloatsPerVertex + 8] = Random.nextFloat() * 0.5f + 0.5f
+                data[i * numberOfFloatsPerVertex + 9] = Random.nextFloat() * 0.5f + 0.5f
             }
         }
     }

@@ -14,7 +14,7 @@ vec2 wrapToNDC(vec2 pos) {
 
 void main() {
     v_brightness = a_brightness;
-    gl_PointSize = a_brightness * 2.0;
+    gl_PointSize = a_brightness;
 
     vec2 position = vec2(
         (a_position.x - u_camera.x * a_camera_speed),
