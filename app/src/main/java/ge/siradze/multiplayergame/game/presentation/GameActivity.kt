@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,10 +26,8 @@ import ge.siradze.multiplayergame.game.presentation.gameView.GameView
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.gameUi.buttons.GameUI
 import ge.siradze.multiplayergame.game.presentation.gameUi.points.PointsView
-import ge.siradze.multiplayergame.game.presentation.vibrator.FeedbackSoundsImpl
+import ge.siradze.multiplayergame.game.presentation.feedback.FeedbackSoundsImpl
 import ge.siradze.multiplayergame.ui.theme.MultiplayerGameTheme
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 

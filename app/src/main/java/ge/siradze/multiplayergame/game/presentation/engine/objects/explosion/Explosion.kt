@@ -1,4 +1,4 @@
-package ge.siradze.multiplayergame.game.presentation.engine.objects.planets.explosion
+package ge.siradze.multiplayergame.game.presentation.engine.objects.explosion
 
 import android.content.Context
 import android.opengl.GLES20.GL_ARRAY_BUFFER
@@ -27,7 +27,6 @@ import android.opengl.GLES31.GL_FLOAT
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.engine.EngineGlobals
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.multiply
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
@@ -37,11 +36,11 @@ import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
 import ge.siradze.multiplayergame.game.presentation.engine.utils.ShaderUtils
 
 
-class PlanetExplosion(
+class Explosion(
     private val context: Context,
     private val camera: Camera,
     private val playerProperties: PlayerData.Properties,
-    helper: PlanetExplosionHelper,
+    helper: ExplosionHelper,
     planet: FloatArray,
     size: Float,
     position: FloatArray,
@@ -50,16 +49,16 @@ class PlanetExplosion(
     private val vao: IntArray = IntArray(1)
     private val vbo: IntArray = IntArray(1)
 
-    private val vertex: PlanetExplosionData.Vertex =
-        PlanetExplosionData.Vertex(
+    private val vertex: ExplosionData.Vertex =
+        ExplosionData.Vertex(
             helper = helper,
-            planet = planet,
+            tilePosition = planet,
             size = size,
             position = position,
             color = color,
         )
 
-    private val shader = PlanetExplosionData.ShaderLocations()
+    private val shader = ExplosionData.ShaderLocations()
 
     private val shaders = arrayOf(
         Shader(
@@ -147,7 +146,6 @@ class PlanetExplosion(
     }
 
     private fun compute() {
-        // Running as many work as there is planet, and each work will be working with each planet.
         ShaderUtils.computeShader(
             shaderProgram = computeProgram,
             uniforms = {

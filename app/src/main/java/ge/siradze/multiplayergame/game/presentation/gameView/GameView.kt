@@ -7,7 +7,7 @@ import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.EngineGlobals
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
-import ge.siradze.multiplayergame.game.presentation.vibrator.FeedbackSounds
+import ge.siradze.multiplayergame.game.presentation.feedback.FeedbackSounds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -1,4 +1,4 @@
-package ge.siradze.multiplayergame.game.presentation.engine.objects.planets.explosion
+package ge.siradze.multiplayergame.game.presentation.engine.objects.explosion
 
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.multiply
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
@@ -14,20 +14,20 @@ import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderUniformLocation
 import java.nio.Buffer
 
-class PlanetExplosionData {
+class ExplosionData {
     class Vertex(
-        helper: PlanetExplosionHelper,
-        planet: FloatArray,
+        helper: ExplosionHelper,
+        tilePosition: FloatArray,
         size: Float,
         position: FloatArray,
         color: FloatArray,
     ): AttributeData() {
-        val availableSize = if(size > 1f) 1f else size
+        private val availableSize = if(size > 1f) 1f else size
         val pointNumber = (helper.pointNumber * availableSize).toInt()
         val data: FloatArray = helper.data[
-            (planet.x * helper.textureDimensions.columns).toInt()
+            (tilePosition.x * helper.textureDimensions.columns).toInt()
         ][
-            (planet.y * helper.textureDimensions.rows).toInt()
+            (tilePosition.y * helper.textureDimensions.rows).toInt()
         ]
         .copyOfRange(0, pointNumber * helper.numberOfFloatsPerPoint).apply {
             multiply(size)

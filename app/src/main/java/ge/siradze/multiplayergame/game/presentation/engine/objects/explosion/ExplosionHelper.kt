@@ -1,4 +1,4 @@
-package ge.siradze.multiplayergame.game.presentation.engine.objects.planets.explosion
+package ge.siradze.multiplayergame.game.presentation.engine.objects.explosion
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -8,7 +8,7 @@ import android.util.Log
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureDimensions
 import androidx.core.graphics.get
 
-class PlanetExplosionHelper(
+class ExplosionHelper(
     context: Context,
     val textureDimensions: TextureDimensions
 ) {

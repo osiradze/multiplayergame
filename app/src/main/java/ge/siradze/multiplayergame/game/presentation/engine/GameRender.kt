@@ -10,15 +10,15 @@ import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.Planets
-import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.explosion.PlanetExplosion
-import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.explosion.PlanetExplosionHelper
+import ge.siradze.multiplayergame.game.presentation.engine.objects.explosion.Explosion
+import ge.siradze.multiplayergame.game.presentation.engine.objects.explosion.ExplosionHelper
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerObject
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.trail.PlayerTrail
 import ge.siradze.multiplayergame.game.presentation.engine.objects.stars.Stars
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureDimensions
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
-import ge.siradze.multiplayergame.game.presentation.vibrator.FeedbackSounds
+import ge.siradze.multiplayergame.game.presentation.feedback.FeedbackSounds
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -35,7 +35,7 @@ class GameRender(
     private val textureCounter: TextureCounter = TextureCounter()
 
     private val planetTextureDimensions = TextureDimensions(2, 3, R.drawable.planets3)
-    val planetExplosionHelper = PlanetExplosionHelper(context, planetTextureDimensions)
+    val planetExplosionHelper = ExplosionHelper(context, planetTextureDimensions)
 
     val camera: Camera = Camera(
         state
@@ -72,7 +72,7 @@ class GameRender(
         playerTrail,
     )
     
-    val temporaryObjects: MutableList<PlanetExplosion> = mutableListOf()
+    val temporaryObjects: MutableList<Explosion> = mutableListOf()
 
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
         lastFrameTime = System.nanoTime()
@@ -120,7 +120,7 @@ class GameRender(
             objects.add(tempObject)
             temporaryObjects.removeAt(0)
             if(objects.size > MAX_EXPLOSION) {
-                objects.find { it is PlanetExplosion }?.let {
+                objects.find { it is Explosion }?.let {
                     objects.remove(it)
                     it.release()
                 }

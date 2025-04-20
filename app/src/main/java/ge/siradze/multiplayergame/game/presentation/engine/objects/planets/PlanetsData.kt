@@ -14,10 +14,16 @@ import java.nio.Buffer
 import kotlin.random.Random
 
 class PlanetsData {
+
+    companion object {
+        const val MIN_SIZE = 0.5f
+        const val MAX_SIZE = 0.5f
+    }
+
     class Vertex(
         val numberOfPlanets: Int,
-        private val planetMinSize: Float = 0.5f,
-        private val planetMaxSize: Float = 0.5f,
+        private val minSize: Float = MIN_SIZE,
+        private val sizeRange: Float = MAX_SIZE,
         private val textureDimensions: TextureDimensions
     ): AttributeData() {
         // 2 position + 1 size + 4 texture coordinates + 3 color + 1 collision flag + 1 isDestroyed flag
@@ -43,7 +49,7 @@ class PlanetsData {
                 lastPlanetPosition[1] = data[i * numberOfFloatsPerVertex + 1]
 
                 //size
-                data[i * numberOfFloatsPerVertex + 2] = Random.nextFloat() * planetMaxSize + planetMinSize
+                data[i * numberOfFloatsPerVertex + 2] = Random.nextFloat() * sizeRange + minSize
 
                 // texture coordinates
                 val randomX = Random.nextInt(until = textureDimensions.columns) + 1
@@ -105,8 +111,8 @@ class PlanetsData {
         val isDestroyed : ShaderAttribLocation = ShaderAttribLocation(
             name = "a_isDestroyed"
         ),
-        val push: ShaderUniformLocation = ShaderUniformLocation(
-            name = "u_push"
+        val destructible: ShaderUniformLocation = ShaderUniformLocation(
+            name = "u_destructible"
         ),
         val drawLine : ShaderUniformLocation = ShaderUniformLocation(
             name = "u_drawLine"

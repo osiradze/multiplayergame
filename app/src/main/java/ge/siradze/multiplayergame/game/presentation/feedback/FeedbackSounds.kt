@@ -1,4 +1,4 @@
-package ge.siradze.multiplayergame.game.presentation.vibrator
+package ge.siradze.multiplayergame.game.presentation.feedback
 
 import android.content.Context
 import android.os.Vibrator

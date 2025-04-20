@@ -178,7 +178,7 @@ class Planets(
 
         shader.floatsPerVertex.init(computeProgram)
         shader.playerPosition.init(computeProgram)
-        shader.push.init(computeProgram)
+        shader.destructible.init(computeProgram)
     }
 
     private fun bindTexture() {
@@ -264,7 +264,7 @@ class Planets(
              uniforms = {
                  glUniform1ui(shader.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
                  glUniform2f(shader.playerPosition.location, playerProperties.position.x, playerProperties.position.y)
-                 glUniform1i(shader.push.location, if (playerProperties.push) 1 else 0)
+                 glUniform1i(shader.destructible.location, if (playerProperties.push) 1 else 0)
              },
              vbos = vbo,
              x = vertex.numberOfPlanets,
