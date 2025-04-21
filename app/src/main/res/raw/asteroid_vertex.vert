@@ -15,9 +15,6 @@ varying float v_isAlive;
 
 void main() {
     v_isAlive = a_isAlive;
-    if(a_isAlive == 0.0) {
-        return;
-    }
     v_texture_coordinates = a_texture_coordinates;
     gl_PointSize = a_size * u_screen_width;
 

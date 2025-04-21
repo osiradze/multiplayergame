@@ -47,9 +47,9 @@ void main() {
         resultBuffer.result[8] = inputOutput.data[index + 9u]; // colorB
 
         inputOutput.data[index + 10u] = 1.0; // indicates that the player is collided with the planet
-        if(u_destructible){
+        /**if(u_destructible){
             inputOutput.data[index + 11u] = 1.0; // indicates that the planet is destroyed
-        }
+        }*/
     }
 
 

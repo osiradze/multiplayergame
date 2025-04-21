@@ -17,7 +17,6 @@ import ge.siradze.multiplayergame.game.presentation.engine.objects.player.Player
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.trail.PlayerTrail
 import ge.siradze.multiplayergame.game.presentation.engine.objects.stars.Stars
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter
-import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureDimensions
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.feedback.FeedbackSounds
 import javax.microedition.khronos.egl.EGLConfig

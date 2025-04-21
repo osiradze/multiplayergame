@@ -16,7 +16,7 @@ import kotlin.random.Random
 class PlanetsData {
 
     companion object {
-        const val MIN_SIZE = 0.5f
+        const val MIN_SIZE = 0.6f
         const val MAX_SIZE = 0.5f
     }
 

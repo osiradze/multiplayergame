@@ -9,7 +9,7 @@ void main() {
     if(v_isAlive == 0.0) {
         discard;
     }
-
+    gl_FragColor = vec4(1.0,0.0,0.0, 1.0);
     vec2 texCoord = v_texture_coordinates.xy + gl_PointCoord * v_texture_coordinates.zw;
     vec4 pixel = texture2D(u_texture, texCoord);
 
@@ -17,11 +17,7 @@ void main() {
         //gl_FragColor = vec4(1.0,0.0,0.0, 1.0);
         discard;
     } else {
-        if(v_isAlive != 1.0) {
-            gl_FragColor = pixel;
-        } else {
-            discard;
-        }
+        gl_FragColor = pixel;
     }
 
 }

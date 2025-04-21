@@ -162,6 +162,11 @@ class PlayerObject(
         camera.bindUniform(shader.camera.location)
         glDrawArrays(GL_TRIANGLES, 0, vertex.pointNumber)
 
+        glActiveTexture(0)
+        glBindTexture(GL_TEXTURE_2D, 0)
+
+
+
         glBindTexture(GL_TEXTURE_2D, 0)
         glDisableVertexAttribArray(shader.vertex.location)
         glDisableVertexAttribArray(shader.textureCoordinates.location)

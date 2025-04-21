@@ -187,6 +187,10 @@ class Explosion(
         glUniform1f(shader.ratio.location, ratio)
     }
 
+    override fun onSizeChange(width: Int, height: Int) {
+        super.onSizeChange(width, height)
+    }
+
 
     override fun release() {
         glDeleteBuffers(vbo.size, vbo, 0)

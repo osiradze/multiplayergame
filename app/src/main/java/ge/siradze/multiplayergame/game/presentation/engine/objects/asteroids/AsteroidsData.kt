@@ -1,5 +1,8 @@
 package ge.siradze.multiplayergame.game.presentation.engine.objects.asteroids
 
+import android.util.Log
+import ge.siradze.multiplayergame.game.presentation.engine.EngineGlobals
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.multiply
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.normalize
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
@@ -21,84 +24,66 @@ import kotlin.random.Random
 **/
 
 
-class AsteroidsData {
-    companion object {
-        /**
-         * 2 - position
-         * 2 - velocity
-         * 1 - size
-         * 4 - texture coordinates
-         * 1 - empty flag, 0 - empty, 1 - alive
-         **/
-        const val NUMBER_OF_FLOATS_PER_VERTEX = 10
+object AsteroidsData {
+    /**
+     * 2 - position
+     * 2 - velocity
+     * 1 - size
+     * 4 - texture coordinates
+     * 1 - empty flag, 0 - empty, 1 - alive
+     **/
+    const val NUMBER_OF_FLOATS_PER_VERTEX = 10
 
-        const val NUMBER_OF_ASTEROIDS = 50
-        const val MIN_SIZE = 0.05f
-        const val SIZE_RANGE = 0.05f
-    }
+    // 2 extra data for:
+    // 1. do we request adding new asteroid? 1 - yes, 0 - no
+    // 2. index to add new asteroid at (or replace)
+    const val NUMBER_OF_FLOAT_IN_CREATE_REQUEST = NUMBER_OF_FLOATS_PER_VERTEX + 2
 
-    class Vertex(
-        private val minSize: Float = MIN_SIZE,
-        private val sizeRange: Float = SIZE_RANGE,
-        private val textureDimensions: TextureDimensions
-    ) : AttributeData() {
+    const val NUMBER_OF_ASTEROIDS = 100
+    private const val MIN_SIZE = 0.05f
+    private const val SIZE_RANGE = 0.4f
 
+    const val TAG = "AsteroidsData"
+
+    class Vertex : AttributeData() {
         override val numberOfFloatsPerVertex = NUMBER_OF_FLOATS_PER_VERTEX
         override val typeSize = Float.SIZE_BYTES
         override val size = NUMBER_OF_ASTEROIDS * numberOfFloatsPerVertex
-        private val data: FloatArray = FloatArray(size) { 0f }
+        val data: FloatArray = FloatArray(size) { 0f }
 
         override fun getBuffer() = data.toBuffer()
-
-        fun addAsteroid(
-            spawnPosition: FloatArray
-        ): FloatArray {
-            // new Asteroid data
-            val newData = FloatArray(numberOfFloatsPerVertex)
-            val vector = floatArrayOf(
-                Math.random().toFloat(),
-                Math.random().toFloat()
-            )
-
-            // velocity
-            newData[2] = -vector.x
-            newData[3] = -vector.y
-
-            vector.normalize()
-            // position
-            newData[0] = spawnPosition.x + vector.x
-            newData[1] = spawnPosition.y + vector.y
-
-
-            // size
-            newData[4] = Math.random().toFloat() * sizeRange + minSize
-
-            // texture coordinates
-            val randomX = Random.nextInt(until = textureDimensions.columns) + 1
-            val randomY = Random.nextInt(until = textureDimensions.rows) + 1
-
-            data[4] = textureDimensions.stepX * (randomX - 1)
-            data[5] = textureDimensions.stepY * (randomY - 1)
-            data[6] = textureDimensions.stepX
-            data[7] = textureDimensions.stepY
-
-            return newData
-        }
-
     }
 
     class CreateAsteroidData {
-        // 2 extra data for:
-        // 1. do we request adding new asteroid? 1 - yes, 0 - no
-        // 2. index to add new asteroid at (or replace)
-        val data: FloatArray = FloatArray(NUMBER_OF_FLOATS_PER_VERTEX + 2)
-        val buffer: Buffer = data.toBuffer()
+        val data: FloatArray = FloatArray(NUMBER_OF_FLOAT_IN_CREATE_REQUEST)
+        val buffer: Buffer get() {
+            return data.toBuffer()
+        }
         val bufferSize = data.size * Float.SIZE_BYTES
+
+        private var clean = true
+
+        // Cleaning the request data
+        fun unload() {
+            if(clean) { return }
+            data.fill(0f)
+            clean = true
+        }
+
+        fun load(requestData: FloatArray) {
+            if(requestData.size != data.size) {
+                Log.e(TAG, "Request data size must be ${data.size} but was ${requestData.size}")
+            }
+            for (i in data.indices) {
+                data[i] = requestData[i]
+            }
+            clean = false
+        }
     }
 
     // For getting data from GPU about collision
     class CollisionData {
-        val data: FloatArray = FloatArray(9)
+        val data: FloatArray = FloatArray(6)
         val buffer: Buffer = data.toBuffer()
         val bufferSize = data.size * Float.SIZE_BYTES
     }
@@ -141,6 +126,54 @@ class AsteroidsData {
             name = "u_destructible"
         ),
     )
+
+
+
+    private var createAsteroidIndex = 0
+    fun getAsteroid(
+        spawnPosition: FloatArray,
+        textureDimensions: TextureDimensions
+    ): FloatArray {
+        // new Asteroid data
+        val newData = FloatArray(NUMBER_OF_FLOAT_IN_CREATE_REQUEST)
+        val vector = floatArrayOf(
+           Math.random().toFloat() - 0.5f,
+            Math.random().toFloat() - 0.5f
+        )
+        vector.normalize()
+        vector.multiply(3f)
+        // position
+        newData[0] = spawnPosition.x + vector.x
+        newData[1] = spawnPosition.y + vector.y
+
+        // velocity
+        val speed = EngineGlobals.deltaTime * (Math.random().toFloat() * 0.5f + 0.5f) * 0.05f
+        newData[2] = -vector.x * speed
+        newData[3] = -vector.y * speed
+
+        // size
+        newData[4] = Math.random().toFloat() * SIZE_RANGE + MIN_SIZE
+
+        // texture coordinates
+        val randomX = Random.nextInt(until = textureDimensions.columns) + 1
+        val randomY = Random.nextInt(until = textureDimensions.rows) + 1
+        newData[5] = textureDimensions.stepX * (randomX - 1)
+        newData[6] = textureDimensions.stepY * (randomY - 1)
+        newData[7] = textureDimensions.stepX
+        newData[8] = textureDimensions.stepY
+
+        // alive flag
+        newData[9] = 1f
+        // request to add new asteroid
+        newData[10] = 1f
+        // index to add new asteroid at
+        newData[11] = createAsteroidIndex.toFloat()
+
+        // increment index
+        createAsteroidIndex = (createAsteroidIndex + 1) % NUMBER_OF_ASTEROIDS
+
+        return newData
+    }
 
 
 

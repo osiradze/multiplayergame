@@ -7,6 +7,7 @@ import android.opengl.GLES20.GL_FRAGMENT_SHADER
 import android.opengl.GLES20.GL_LINEAR
 import android.opengl.GLES20.GL_LINE_STRIP
 import android.opengl.GLES20.GL_POINTS
+import android.opengl.GLES20.glActiveTexture
 import android.opengl.GLES20.glDeleteBuffers
 import android.opengl.GLES20.glDeleteShader
 import android.opengl.GLES20.glDeleteTextures
@@ -214,6 +215,8 @@ class Planets(
         glEnableVertexAttribArray(shader.size.location)
         glEnableVertexAttribArray(shader.color.location)
         glEnableVertexAttribArray(shader.isDestroyed.location)
+
+        glActiveTexture(texture)
         glBindTexture(GL_TEXTURE_2D, textures[0])
 
 
@@ -225,7 +228,9 @@ class Planets(
             vertex.numberOfPlanets
         )
 
-        glBindTexture(GL_TEXTURE_2D, 0)
+        glActiveTexture(texture)
+        glBindTexture(GL_TEXTURE_2D, textures[0])
+
         glDisableVertexAttribArray(shader.vertex.location)
         glDisableVertexAttribArray(shader.textureCoordinates.location)
         glDisableVertexAttribArray(shader.size.location)
@@ -282,21 +287,9 @@ class Planets(
         )
         // check if collision happened
         if(collisionData[0] == 1f){
-            if(playerProperties.push){
-                event(
-                    GameRender.InGameEvents.CreateExplosion(
-                        position = floatArrayOf(collisionData[1], collisionData[2]),
-                        size = collisionData[3],
-                        planet = floatArrayOf(collisionData[4],  collisionData[5]),
-                        color = floatArrayOf(collisionData[6], collisionData[7], collisionData[8]),
-                        explosionHelper = explosionHelper
-                    )
-                )
-            }  else {
-                playerProperties.addForce(
-                    floatArrayOf(collisionData[1], collisionData[2])
-                )
-            }
+            playerProperties.addForce(
+                floatArrayOf(collisionData[1], collisionData[2])
+            )
         }
     }
 

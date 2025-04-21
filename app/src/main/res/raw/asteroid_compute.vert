@@ -23,16 +23,19 @@ float getDistance(vec2 p1, vec2 p2) {
 }
 
 void main() {
-    uint index = (gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x) * u_floats_per_vertex;
+
+    uint aseteroidNumber = (gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x);
+    uint index = aseteroidNumber * u_floats_per_vertex;
 
     // position of float where it says creating asteroid requested is after the last float of the vertex
     uint requestIndex = u_floats_per_vertex;
-    uint placeToAddAsteroid = requestIndex + 1u;
+    uint placeToCreateAsteroid = requestIndex + 1u;
 
     // check if creating asteroid is requested
     if(createAsteroidBuffer.request[u_floats_per_vertex] == 1.0){
         // check if the index is the one where we want to create the asteroid
-        if(index == uint(createAsteroidBuffer.request[placeToAddAsteroid])){
+        if(aseteroidNumber == uint(createAsteroidBuffer.request[placeToCreateAsteroid])){
+            // write data
             for(uint i = 0u; i < u_floats_per_vertex; i++){
                 inputOutput.data[index + i] = createAsteroidBuffer.request[uint(i)];
             }
@@ -40,7 +43,7 @@ void main() {
     }
 
     // if asteroid momory block is not alive return (it's last float)
-    if(inputOutput.data[u_floats_per_vertex - 1u] == 1.0) {
+    if(inputOutput.data[index + u_floats_per_vertex - 1u] != 1.0) {
         return;
     }
 
@@ -49,38 +52,63 @@ void main() {
     inputOutput.data[index + 1u] += inputOutput.data[index + 3u];
 
 
-/** if(inputOutput.data[index + 9u] == 1.0) {
-        // If the planet is already collided with, skip the collision check
-        return;
-    }
-    float x = inputOutput.data[index];
-    float y = inputOutput.data[index + 1u];
-    float size = inputOutput.data[index + 2u];
-    float textureCoordX = inputOutput.data[index + 3u];
-    float textureCoordY = inputOutput.data[index + 4u];
+    uint planetNumber = uint(inputOutput.data.length()) / u_floats_per_vertex;
+    vec2 thisAsteroidPosition = vec2(
+        inputOutput.data[index],
+        inputOutput.data[index + 1u]
+    );
+    vec2 thisAsteroidVelocity = vec2(
+        inputOutput.data[index + 2u],
+        inputOutput.data[index + 3u]
+    );
 
 
-    float distance = getDistance(u_player_position, vec2(x, y));
-    if(distance < size / 2.2) {
-        resultBuffer.result[0] = 1.0; // indicates that the player is colliding with the planet
-        resultBuffer.result[1] = x;
-        resultBuffer.result[2] = y;
-        resultBuffer.result[3] = size;
+    float thisAsteroidSize = inputOutput.data[index + 4u];
+    float textureCoordX = inputOutput.data[index + 5u];
+    float textureCoordY = inputOutput.data[index + 6u];
+
+    float distance = getDistance(u_player_position, vec2(thisAsteroidPosition.x, thisAsteroidPosition.y));
+
+    if(distance < thisAsteroidSize / 2.2) {
+        inputOutput.data[index + u_floats_per_vertex - 1u] = 0.0; // mark the other asteroid as not alive
+
+        resultBuffer.result[0] = 1.0; // indicates that the colliding happened
+        resultBuffer.result[1] = thisAsteroidPosition.x;
+        resultBuffer.result[2] = thisAsteroidPosition.y;
+        resultBuffer.result[3] = thisAsteroidSize;
 
         resultBuffer.result[4] = textureCoordX;
         resultBuffer.result[5] = textureCoordY;
 
-        resultBuffer.result[6] = inputOutput.data[index + 7u]; // colorR
-        resultBuffer.result[7] = inputOutput.data[index + 8u]; // colorG
-        resultBuffer.result[8] = inputOutput.data[index + 9u]; // colorB
+    }
+    for(uint otherAsteroid = 0u; otherAsteroid < planetNumber; otherAsteroid++){
+        if(otherAsteroid != aseteroidNumber) {
 
-        inputOutput.data[index + 10u] = 1.0; // indicates that the player is collided with the planet
-        if(u_destructible){
-            inputOutput.data[index + 11u] = 1.0; // indicates that the planet is destroyed
+            float isAlive = inputOutput.data[otherAsteroid * u_floats_per_vertex + u_floats_per_vertex - 1u];
+            if(isAlive != 1.0) {
+                continue; // Skip if the other asteroid is not alive
+            }
+
+            vec2 otherAsteroidPosition = vec2(
+                inputOutput.data[otherAsteroid * u_floats_per_vertex],
+                inputOutput.data[otherAsteroid * u_floats_per_vertex + 1u]
+            );
+            vec2 otherAsteroidVelocity = vec2(
+                inputOutput.data[otherAsteroid * u_floats_per_vertex + 2u],
+                inputOutput.data[otherAsteroid * u_floats_per_vertex + 3u]
+            );
+
+            float otherAsteroidSize = inputOutput.data[otherAsteroid * u_floats_per_vertex + 4u];
+
+            float distance = getDistance(otherAsteroidPosition, thisAsteroidPosition);
+            float minAvaliableDistance = (thisAsteroidSize + otherAsteroidSize) / 2.2;
+            if(distance < minAvaliableDistance) {
+                uint otherAsteroidIndex = otherAsteroid * u_floats_per_vertex;
+                //inputOutput.data[otherAsteroidIndex + u_floats_per_vertex - 1u] = 0.0; // mark the other asteroid as not alive
+
+                inputOutput.data[otherAsteroidIndex + 2u] += (otherAsteroidPosition.x - thisAsteroidPosition.x) / 3000.0;
+                inputOutput.data[otherAsteroidIndex + 3u] += (otherAsteroidPosition.y - thisAsteroidPosition.y) / 3000.0;
+            }
         }
-    }*/
-
-
-
-
+    }
 }

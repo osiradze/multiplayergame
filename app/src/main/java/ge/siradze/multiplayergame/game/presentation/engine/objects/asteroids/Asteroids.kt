@@ -6,6 +6,8 @@ import android.opengl.GLES20.GL_ARRAY_BUFFER
 import android.opengl.GLES20.GL_FRAGMENT_SHADER
 import android.opengl.GLES20.GL_LINEAR
 import android.opengl.GLES20.GL_POINTS
+import android.opengl.GLES20.glActiveTexture
+import android.opengl.GLES20.glBufferSubData
 import android.opengl.GLES20.glDeleteBuffers
 import android.opengl.GLES20.glDeleteShader
 import android.opengl.GLES20.glDeleteTextures
@@ -13,6 +15,7 @@ import android.opengl.GLES20.glDisableVertexAttribArray
 import android.opengl.GLES20.glDrawArrays
 import android.opengl.GLES20.glEnableVertexAttribArray
 import android.opengl.GLES20.glGenBuffers
+import android.opengl.GLES20.glUniform1f
 import android.opengl.GLES20.glUniform1i
 import android.opengl.GLES20.glUniform2f
 import android.opengl.GLES20.glUseProgram
@@ -32,13 +35,13 @@ import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.GameState
+import ge.siradze.multiplayergame.game.presentation.engine.EngineGlobals
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.objects.explosion.ExplosionHelper
-import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.PlanetsData
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerData
 import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter
@@ -57,7 +60,7 @@ class Asteroids(
     private val event: (GameRender.InGameEvents.CreateExplosion) -> Unit
 ): GameObject {
 
-    private val textureDimensions = TextureDimensions(2, 3, R.drawable.planets3)
+    private val textureDimensions = TextureDimensions(2, 3, R.drawable.asteroidscolor)
     private val explosionHelper = ExplosionHelper(context, textureDimensions)
 
 
@@ -68,7 +71,7 @@ class Asteroids(
 
     private val vertex: AsteroidsData.Vertex =
         state.get(AsteroidsData.Vertex::class.qualifiedName + name) as? AsteroidsData.Vertex
-            ?: AsteroidsData.Vertex(textureDimensions = textureDimensions).also { state.set(
+            ?: AsteroidsData.Vertex().also { state.set(
                 AsteroidsData.Vertex::class.qualifiedName, it) }
 
     private val shader = AsteroidsData.ShaderLocations()
@@ -137,15 +140,6 @@ class Asteroids(
             GL_DYNAMIC_DRAW
         )
 
-        // create asteroid data
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, vbo[1])
-        glBufferData(
-            GL_SHADER_STORAGE_BUFFER,
-            createAsteroidsData.bufferSize,
-            createAsteroidsData.buffer,
-            GL_DYNAMIC_DRAW
-        )
-
         // collision data
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, vbo[2])
         glBufferData(
@@ -189,6 +183,7 @@ class Asteroids(
         shader.screenWidth.init(program)
         shader.ratio.init(program)
         shader.camera.init(program)
+        shader.texture.init(program)
 
         shader.floatsPerVertex.init(computeProgram)
         shader.playerPosition.init(computeProgram)
@@ -218,19 +213,21 @@ class Asteroids(
     }
 
     private fun compute() {
+        updateAsteroids()
+
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, vbo[1])
         glBufferData(
             GL_SHADER_STORAGE_BUFFER,
-            collisionData.bufferSize,
-            collisionData.buffer,
+            createAsteroidsData.bufferSize,
+            createAsteroidsData.buffer,
             GL_DYNAMIC_DRAW
         )
 
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, vbo[2])
         glBufferData(
             GL_SHADER_STORAGE_BUFFER,
-            createAsteroidsData.bufferSize,
-            createAsteroidsData.buffer,
+            collisionData.bufferSize,
+            collisionData.buffer,
             GL_DYNAMIC_DRAW
         )
 
@@ -245,9 +242,37 @@ class Asteroids(
             vbos = vbo,
             x = AsteroidsData.NUMBER_OF_ASTEROIDS,
         )
-
         handleCollisionData()
+
     }
+
+    private var counter = 0
+    private fun updateAsteroids() {
+        counter++
+        createAsteroidsData.unload()
+        if(counter < EngineGlobals.fps) {
+            return
+        }
+        counter = 0
+
+        val requestData = AsteroidsData.getAsteroid(
+            playerProperties.position,
+            textureDimensions,
+        )
+        createAsteroidsData.load(requestData)
+    }
+
+   /* private fun readData() {
+        // read data from GPU
+        val collisionData = OpenGLUtils.readSSBO(
+            vbo[0],
+            vertex.data.size,
+            Float.SIZE_BYTES
+        )
+        // check if collision happened
+        println()
+    }*/
+
 
     private fun handleCollisionData() {
         // read data from GPU
@@ -258,21 +283,15 @@ class Asteroids(
         )
         // check if collision happened
         if(collisionData[0] == 1f){
-            if(playerProperties.push){
-                event(
-                    GameRender.InGameEvents.CreateExplosion(
-                        position = floatArrayOf(collisionData[1], collisionData[2]),
-                        size = collisionData[3],
-                        planet = floatArrayOf(collisionData[4],  collisionData[5]),
-                        color = floatArrayOf(collisionData[6], collisionData[7], collisionData[8]),
-                        explosionHelper = explosionHelper
-                    )
+            event(
+                GameRender.InGameEvents.CreateExplosion(
+                    position = floatArrayOf(collisionData[1], collisionData[2]),
+                    size = collisionData[3],
+                    planet = floatArrayOf(collisionData[4],  collisionData[5]),
+                    color = floatArrayOf(1f, 1f, 1f),
+                    explosionHelper = explosionHelper
                 )
-            }  else {
-                playerProperties.addForce(
-                    floatArrayOf(collisionData[1], collisionData[2])
-                )
-            }
+            )
         }
     }
 
@@ -284,6 +303,8 @@ class Asteroids(
         glEnableVertexAttribArray(shader.textureCoordinates.location)
         glEnableVertexAttribArray(shader.size.location)
         glEnableVertexAttribArray(shader.isAlive.location)
+
+        glActiveTexture(texture)
         glBindTexture(GL_TEXTURE_2D, textures[0])
 
         camera.bindUniform(shader.camera.location)
@@ -294,14 +315,27 @@ class Asteroids(
             AsteroidsData.NUMBER_OF_ASTEROIDS
         )
 
+        glActiveTexture(texture)
+        glBindTexture(GL_TEXTURE_2D, textures[0])
+
         glDisableVertexAttribArray(shader.vertex.location)
         glDisableVertexAttribArray(shader.velocity.location)
         glDisableVertexAttribArray(shader.textureCoordinates.location)
         glDisableVertexAttribArray(shader.size.location)
         glDisableVertexAttribArray(shader.isAlive.location)
 
-
         glUseProgram(0)
+    }
+
+    override fun setRatio(ratio: Float) {
+        super.setRatio(ratio)
+        glUseProgram(program)
+        glUniform1f(shader.ratio.location, ratio)
+    }
+
+    override fun onSizeChange(width: Int, height: Int) {
+        glUseProgram(program)
+        glUniform1f(shader.screenWidth.location, width.toFloat() / 2f)
     }
 
     override fun release() {
