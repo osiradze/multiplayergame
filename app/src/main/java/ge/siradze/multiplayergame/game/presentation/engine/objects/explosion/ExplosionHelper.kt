@@ -12,7 +12,7 @@ class ExplosionHelper(
     context: Context,
     val textureDimensions: TextureDimensions
 ) {
-    val pointNumber: Int = 4000
+    val pointNumber: Int = 1000
 
     val numberOfFloatsPerPoint = 8 // 2 - position.  3 - color. 2 - velocity. 1 - isDead
     // adding 1 for counter

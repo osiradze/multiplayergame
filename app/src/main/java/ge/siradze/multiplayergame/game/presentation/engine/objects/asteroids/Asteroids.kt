@@ -250,7 +250,7 @@ class Asteroids(
     private fun updateAsteroids() {
         counter++
         createAsteroidsData.unload()
-        if(counter < EngineGlobals.fps) {
+        if(counter < EngineGlobals.fps / 2) {
             return
         }
         counter = 0
@@ -261,17 +261,6 @@ class Asteroids(
         )
         createAsteroidsData.load(requestData)
     }
-
-   /* private fun readData() {
-        // read data from GPU
-        val collisionData = OpenGLUtils.readSSBO(
-            vbo[0],
-            vertex.data.size,
-            Float.SIZE_BYTES
-        )
-        // check if collision happened
-        println()
-    }*/
 
 
     private fun handleCollisionData() {

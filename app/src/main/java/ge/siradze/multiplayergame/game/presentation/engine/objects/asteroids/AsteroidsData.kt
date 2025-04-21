@@ -39,9 +39,9 @@ object AsteroidsData {
     // 2. index to add new asteroid at (or replace)
     const val NUMBER_OF_FLOAT_IN_CREATE_REQUEST = NUMBER_OF_FLOATS_PER_VERTEX + 2
 
-    const val NUMBER_OF_ASTEROIDS = 100
-    private const val MIN_SIZE = 0.05f
-    private const val SIZE_RANGE = 0.4f
+    const val NUMBER_OF_ASTEROIDS = 150
+    private const val MIN_SIZE = 0.1f
+    private const val SIZE_RANGE = 0.25f
 
     const val TAG = "AsteroidsData"
 
@@ -147,7 +147,7 @@ object AsteroidsData {
         newData[1] = spawnPosition.y + vector.y
 
         // velocity
-        val speed = EngineGlobals.deltaTime * (Math.random().toFloat() * 0.5f + 0.5f) * 0.05f
+        val speed = EngineGlobals.deltaTime * (Math.random().toFloat() * 0.5f + 0.5f) * 0.1f
         newData[2] = -vector.x * speed
         newData[3] = -vector.y * speed
 

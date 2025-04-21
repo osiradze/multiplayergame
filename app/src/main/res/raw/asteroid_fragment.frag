@@ -4,6 +4,12 @@ uniform sampler2D u_texture;
 varying vec4 v_texture_coordinates;
 varying float v_isAlive;
 
+
+vec4 toGrayscale(vec4 color) {
+    float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+    return vec4(vec3(gray), color.a);
+}
+
 void main() {
 
     if(v_isAlive == 0.0) {
@@ -17,7 +23,7 @@ void main() {
         //gl_FragColor = vec4(1.0,0.0,0.0, 1.0);
         discard;
     } else {
-        gl_FragColor = pixel;
+        gl_FragColor = toGrayscale(pixel);
     }
 
 }

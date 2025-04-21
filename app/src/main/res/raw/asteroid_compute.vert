@@ -30,11 +30,16 @@ void main() {
     // position of float where it says creating asteroid requested is after the last float of the vertex
     uint requestIndex = u_floats_per_vertex;
     uint placeToCreateAsteroid = requestIndex + 1u;
+    uint isAliveIndex = u_floats_per_vertex - 1u;
 
     // check if creating asteroid is requested
     if(createAsteroidBuffer.request[u_floats_per_vertex] == 1.0){
         // check if the index is the one where we want to create the asteroid
         if(aseteroidNumber == uint(createAsteroidBuffer.request[placeToCreateAsteroid])){
+            //is is alive don't touch it
+            if(inputOutput.data[index + isAliveIndex] == 1.0) {
+                return;
+            }
             // write data
             for(uint i = 0u; i < u_floats_per_vertex; i++){
                 inputOutput.data[index + i] = createAsteroidBuffer.request[uint(i)];
@@ -43,7 +48,7 @@ void main() {
     }
 
     // if asteroid momory block is not alive return (it's last float)
-    if(inputOutput.data[index + u_floats_per_vertex - 1u] != 1.0) {
+    if(inputOutput.data[index + isAliveIndex] != 1.0) {
         return;
     }
 
@@ -69,8 +74,8 @@ void main() {
 
     float distance = getDistance(u_player_position, vec2(thisAsteroidPosition.x, thisAsteroidPosition.y));
 
-    if(distance < thisAsteroidSize / 2.2) {
-        inputOutput.data[index + u_floats_per_vertex - 1u] = 0.0; // mark the other asteroid as not alive
+    if(distance < thisAsteroidSize / 1.8) {
+        inputOutput.data[index + isAliveIndex] = 0.0; // mark the other asteroid as not alive
 
         resultBuffer.result[0] = 1.0; // indicates that the colliding happened
         resultBuffer.result[1] = thisAsteroidPosition.x;
@@ -84,7 +89,7 @@ void main() {
     for(uint otherAsteroid = 0u; otherAsteroid < planetNumber; otherAsteroid++){
         if(otherAsteroid != aseteroidNumber) {
 
-            float isAlive = inputOutput.data[otherAsteroid * u_floats_per_vertex + u_floats_per_vertex - 1u];
+            float isAlive = inputOutput.data[otherAsteroid * u_floats_per_vertex + isAliveIndex];
             if(isAlive != 1.0) {
                 continue; // Skip if the other asteroid is not alive
             }
@@ -106,8 +111,8 @@ void main() {
                 uint otherAsteroidIndex = otherAsteroid * u_floats_per_vertex;
                 //inputOutput.data[otherAsteroidIndex + u_floats_per_vertex - 1u] = 0.0; // mark the other asteroid as not alive
 
-                inputOutput.data[otherAsteroidIndex + 2u] += (otherAsteroidPosition.x - thisAsteroidPosition.x) / 3000.0;
-                inputOutput.data[otherAsteroidIndex + 3u] += (otherAsteroidPosition.y - thisAsteroidPosition.y) / 3000.0;
+                inputOutput.data[otherAsteroidIndex] += (otherAsteroidPosition.x - thisAsteroidPosition.x) / 50.0;
+                inputOutput.data[otherAsteroidIndex + 1u] += (otherAsteroidPosition.y - thisAsteroidPosition.y) / 50.0;
             }
         }
     }
