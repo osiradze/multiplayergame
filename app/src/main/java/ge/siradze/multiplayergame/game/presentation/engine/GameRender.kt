@@ -158,7 +158,7 @@ class GameRender(
     }
 
     companion object {
-        const val MAX_EXPLOSION = 50
+        const val MAX_EXPLOSION = 70
         const val NUMBER_OF_PLANETS = 50
     }
 }

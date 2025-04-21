@@ -12,7 +12,7 @@ class ExplosionHelper(
     context: Context,
     val textureDimensions: TextureDimensions
 ) {
-    val pointNumber: Int = 1000
+    val pointNumber: Int = 8000
 
     val numberOfFloatsPerPoint = 8 // 2 - position.  3 - color. 2 - velocity. 1 - isDead
     // adding 1 for counter
@@ -71,9 +71,9 @@ class ExplosionHelper(
             if(alpha < 0.1f) continue
 
             // get color values
-            val red = Color.red(pixel) / 100f
-            val green = Color.green(pixel) / 100f
-            val blue = Color.blue(pixel) / 100f
+            val red = Color.red(pixel) / 60f
+            val green = Color.green(pixel) / 60f
+            val blue = Color.blue(pixel) / 60f
 
             // set color values to data
             val startPosition = counter * numberOfFloatsPerPoint

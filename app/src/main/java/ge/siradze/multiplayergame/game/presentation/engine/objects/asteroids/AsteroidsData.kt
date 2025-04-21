@@ -39,7 +39,7 @@ object AsteroidsData {
     // 2. index to add new asteroid at (or replace)
     const val NUMBER_OF_FLOAT_IN_CREATE_REQUEST = NUMBER_OF_FLOATS_PER_VERTEX + 2
 
-    const val NUMBER_OF_ASTEROIDS = 900
+    const val NUMBER_OF_ASTEROIDS = 400
     private const val MIN_SIZE = 0.1f
     private const val SIZE_RANGE = 0.25f
 
