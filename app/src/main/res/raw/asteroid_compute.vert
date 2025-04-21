@@ -22,14 +22,23 @@ float getDistance(vec2 p1, vec2 p2) {
     return length(p2 - p1);
 }
 
-void main() {
+uint findNextDeadAsteroidMemory() {
+    uint isAliveIndex = u_floats_per_vertex - 1u;
+    uint numberOfPlanets = uint(inputOutput.data.length()) / u_floats_per_vertex;
+    for(uint i = 0u; i < numberOfPlanets; i++) {
+        uint startIndex = i * u_floats_per_vertex;
+        if(inputOutput.data[startIndex + isAliveIndex] != 1.0) {
+            return startIndex;
+        }
+    }
+}
 
-    uint aseteroidNumber = (gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x);
-    uint index = aseteroidNumber * u_floats_per_vertex;
-
-    // position of float where it says creating asteroid requested is after the last float of the vertex
-    uint requestIndex = u_floats_per_vertex;
-    uint placeToCreateAsteroid = requestIndex + 1u;
+void handleAsteroidCreation(
+      uint aseteroidNumber,
+      uint index,
+      uint requestedIndex
+) {
+    uint placeToCreateAsteroid = requestedIndex + 1u;
     uint isAliveIndex = u_floats_per_vertex - 1u;
 
     // check if creating asteroid is requested
@@ -37,15 +46,38 @@ void main() {
         // check if the index is the one where we want to create the asteroid
         if(aseteroidNumber == uint(createAsteroidBuffer.request[placeToCreateAsteroid])){
             //is is alive don't touch it
+            uint startIndexOfEmptyAsteroid = index;
             if(inputOutput.data[index + isAliveIndex] == 1.0) {
+                startIndexOfEmptyAsteroid = findNextDeadAsteroidMemory();
                 return;
             }
             // write data
             for(uint i = 0u; i < u_floats_per_vertex; i++){
-                inputOutput.data[index + i] = createAsteroidBuffer.request[uint(i)];
+                inputOutput.data[startIndexOfEmptyAsteroid + i] = createAsteroidBuffer.request[uint(i)];
             }
         }
     }
+}
+
+
+void main() {
+
+    uint aseteroidNumber = (gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x);
+    uint index = aseteroidNumber * u_floats_per_vertex;
+
+    // position of float where it says if the asteroid is alive
+    uint isAliveIndex = u_floats_per_vertex - 1u;
+
+    // position of float where it says creating asteroid requested is after the last float of the vertex
+    uint requestIndex = u_floats_per_vertex;
+
+
+    handleAsteroidCreation(
+        aseteroidNumber,
+        index,
+        requestIndex
+    );
+
 
     // if asteroid momory block is not alive return (it's last float)
     if(inputOutput.data[index + isAliveIndex] != 1.0) {
@@ -73,6 +105,12 @@ void main() {
     float textureCoordY = inputOutput.data[index + 6u];
 
     float distance = getDistance(u_player_position, vec2(thisAsteroidPosition.x, thisAsteroidPosition.y));
+
+    // if asteroid is too far away, destroy it
+    if(distance > 6.0) {
+        inputOutput.data[index + isAliveIndex] = 0.0; // mark the other asteroid as not alive
+        return;
+    }
 
     if(distance < thisAsteroidSize / 1.8) {
         inputOutput.data[index + isAliveIndex] = 0.0; // mark the other asteroid as not alive
@@ -111,8 +149,8 @@ void main() {
                 uint otherAsteroidIndex = otherAsteroid * u_floats_per_vertex;
                 //inputOutput.data[otherAsteroidIndex + u_floats_per_vertex - 1u] = 0.0; // mark the other asteroid as not alive
 
-                inputOutput.data[otherAsteroidIndex] += (otherAsteroidPosition.x - thisAsteroidPosition.x) / 50.0;
-                inputOutput.data[otherAsteroidIndex + 1u] += (otherAsteroidPosition.y - thisAsteroidPosition.y) / 50.0;
+                inputOutput.data[otherAsteroidIndex] += (otherAsteroidPosition.x - thisAsteroidPosition.x) / 100.0;
+                inputOutput.data[otherAsteroidIndex + 1u] += (otherAsteroidPosition.y - thisAsteroidPosition.y) / 100.0;
             }
         }
     }
