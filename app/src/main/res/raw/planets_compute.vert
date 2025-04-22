@@ -18,13 +18,24 @@ float getDistance(vec2 p1, vec2 p2) {
     return length(p2 - p1);
 }
 
-void main() {
-    uint index = (gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x) * u_floats_per_vertex;
+void setFirstPlanetPostisionToPlayerForLine(
+        uint index
+) {
+    inputOutput.data[index] = u_player_position.x;
+    inputOutput.data[index + 1u] = u_player_position.y;
+    // kill planet
+    inputOutput.data[index + 11u] = 1.0;
+}
 
-    if(inputOutput.data[index + 11u] == 1.0) {
+void main() {
+
+    uint planetNumber = gl_WorkGroupID.x + gl_WorkGroupID.y * gl_NumWorkGroups.x;
+    uint index = planetNumber * u_floats_per_vertex;
+
+   /** if(inputOutput.data[index + 11u] == 1.0) {
         // If the planet is already collided with, skip the collision check
         return;
-    }
+    }*/
     float x = inputOutput.data[index];
     float y = inputOutput.data[index + 1u];
     float size = inputOutput.data[index + 2u];
@@ -51,6 +62,13 @@ void main() {
             inputOutput.data[index + 11u] = 1.0; // indicates that the planet is destroyed
         }*/
     }
+
+    if(planetNumber == 0u) {
+        // Set the first planet's position to the player's position
+        setFirstPlanetPostisionToPlayerForLine(index);
+    }
+
+
 
 
 

@@ -73,8 +73,8 @@ class GameRender(
 
     private val objects: MutableList<GameObject> = mutableListOf(
         stars,
-        planets,
         asteroids,
+        planets,
         player,
         playerTrail,
     )
@@ -124,10 +124,10 @@ class GameRender(
             val tempObject = temporaryObjects.first()
             tempObject.init()
             tempObject.setRatio(ratio)
-            objects.add(tempObject)
+            objects.add(1, tempObject)
             temporaryObjects.removeAt(0)
             if(objects.size > MAX_EXPLOSION) {
-                objects.find { it is Explosion }?.let {
+                objects.findLast { it is Explosion }?.let {
                     objects.remove(it)
                     it.release()
                 }
