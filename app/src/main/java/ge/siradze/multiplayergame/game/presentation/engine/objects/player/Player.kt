@@ -2,7 +2,6 @@ package ge.siradze.multiplayergame.game.presentation.engine.objects.player
 
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.opengl.GLES20
 import android.opengl.GLES20.GL_FLOAT
 import android.opengl.GLES20.GL_FRAGMENT_SHADER
 import android.opengl.GLES20.GL_TRIANGLES
@@ -10,7 +9,6 @@ import android.opengl.GLES20.GL_VERTEX_SHADER
 import android.opengl.GLES20.glActiveTexture
 import android.opengl.GLES20.glDrawArrays
 import android.opengl.GLES20.glUniform2f
-import android.opengl.GLES20.glVertexAttribPointer
 import android.opengl.GLES30.GL_STATIC_DRAW
 import android.opengl.GLES30.GL_TEXTURE_2D
 import android.opengl.GLES30.glBindTexture
