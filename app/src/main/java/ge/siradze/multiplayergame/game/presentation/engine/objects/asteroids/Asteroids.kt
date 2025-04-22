@@ -304,8 +304,8 @@ class Asteroids(
             AsteroidsData.NUMBER_OF_ASTEROIDS
         )
 
-        glActiveTexture(texture)
-        glBindTexture(GL_TEXTURE_2D, textures[0])
+        glActiveTexture(0)
+        glBindTexture(GL_TEXTURE_2D, 0)
 
         glDisableVertexAttribArray(shader.vertex.location)
         glDisableVertexAttribArray(shader.velocity.location)

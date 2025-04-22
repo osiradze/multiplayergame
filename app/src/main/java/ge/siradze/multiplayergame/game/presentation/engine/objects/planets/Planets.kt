@@ -173,6 +173,7 @@ class Planets(
         }
 
         // Uniforms
+        shader.texture.init(program)
         shader.screenWidth.init(program)
         shader.ratio.init(program)
         shader.camera.init(program)
@@ -228,8 +229,8 @@ class Planets(
             vertex.numberOfPlanets
         )
 
-        glActiveTexture(texture)
-        glBindTexture(GL_TEXTURE_2D, textures[0])
+        glActiveTexture(0)
+        glBindTexture(GL_TEXTURE_2D, 0)
 
         glDisableVertexAttribArray(shader.vertex.location)
         glDisableVertexAttribArray(shader.textureCoordinates.location)
