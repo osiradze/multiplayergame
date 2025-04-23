@@ -113,16 +113,16 @@ class Explosion(
 
         shader.vertex.apply {
             init(program)
-            load(2, GL_FLOAT, false, vertex.stride, 0)
+            load(2, GL_FLOAT, false, vertex.stride, offset)
         }
         shader.color.apply {
             init(program)
-            load(3, GL_FLOAT, false, vertex.stride, 2 * vertex.typeSize)
+            load(3, GL_FLOAT, false, vertex.stride, offset * vertex.typeSize)
         }
 
         shader.isDead.apply {
             init(program)
-            load(1, GL_FLOAT, false, vertex.stride, 7 * vertex.typeSize)
+            load(1, GL_FLOAT, false, vertex.stride, offset * vertex.typeSize)
         }
 
         // Uniforms

@@ -24,7 +24,8 @@ open class ShaderUniformLocation(
 
 open class ShaderAttribLocation(
     location: Int = -1,
-    name: String
+    name: String,
+    val offset: Int = 0
 ): ShaderLocation(location, name) {
     override fun init(program: Int){
         location = glGetAttribLocation(program, name)

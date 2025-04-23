@@ -18,6 +18,22 @@ class PlanetsData {
     companion object {
         const val MIN_SIZE = 0.6f
         const val MAX_SIZE = 0.5f
+
+        const val NUMBER_OF_FLOATS_PER_VERTEX = 12
+        const val PX = 0
+        const val PY = 1
+        const val SIZE = 2
+        const val TX = 3
+        const val TY = 4
+        const val TW = 5
+        const val TH = 6
+
+        const val CR = 7
+        const val CB = 8
+        const val CG = 9
+        const val COLLISION = 10
+        const val IS_DESTROYED = 11
+
     }
 
     class Vertex(
@@ -27,7 +43,7 @@ class PlanetsData {
         private val textureDimensions: TextureDimensions
     ): AttributeData() {
         // 2 position + 1 size + 4 texture coordinates + 3 color + 1 collision flag + 1 isDestroyed flag
-        override val numberOfFloatsPerVertex = 12
+        override val numberOfFloatsPerVertex = NUMBER_OF_FLOATS_PER_VERTEX
         override val typeSize = Float.SIZE_BYTES
         override val size = numberOfPlanets * numberOfFloatsPerVertex
         private val data: FloatArray = FloatArray(size)
@@ -43,27 +59,27 @@ class PlanetsData {
             for (i in 0 until numberOfPlanets) {
 
                 //position
-                data[i * numberOfFloatsPerVertex + 0] = lastPlanetPosition.x + (Random.nextFloat()) * 2f + 2f
-                data[i * numberOfFloatsPerVertex + 1] = lastPlanetPosition.y + (Random.nextFloat()) * 4f - 2f
-                lastPlanetPosition[0] = data[i * numberOfFloatsPerVertex + 0]
-                lastPlanetPosition[1] = data[i * numberOfFloatsPerVertex + 1]
+                data[i * numberOfFloatsPerVertex + PX] = lastPlanetPosition.x + (Random.nextFloat()) * 2f + 2f
+                data[i * numberOfFloatsPerVertex + PY] = lastPlanetPosition.y + (Random.nextFloat()) * 4f - 2f
+                lastPlanetPosition[PX] = data[i * numberOfFloatsPerVertex + PX]
+                lastPlanetPosition[PY] = data[i * numberOfFloatsPerVertex + PY]
 
                 //size
-                data[i * numberOfFloatsPerVertex + 2] = Random.nextFloat() * sizeRange + minSize
+                data[i * numberOfFloatsPerVertex + SIZE] = Random.nextFloat() * sizeRange + minSize
 
                 // texture coordinates
                 val randomX = Random.nextInt(until = textureDimensions.columns) + 1
                 val randomY = Random.nextInt(until = textureDimensions.rows) + 1
 
-                data[i * numberOfFloatsPerVertex + 3] = textureDimensions.stepX * (randomX - 1)
-                data[i * numberOfFloatsPerVertex + 4] = textureDimensions.stepY * (randomY - 1)
-                data[i * numberOfFloatsPerVertex + 5] = textureDimensions.stepX
-                data[i * numberOfFloatsPerVertex + 6] = textureDimensions.stepY
+                data[i * numberOfFloatsPerVertex + TX] = textureDimensions.stepX * (randomX - 1)
+                data[i * numberOfFloatsPerVertex + TY] = textureDimensions.stepY * (randomY - 1)
+                data[i * numberOfFloatsPerVertex + TW] = textureDimensions.stepX
+                data[i * numberOfFloatsPerVertex + TH] = textureDimensions.stepY
 
                 // color
-                data[i * numberOfFloatsPerVertex + 7] = Random.nextFloat() * 0.5f + 0.5f
-                data[i * numberOfFloatsPerVertex + 8] = Random.nextFloat() * 0.5f + 0.5f
-                data[i * numberOfFloatsPerVertex + 9] = Random.nextFloat() * 0.5f + 0.5f
+                data[i * numberOfFloatsPerVertex + CR] = Random.nextFloat() * 0.5f + 0.5f
+                data[i * numberOfFloatsPerVertex + CB] = Random.nextFloat() * 0.5f + 0.5f
+                data[i * numberOfFloatsPerVertex + CG] = Random.nextFloat() * 0.5f + 0.5f
             }
         }
     }
@@ -77,16 +93,28 @@ class PlanetsData {
 
     class ShaderLocations(
         val vertex : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_position"
+            name = "a_position",
+            offset = 0
         ),
         val size : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_size"
+            name = "a_size",
+            offset = 2
         ),
         val textureCoordinates : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_texture_coordinates"
+            name = "a_texture_coordinates",
+            offset = 3
         ),
         val color : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_color"
+            name = "a_color",
+            offset = 7
+        ),
+        val collision : ShaderAttribLocation = ShaderAttribLocation(
+            name = "a_collision",
+            offset = 10
+        ),
+        val isDestroyed : ShaderAttribLocation = ShaderAttribLocation(
+            name = "a_isDestroyed",
+            offset = 11
         ),
 
         // required to convert pixel size to world units
@@ -105,12 +133,6 @@ class PlanetsData {
         ),
         val playerPosition: ShaderLocation = ShaderUniformLocation(
             name = "u_player_position"
-        ),
-        val collision : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_collision"
-        ),
-        val isDestroyed : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_isDestroyed"
         ),
         val destructible: ShaderUniformLocation = ShaderUniformLocation(
             name = "u_destructible"

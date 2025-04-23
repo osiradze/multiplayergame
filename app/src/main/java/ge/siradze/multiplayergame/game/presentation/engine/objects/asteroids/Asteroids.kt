@@ -7,7 +7,6 @@ import android.opengl.GLES20.GL_FRAGMENT_SHADER
 import android.opengl.GLES20.GL_LINEAR
 import android.opengl.GLES20.GL_POINTS
 import android.opengl.GLES20.glActiveTexture
-import android.opengl.GLES20.glBufferSubData
 import android.opengl.GLES20.glDeleteBuffers
 import android.opengl.GLES20.glDeleteShader
 import android.opengl.GLES20.glDeleteTextures
@@ -156,27 +155,27 @@ class Asteroids(
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
         shader.vertex.apply {
             init(program)
-            load(2, GL_FLOAT, false, vertex.stride, 0)
+            load(2, GL_FLOAT, false, vertex.stride, offset)
         }
 
         shader.velocity.apply {
             init(program)
-            load(2, GL_FLOAT, false, vertex.stride, 2)
+            load(2, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
         }
 
         shader.size.apply {
             init(program)
-            load(1, GL_FLOAT, false, vertex.stride, 4 * Float.SIZE_BYTES)
+            load(1, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
         }
 
         shader.textureCoordinates.apply {
             init(program)
-            load(4, GL_FLOAT, false, vertex.stride, 5 * Float.SIZE_BYTES)
+            load(4, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
         }
 
         shader.isAlive.apply {
             init(program)
-            load(1, GL_FLOAT, false, vertex.stride, 9 * Float.SIZE_BYTES)
+            load(1, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
         }
 
         // Uniforms

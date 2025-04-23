@@ -49,9 +49,18 @@ class ExplosionData {
     }
 
     class ShaderLocations (
-        val vertex: ShaderAttribLocation = ShaderAttribLocation(name = "a_position"),
-        val color: ShaderAttribLocation = ShaderAttribLocation(name = "a_color"),
-        val isDead: ShaderAttribLocation = ShaderAttribLocation(name = "a_isDead"),
+        val vertex: ShaderAttribLocation = ShaderAttribLocation(
+            name = "a_position",
+            offset = 0,
+        ),
+        val color: ShaderAttribLocation = ShaderAttribLocation(
+            name = "a_color",
+            offset = 2,
+        ),
+        val isDead: ShaderAttribLocation = ShaderAttribLocation(
+            name = "a_isDead",
+            offset = 7,
+        ),
 
         // Uniforms
         val ratio: ShaderLocation = RatioShaderLocation(),

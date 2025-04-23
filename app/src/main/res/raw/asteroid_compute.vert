@@ -107,7 +107,7 @@ void main() {
     float distance = getDistance(u_player_position, vec2(thisAsteroidPosition.x, thisAsteroidPosition.y));
 
     // if asteroid is too far away, destroy it
-    if(distance > 4.0) {
+    if(distance > 7.0) {
         inputOutput.data[index + isAliveIndex] = 0.0; // mark the other asteroid as not alive
         return;
     }

@@ -59,11 +59,9 @@ class Planets(
     private val playerProperties: PlayerData.Properties,
     private val camera: Camera,
     private val textureCounter: TextureCounter,
-    private val event: (GameRender.InGameEvents.CreateExplosion) -> Unit
 ): GameObject {
 
-    private val textureDimensions = TextureDimensions(2, 3, R.drawable.planets3)
-    private val explosionHelper = ExplosionHelper(context, textureDimensions)
+    private val textureDimensions = TextureDimensions(4, 3, R.drawable.planets2)
 
 
     private val vao: IntArray = IntArray(1)
@@ -149,27 +147,27 @@ class Planets(
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
         shader.vertex.apply {
             init(program)
-            load(2, GL_FLOAT, false, vertex.stride, 0)
+            load(2, GL_FLOAT, false, vertex.stride, offset)
         }
 
         shader.size.apply {
             init(program)
-            load(1, GL_FLOAT, false, vertex.stride, 2 * Float.SIZE_BYTES)
+            load(1, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
         }
 
         shader.textureCoordinates.apply {
             init(program)
-            load(4, GL_FLOAT, false, vertex.stride, 3 * Float.SIZE_BYTES)
+            load(4, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
         }
 
         shader.color.apply {
             init(program)
-            load(3, GL_FLOAT, false, vertex.stride, 7 * Float.SIZE_BYTES)
+            load(3, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
         }
 
         shader.isDestroyed.apply {
             init(program)
-            load(1, GL_FLOAT, false, vertex.stride, 11 * Float.SIZE_BYTES)
+            load(1, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
         }
 
         // Uniforms

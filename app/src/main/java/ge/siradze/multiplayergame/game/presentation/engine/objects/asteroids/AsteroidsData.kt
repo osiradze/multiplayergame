@@ -30,9 +30,24 @@ object AsteroidsData {
      * 2 - velocity
      * 1 - size
      * 4 - texture coordinates
-     * 1 - empty flag, 0 - empty, 1 - alive
+     * 1 - is alive flag, 0 - no, 1 - yes
      **/
-    const val NUMBER_OF_FLOATS_PER_VERTEX = 10
+    private const val NUMBER_OF_FLOATS_PER_VERTEX = 10
+    private const val PX = 0
+    private const val PY = 1
+    private const val VX = 2
+    private const val VY = 3
+    private const val SIZE = 4
+    private const val TX = 5
+    private const val TY = 6
+    private const val TW = 7
+    private const val TH = 8
+    private const val IS_ALIVE = 9
+
+    private const val REQUEST = 10
+    private const val CREATE_INDEX = 11
+
+
 
     // 2 extra data for:
     // 1. do we request adding new asteroid? 1 - yes, 0 - no
@@ -42,6 +57,7 @@ object AsteroidsData {
     const val NUMBER_OF_ASTEROIDS = 400
     private const val MIN_SIZE = 0.1f
     private const val SIZE_RANGE = 0.25f
+    const val SPAWN_DISTANCE = 3f
 
     const val TAG = "AsteroidsData"
 
@@ -90,19 +106,25 @@ object AsteroidsData {
 
     class ShaderLocations(
         val vertex : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_position"
+            name = "a_position",
+            offset = 0
         ),
         val velocity : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_velocity"
+            name = "a_velocity",
+            offset = 2
+
         ),
         val size : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_size"
+            name = "a_size",
+            offset = 4
         ),
         val textureCoordinates : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_texture_coordinates"
+            name = "a_texture_coordinates",
+            offset = 5
         ),
         val isAlive : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_isAlive"
+            name = "a_isAlive",
+            offset = 9
         ),
         // required to convert pixel size to world units
         val screenWidth : ShaderUniformLocation = ShaderUniformLocation(
@@ -136,38 +158,44 @@ object AsteroidsData {
     ): FloatArray {
         // new Asteroid data
         val newData = FloatArray(NUMBER_OF_FLOAT_IN_CREATE_REQUEST)
-        val vector = floatArrayOf(
+        val positionVector = floatArrayOf(
            Math.random().toFloat() - 0.5f,
             Math.random().toFloat() - 0.5f
         )
-        vector.normalize()
-        vector.multiply(3f)
+        positionVector.normalize()
+        positionVector.multiply(SPAWN_DISTANCE)
         // position
-        newData[0] = spawnPosition.x + vector.x
-        newData[1] = spawnPosition.y + vector.y
+        newData[PX] = spawnPosition.x + positionVector.x
+        newData[PY] = spawnPosition.y + positionVector.y
 
+
+        val velocityVector = floatArrayOf(
+            Math.random().toFloat() - 0.5f,
+            Math.random().toFloat() - 0.5f
+        )
+        velocityVector.normalize()
         // velocity
         val speed = EngineGlobals.deltaTime * (Math.random().toFloat() * 0.5f + 0.5f) * 0.1f
-        newData[2] = -vector.x * speed
-        newData[3] = -vector.y * speed
+        newData[VX] = -velocityVector.x * speed
+        newData[VY] = -velocityVector.y * speed
 
         // size
-        newData[4] = Math.random().toFloat() * SIZE_RANGE + MIN_SIZE
+        newData[SIZE] = Math.random().toFloat() * SIZE_RANGE + MIN_SIZE
 
         // texture coordinates
         val randomX = Random.nextInt(until = textureDimensions.columns) + 1
         val randomY = Random.nextInt(until = textureDimensions.rows) + 1
-        newData[5] = textureDimensions.stepX * (randomX - 1)
-        newData[6] = textureDimensions.stepY * (randomY - 1)
-        newData[7] = textureDimensions.stepX
-        newData[8] = textureDimensions.stepY
+        newData[TX] = textureDimensions.stepX * (randomX - 1)
+        newData[TY] = textureDimensions.stepY * (randomY - 1)
+        newData[TW] = textureDimensions.stepX
+        newData[TH] = textureDimensions.stepY
 
         // alive flag
-        newData[9] = 1f
+        newData[IS_ALIVE] = 1f
         // request to add new asteroid
-        newData[10] = 1f
+        newData[REQUEST] = 1f
         // index to add new asteroid at
-        newData[11] = createAsteroidIndex.toFloat()
+        newData[CREATE_INDEX] = createAsteroidIndex.toFloat()
 
         // increment index
         createAsteroidIndex = (createAsteroidIndex + 1) % NUMBER_OF_ASTEROIDS

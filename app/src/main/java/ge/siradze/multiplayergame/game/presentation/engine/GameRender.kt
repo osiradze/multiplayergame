@@ -5,7 +5,6 @@ import android.opengl.GLES20.GL_COLOR_BUFFER_BIT
 import android.opengl.GLES20.glClear
 import android.opengl.GLES20.glClearColor
 import android.opengl.GLSurfaceView
-import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
@@ -56,7 +55,6 @@ class GameRender(
         playerProperties = player.properties,
         camera = camera,
         textureCounter = textureCounter,
-        event = explosionCreation
     )
 
     private val asteroids = Asteroids(
