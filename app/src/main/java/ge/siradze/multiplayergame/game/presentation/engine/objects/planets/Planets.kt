@@ -36,12 +36,10 @@ import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.GameState
-import ge.siradze.multiplayergame.game.presentation.engine.GameRender
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
-import ge.siradze.multiplayergame.game.presentation.engine.objects.explosion.ExplosionHelper
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerData
 import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter

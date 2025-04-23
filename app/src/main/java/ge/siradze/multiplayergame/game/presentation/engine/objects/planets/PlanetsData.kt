@@ -31,8 +31,6 @@ class PlanetsData {
         const val CR = 7
         const val CB = 8
         const val CG = 9
-        const val COLLISION = 10
-        const val IS_DESTROYED = 11
 
     }
 
@@ -107,10 +105,6 @@ class PlanetsData {
         val color : ShaderAttribLocation = ShaderAttribLocation(
             name = "a_color",
             offset = 7
-        ),
-        val collision : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_collision",
-            offset = 10
         ),
         val isDestroyed : ShaderAttribLocation = ShaderAttribLocation(
             name = "a_isDestroyed",
