@@ -16,8 +16,8 @@ import kotlin.random.Random
 class PlanetsData {
 
     companion object {
-        const val MIN_SIZE = 0.6f
-        const val MAX_SIZE = 0.5f
+        const val MIN_SIZE = 1.0f
+        const val MAX_SIZE = 0.7f
 
         const val NUMBER_OF_FLOATS_PER_VERTEX = 12
         const val PX = 0

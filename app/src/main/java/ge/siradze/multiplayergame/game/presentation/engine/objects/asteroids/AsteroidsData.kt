@@ -2,6 +2,7 @@ package ge.siradze.multiplayergame.game.presentation.engine.objects.asteroids
 
 import android.util.Log
 import ge.siradze.multiplayergame.game.presentation.engine.EngineGlobals
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.add
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.multiply
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.normalize
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
@@ -173,7 +174,8 @@ object AsteroidsData {
             Math.random().toFloat() - 0.5f,
             Math.random().toFloat() - 0.5f
         )
-        velocityVector.normalize()
+        velocityVector.add(positionVector)
+
         // velocity
         val speed = EngineGlobals.deltaTime * (Math.random().toFloat() * 0.5f + 0.5f) * 0.1f
         newData[VX] = -velocityVector.x * speed

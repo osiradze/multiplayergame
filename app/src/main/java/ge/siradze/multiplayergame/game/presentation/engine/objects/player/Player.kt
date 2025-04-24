@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.opengl.GLES20.GL_FLOAT
 import android.opengl.GLES20.GL_FRAGMENT_SHADER
+import android.opengl.GLES20.GL_LINEAR
 import android.opengl.GLES20.GL_TRIANGLES
 import android.opengl.GLES20.GL_VERTEX_SHADER
 import android.opengl.GLES20.glActiveTexture
@@ -72,7 +73,7 @@ class PlayerObject(
     )
     private var program = 0
 
-    private val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.ship)
+    private val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.ship2)
     private val textures = IntArray(1)
     private var texture: Int = 0
 
@@ -140,7 +141,8 @@ class PlayerObject(
             bitmap,
             textures[0],
             shader.texture.location,
-            textureCounter.getTextureOffset(1)
+            textureCounter.getTextureOffset(1),
+            filterType = GL_LINEAR
         )
     }
 

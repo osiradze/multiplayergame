@@ -10,7 +10,7 @@ uniform bool u_drawLine;
 
 void main() {
     if(u_drawLine) {
-        float lineAlpha = 0.1;
+        float lineAlpha = 1.0;
         if(v_isDestroyed > 0.8) {
             discard;
         }
