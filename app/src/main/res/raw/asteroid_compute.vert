@@ -85,8 +85,9 @@ void main() {
     }
 
     // addVelocity
-    inputOutput.data[index] += inputOutput.data[index + 2u];
-    inputOutput.data[index + 1u] += inputOutput.data[index + 3u];
+    vec2 normalized = normalize(vec2(inputOutput.data[index + 2u], inputOutput.data[index + 3u]));
+    inputOutput.data[index] +=  normalized.x / 1000.0;
+    inputOutput.data[index + 1u] += normalized.y / 1000.0;
 
 
     uint planetNumber = uint(inputOutput.data.length()) / u_floats_per_vertex;
@@ -149,8 +150,8 @@ void main() {
                 uint otherAsteroidIndex = otherAsteroid * u_floats_per_vertex;
                 //inputOutput.data[otherAsteroidIndex + u_floats_per_vertex - 1u] = 0.0; // mark the other asteroid as not alive
 
-                inputOutput.data[otherAsteroidIndex] += (otherAsteroidPosition.x - thisAsteroidPosition.x) / 100.0;
-                inputOutput.data[otherAsteroidIndex + 1u] += (otherAsteroidPosition.y - thisAsteroidPosition.y) / 100.0;
+                inputOutput.data[otherAsteroidIndex + 2u] = (otherAsteroidPosition.x - thisAsteroidPosition.x);
+                inputOutput.data[otherAsteroidIndex + 3u] = (otherAsteroidPosition.y - thisAsteroidPosition.y);
             }
         }
     }

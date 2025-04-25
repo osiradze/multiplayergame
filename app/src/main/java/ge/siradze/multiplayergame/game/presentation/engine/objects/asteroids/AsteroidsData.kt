@@ -57,8 +57,8 @@ object AsteroidsData {
 
     const val NUMBER_OF_ASTEROIDS = 400
     private const val MIN_SIZE = 0.1f
-    private const val SIZE_RANGE = 0.25f
-    const val SPAWN_DISTANCE = 3f
+    private const val SIZE_RANGE = 0.2f
+    private const val SPAWN_DISTANCE = 3f
 
     const val TAG = "AsteroidsData"
 

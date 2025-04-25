@@ -59,7 +59,7 @@ class Planets(
     private val textureCounter: TextureCounter,
 ): GameObject {
 
-    private val textureDimensions = TextureDimensions(4, 3, R.drawable.planets2)
+    private val textureDimensions = TextureDimensions(2, 2, R.drawable.planets3)
 
 
     private val vao: IntArray = IntArray(1)
@@ -69,6 +69,9 @@ class Planets(
         PlanetsData.Vertex(numberOfPlanets, textureDimensions = textureDimensions).also {
             state.set(PlanetsData.Vertex::class.qualifiedName, it)
         }
+
+    fun getVertexData(): FloatArray = vertex.data
+
     private val shader = PlanetsData.ShaderLocations()
     private val shaders = arrayOf(
         Shader(

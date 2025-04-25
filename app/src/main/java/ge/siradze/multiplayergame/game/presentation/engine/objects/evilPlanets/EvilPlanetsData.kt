@@ -1,9 +1,13 @@
-package ge.siradze.multiplayergame.game.presentation.engine.objects.planets
+package ge.siradze.multiplayergame.game.presentation.engine.objects.evilPlanets
 
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.multiply
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.normalize
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.rotate
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.engine.objects.AttributeData
+import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.PlanetsData
 import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.RatioShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderAttribLocation
@@ -13,14 +17,16 @@ import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureDimens
 import java.nio.Buffer
 import kotlin.random.Random
 
-class PlanetsData {
+class EvilPlanetsData {
 
     companion object {
-        const val MIN_SIZE = 1.0f
-        const val MAX_SIZE = 0.7f
+        const val MIN_SIZE = 0.3f
+        const val MAX_SIZE = 0.3f
 
         const val NUMBER_OF_FLOATS_PER_VERTEX = 12
-        const val DISTANCE_BETWEEN_PLANETS = 5.0f
+        const val NUMBER_OF_EVIL_PLANET_PER_PLANET = 10
+        const val SPAWN_RADIUS = 1f
+
 
         const val PX = 0
         const val PY = 1
@@ -37,32 +43,40 @@ class PlanetsData {
     }
 
     class Vertex(
-        val numberOfPlanets: Int,
         private val minSize: Float = MIN_SIZE,
         private val sizeRange: Float = MAX_SIZE,
-        private val textureDimensions: TextureDimensions
+        private val textureDimensions: TextureDimensions,
+        private val planets: FloatArray,
     ): AttributeData() {
         // 2 position + 1 size + 4 texture coordinates + 3 color + 1 collision flag + 1 isDestroyed flag
         override val numberOfFloatsPerVertex = NUMBER_OF_FLOATS_PER_VERTEX
         override val typeSize = Float.SIZE_BYTES
+        val numberOfPlanets = planets.size / PlanetsData.NUMBER_OF_FLOATS_PER_VERTEX * NUMBER_OF_EVIL_PLANET_PER_PLANET
         override val size = numberOfPlanets * numberOfFloatsPerVertex
-        val data: FloatArray = FloatArray(size)
+        private val data: FloatArray = FloatArray(size)
 
         override fun getBuffer(): Buffer = data.toBuffer()
+
+        private val direction = floatArrayOf(0f, 1f)
 
         init {
             generatePoints()
         }
 
         private fun generatePoints() {
-            val lastPlanetPosition = floatArrayOf(0f,0f)
+
             for (i in 0 until numberOfPlanets) {
+                val planetX = planets[i / NUMBER_OF_EVIL_PLANET_PER_PLANET * PlanetsData.NUMBER_OF_FLOATS_PER_VERTEX]
+                val planetY = planets[i / NUMBER_OF_EVIL_PLANET_PER_PLANET* PlanetsData.NUMBER_OF_FLOATS_PER_VERTEX + 1]
 
                 //position
-                data[i * numberOfFloatsPerVertex + PX] = lastPlanetPosition.x + (Random.nextFloat()) * DISTANCE_BETWEEN_PLANETS + DISTANCE_BETWEEN_PLANETS / 2
-                data[i * numberOfFloatsPerVertex + PY] = lastPlanetPosition.y + (Random.nextFloat()) * DISTANCE_BETWEEN_PLANETS + DISTANCE_BETWEEN_PLANETS / 2
-                lastPlanetPosition[PX] = data[i * numberOfFloatsPerVertex + PX]
-                lastPlanetPosition[PY] = data[i * numberOfFloatsPerVertex + PY]
+                direction.rotate(360f / NUMBER_OF_EVIL_PLANET_PER_PLANET)
+
+                direction.normalize()
+                direction.multiply(SPAWN_RADIUS)
+
+                data[i * numberOfFloatsPerVertex + PX] = planetX + direction.x
+                data[i * numberOfFloatsPerVertex + PY] = planetY + direction.y
 
                 //size
                 data[i * numberOfFloatsPerVertex + SIZE] = Random.nextFloat() * sizeRange + minSize
@@ -78,9 +92,9 @@ class PlanetsData {
 
                 // color
                 val min = 0.5f
-                data[i * numberOfFloatsPerVertex + CR] = Random.nextFloat() + min
-                data[i * numberOfFloatsPerVertex + CB] = Random.nextFloat() + min
-                data[i * numberOfFloatsPerVertex + CG] = Random.nextFloat() + min
+                data[i * numberOfFloatsPerVertex + CR] = Random.nextFloat()  + min
+                data[i * numberOfFloatsPerVertex + CB] = Random.nextFloat()  + min
+                data[i * numberOfFloatsPerVertex + CG] = Random.nextFloat()  + min
             }
         }
     }

@@ -9,6 +9,7 @@ import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.objects.asteroids.Asteroids
+import ge.siradze.multiplayergame.game.presentation.engine.objects.evilPlanets.EvilPlanets
 import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.Planets
 import ge.siradze.multiplayergame.game.presentation.engine.objects.explosion.Explosion
 import ge.siradze.multiplayergame.game.presentation.engine.objects.explosion.ExplosionHelper
@@ -56,6 +57,16 @@ class GameRender(
         camera = camera,
         textureCounter = textureCounter,
     )
+    private val evilPlanets = EvilPlanets(
+        name = "EvilPlanets",
+        state = state,
+        context = context,
+        playerProperties = player.properties,
+        camera = camera,
+        textureCounter = textureCounter,
+        evilPlanetsData = planets.getVertexData(),
+    )
+
 
     private val asteroids = Asteroids(
         name = "Asteroids",
@@ -72,6 +83,7 @@ class GameRender(
     private val objects: MutableList<GameObject> = mutableListOf(
         stars,
         asteroids,
+        evilPlanets,
         planets,
         player,
         playerTrail,
@@ -157,6 +169,6 @@ class GameRender(
 
     companion object {
         const val MAX_EXPLOSION = 70
-        const val NUMBER_OF_PLANETS = 50
+        const val NUMBER_OF_PLANETS = 20
     }
 }
