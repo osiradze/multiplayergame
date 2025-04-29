@@ -23,8 +23,8 @@ void main() {
         //gl_FragColor = vec4(1.0,0.0,0.0, 1.0);
         discard;
     } else {
-        //gl_FragColor = pixel;
-        gl_FragColor = toGrayscale(pixel);
+        gl_FragColor = pixel;
+        //gl_FragColor = toGrayscale(pixel);
     }
 
 }

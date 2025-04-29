@@ -58,7 +58,7 @@ object AsteroidsData {
     const val NUMBER_OF_ASTEROIDS = 400
     private const val MIN_SIZE = 0.1f
     private const val SIZE_RANGE = 0.2f
-    private const val SPAWN_DISTANCE = 3f
+    private const val SPAWN_DISTANCE = 4f
 
     const val TAG = "AsteroidsData"
 
@@ -147,6 +147,9 @@ object AsteroidsData {
         ),
         val destructible: ShaderUniformLocation = ShaderUniformLocation(
             name = "u_destructible"
+        ),
+        val deltaTime : ShaderUniformLocation = ShaderUniformLocation(
+            name = "u_delta_time"
         ),
     )
 

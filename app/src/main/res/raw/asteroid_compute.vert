@@ -17,6 +17,7 @@ layout(std430, binding = 2) buffer ResultBuffer {
 uniform uint u_floats_per_vertex;
 uniform vec2 u_player_position;
 uniform bool u_destructible;
+uniform float u_delta_time;
 
 float getDistance(vec2 p1, vec2 p2) {
     return length(p2 - p1);
@@ -85,9 +86,9 @@ void main() {
     }
 
     // addVelocity
-    vec2 normalized = normalize(vec2(inputOutput.data[index + 2u], inputOutput.data[index + 3u]));
-    inputOutput.data[index] +=  normalized.x / 1000.0;
-    inputOutput.data[index + 1u] += normalized.y / 1000.0;
+    //vec2 normalized = normalize(vec2(inputOutput.data[index + 2u], inputOutput.data[index + 3u]));
+    inputOutput.data[index] += inputOutput.data[index + 2u];
+    inputOutput.data[index + 1u] += inputOutput.data[index + 3u];
 
 
     uint planetNumber = uint(inputOutput.data.length()) / u_floats_per_vertex;
@@ -150,8 +151,8 @@ void main() {
                 uint otherAsteroidIndex = otherAsteroid * u_floats_per_vertex;
                 //inputOutput.data[otherAsteroidIndex + u_floats_per_vertex - 1u] = 0.0; // mark the other asteroid as not alive
 
-                inputOutput.data[otherAsteroidIndex + 2u] = (otherAsteroidPosition.x - thisAsteroidPosition.x);
-                inputOutput.data[otherAsteroidIndex + 3u] = (otherAsteroidPosition.y - thisAsteroidPosition.y);
+                inputOutput.data[otherAsteroidIndex + 2u] = (otherAsteroidPosition.x - thisAsteroidPosition.x) * u_delta_time;
+                inputOutput.data[otherAsteroidIndex + 3u] = (otherAsteroidPosition.y - thisAsteroidPosition.y) * u_delta_time;
             }
         }
     }

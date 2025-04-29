@@ -25,7 +25,7 @@ class EvilPlanetsData {
 
         const val NUMBER_OF_FLOATS_PER_VERTEX = 12
         const val NUMBER_OF_EVIL_PLANET_PER_PLANET = 10
-        const val SPAWN_RADIUS = 1f
+        const val SPAWN_RADIUS = 2f
 
 
         const val PX = 0
