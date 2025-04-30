@@ -41,7 +41,7 @@ void main() {
 
 
     float distance = getDistance(u_player_position, vec2(x, y));
-    if(distance < size / 2.5) {
+    if(distance < size / 2.0 * 0.95) {
         resultBuffer.result[u_reader_offset + 0u] = 1.0; // indicates that the player is colliding with the planet
         resultBuffer.result[u_reader_offset + 1u] = x;
         resultBuffer.result[u_reader_offset + 2u] = y;
