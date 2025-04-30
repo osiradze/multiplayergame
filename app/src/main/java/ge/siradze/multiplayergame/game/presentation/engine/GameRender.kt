@@ -7,22 +7,19 @@ import android.opengl.GLES20.glClearColor
 import android.opengl.GLSurfaceView
 import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
-import ge.siradze.multiplayergame.game.presentation.engine.collision.VBOReader
-import ge.siradze.multiplayergame.game.presentation.engine.collision.VBOReaderImpl
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
-import ge.siradze.multiplayergame.game.presentation.engine.objects.asteroids.Asteroids
-import ge.siradze.multiplayergame.game.presentation.engine.objects.evilPlanets.EvilPlanets
-import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.Planets
 import ge.siradze.multiplayergame.game.presentation.engine.objects.explosion.Explosion
 import ge.siradze.multiplayergame.game.presentation.engine.objects.explosion.ExplosionHelper
-import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerObject
-import ge.siradze.multiplayergame.game.presentation.engine.objects.player.trail.PlayerTrail
-import ge.siradze.multiplayergame.game.presentation.engine.objects.stars.Stars
+import ge.siradze.multiplayergame.game.presentation.engine.objects.player.Player
+import ge.siradze.multiplayergame.game.presentation.engine.scene.ExplosionCreation
+import ge.siradze.multiplayergame.game.presentation.engine.scene.SceneObjects
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter
-import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
+import ge.siradze.multiplayergame.game.presentation.engine.vboReader.VBOReaderImpl
 import ge.siradze.multiplayergame.game.presentation.feedback.FeedbackSounds
+import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
+
 
 class GameRender(
     val context: Context,
@@ -33,67 +30,43 @@ class GameRender(
 
     private var ratio = 1f
 
-    val camera: Camera = Camera(
-        state
-    )
-
+    val camera: Camera = Camera(state)
     private val textureCounter: TextureCounter = TextureCounter()
     private val vboReader: VBOReaderImpl = VBOReaderImpl()
 
-    // create player and set camera to follow it
-    val player = PlayerObject(state, context, camera, textureCounter).also {
+    val player = Player(state, context, camera, textureCounter).also {
         camera.followPlayer(it.properties)
     }
-    private val playerTrail = PlayerTrail(
-        context  = context,
-        player.properties,
-        camera
+
+    private val temporaryObjects: MutableList<Explosion> = mutableListOf()
+    private val explosionCreation = ExplosionCreation(
+        context = context,
+        camera = camera,
+        player = player,
+        temporaryObjects = temporaryObjects,
+        feedbackSounds = feedbackSounds,
+        uiEffect = uiEffect
     )
 
-    private val planets = Planets(
-        name = "Planets",
+    private val sceneObjects = SceneObjects(
         state = state,
-        numberOfPlanets = NUMBER_OF_PLANETS,
         context = context,
-        playerProperties = player.properties,
         camera = camera,
         textureCounter = textureCounter,
         vboReader = vboReader,
-    )
-    private val evilPlanets = EvilPlanets(
-        name = "EvilPlanets",
-        state = state,
-        context = context,
-        playerProperties = player.properties,
-        camera = camera,
-        textureCounter = textureCounter,
-        planetsData = planets.getVertexData(),
-        vboReader = vboReader,
+        player = player,
+        explosionCreation = explosionCreation,
     )
 
-    private val asteroids = Asteroids(
-        name = "Asteroids",
-        state = state,
-        context = context,
-        playerProperties = player.properties,
-        camera = camera,
-        textureCounter = textureCounter,
-        event = explosionCreation,
-        vboReader = vboReader,
-    )
-
-    private val stars = Stars(context, camera)
 
     private val objects: MutableList<GameObject> = mutableListOf(
-        stars,
-        asteroids,
-        evilPlanets,
-        planets,
+        sceneObjects.stars,
+        sceneObjects.asteroids,
+        sceneObjects.evilPlanets,
+        sceneObjects.planets,
         player,
-        playerTrail,
+        sceneObjects.playerTrail,
     )
-    // for objects that needs to be created
-    val temporaryObjects: MutableList<Explosion> = mutableListOf()
 
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
         EngineGlobals.update()
@@ -173,7 +146,7 @@ class GameRender(
     }
 
     companion object {
-        const val MAX_EXPLOSION = 70
+        const val MAX_EXPLOSION = 50
         const val NUMBER_OF_PLANETS = 30
     }
 }

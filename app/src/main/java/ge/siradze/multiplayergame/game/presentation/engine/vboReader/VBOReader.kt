@@ -1,4 +1,4 @@
-package ge.siradze.multiplayergame.game.presentation.engine.collision
+package ge.siradze.multiplayergame.game.presentation.engine.vboReader
 
 import android.opengl.GLES20.GL_DYNAMIC_DRAW
 import android.opengl.GLES20.glGenBuffers
@@ -11,13 +11,12 @@ import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
 
 
 /**
- Reading array from GPU to CPU is slowest operation in OpenGL.
- It is slower than Heaviest frame render there can be.
- It does not matter if you are reading even one byte from GPU to CPU it is still as slow.
- And when we are using reading for multiple objects we have heavy hit on performance.
-
- Idea of this class is to use one read for all objects per frame (or less) .
- **/
+ * Reading data from GPU to CPU in OpenGL is extremely slow.
+ * Even reading a single byte can stall the pipeline more than the heaviest frame render.
+ *
+ * This class reduces performance impact by consolidating all GPU reads into a single buffer read per frame.
+ * Each object accesses its own slice of the shared buffer.
+ */
 
 interface VBOReader {
     fun allocate(
@@ -44,7 +43,6 @@ class VBOReaderImpl : VBOReader {
     override val vbo: IntArray = IntArray(1)
     private val buffer by lazy { cleanData.toBuffer() }
     private val bufferSize by lazy { cleanData.size * Float.SIZE_BYTES }
-
 
     class KeyData (
         val offset: Int,
@@ -93,6 +91,7 @@ class VBOReaderImpl : VBOReader {
     }
 
 
+    // writes data inside provided float array
     override fun getData(key: String, destArray: FloatArray) {
         val keyData = allocations[key] ?: return
         if (keyData.numberOfFloats != destArray.size) {

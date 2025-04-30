@@ -41,7 +41,7 @@ import ge.siradze.multiplayergame.game.presentation.engine.utils.TextureUtils
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 
 
-class PlayerObject(
+class Player(
     state: GameState,
     private val context: Context,
     private val camera: Camera,

@@ -3,7 +3,6 @@ package ge.siradze.multiplayergame.game.presentation.engine.utils
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.opengl.GLES20
-import android.opengl.GLES20.GL_LINEAR
 import android.opengl.GLES20.GL_TEXTURE0
 import android.opengl.GLES30.GL_NEAREST
 import android.opengl.GLES30.GL_TEXTURE_2D

@@ -35,7 +35,6 @@ class ExplosionHelper(
                 generatePointsFor(x = i, y = j)
             }
         }
-        Log.i("TAG", ": ")
     }
 
     private fun cutBitmap(

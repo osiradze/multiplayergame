@@ -1,8 +1,6 @@
 package ge.siradze.multiplayergame.game.presentation.engine.objects.asteroids
 
-import android.util.Log
 import ge.siradze.multiplayergame.game.presentation.engine.EngineGlobals
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.add
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.multiply
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.normalize
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
@@ -15,7 +13,6 @@ import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderAttribLo
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderLocation
 import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderUniformLocation
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureDimensions
-import java.nio.Buffer
 import kotlin.random.Random
 
 /**

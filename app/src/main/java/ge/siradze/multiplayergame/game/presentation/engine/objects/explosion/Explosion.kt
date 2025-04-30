@@ -159,8 +159,6 @@ class Explosion(
         )
     }
 
-
-
     private fun drawExplosion() {
         glUseProgram(program)
         glEnableVertexAttribArray(shader.vertex.location)
