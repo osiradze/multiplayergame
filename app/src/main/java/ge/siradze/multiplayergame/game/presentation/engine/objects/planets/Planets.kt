@@ -37,9 +37,11 @@ import android.opengl.GLES31.glBufferData
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
+import ge.siradze.multiplayergame.game.presentation.engine.collision.VBOReader
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
+import ge.siradze.multiplayergame.game.presentation.engine.objects.evilPlanets.EvilPlanets
 import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerData
 import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
 import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter
@@ -57,17 +59,19 @@ class Planets(
     private val playerProperties: PlayerData.Properties,
     private val camera: Camera,
     private val textureCounter: TextureCounter,
+    private val vboReader: VBOReader
 ): GameObject {
 
     private val textureDimensions = TextureDimensions(2, 2, R.drawable.planets3)
 
 
     private val vao: IntArray = IntArray(1)
-    private val vbo: IntArray = IntArray(2)
+    private val vbo: IntArray = IntArray(1)
 
-    private val vertex: PlanetsData.Vertex = state.get(PlanetsData.Vertex::class.qualifiedName + name) as? PlanetsData.Vertex ?:
+    private val dataSerializeName = Planets::class.qualifiedName + name
+    private val vertex: PlanetsData.Vertex = state.get(dataSerializeName) as? PlanetsData.Vertex ?:
         PlanetsData.Vertex(numberOfPlanets, textureDimensions = textureDimensions).also {
-            state.set(PlanetsData.Vertex::class.qualifiedName, it)
+            state.set(dataSerializeName, it)
         }
 
     fun getVertexData(): FloatArray = vertex.data
@@ -123,7 +127,7 @@ class Planets(
         glGenVertexArrays(1, vao, 0)
         glBindVertexArray(vao[0])
 
-        glGenBuffers(2, vbo, 0)
+        glGenBuffers(vbo.size, vbo, 0)
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
 
         glBufferData(
@@ -133,12 +137,9 @@ class Planets(
             GL_DYNAMIC_DRAW
         )
 
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, vbo[1])
-        glBufferData(
-            GL_SHADER_STORAGE_BUFFER,
-            collisionData.bufferSize,
-            collisionData.buffer,
-            GL_DYNAMIC_DRAW
+        vboReader.allocate(
+            key = dataSerializeName,
+            numberOfFloats = collisionData.data.size
         )
     }
 
@@ -181,6 +182,7 @@ class Planets(
         shader.floatsPerVertex.init(computeProgram)
         shader.playerPosition.init(computeProgram)
         shader.destructible.init(computeProgram)
+        shader.readerOffset.init(computeProgram)
     }
 
     private fun bindTexture() {
@@ -256,39 +258,30 @@ class Planets(
     }
 
     private fun compute() {
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, vbo[1])
-        glBufferData(
-            GL_SHADER_STORAGE_BUFFER,
-            collisionData.bufferSize,
-            collisionData.buffer,
-            GL_DYNAMIC_DRAW
-        )
          // Running as many work as there is planet, and each work will be working with each planet.
-         ShaderUtils.computeShader(
-             shaderProgram = computeProgram,
-             uniforms = {
-                 glUniform1ui(shader.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
-                 glUniform2f(shader.playerPosition.location, playerProperties.position.x, playerProperties.position.y)
-                 glUniform1i(shader.destructible.location, if (playerProperties.push) 1 else 0)
-             },
-             vbos = vbo,
-             x = vertex.numberOfPlanets,
-         )
-
+        ShaderUtils.computeShader(
+         shaderProgram = computeProgram,
+         uniforms = {
+             glUniform1ui(shader.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
+             glUniform2f(shader.playerPosition.location, playerProperties.position.x, playerProperties.position.y)
+             glUniform1i(shader.destructible.location, if (playerProperties.push) 1 else 0)
+             glUniform1ui(shader.readerOffset.location, vboReader.getOffset(dataSerializeName))
+         },
+         vbos = vbo + vboReader.vbo,
+         x = vertex.numberOfPlanets,
+        )
         handleCollisionData()
     }
 
     private fun handleCollisionData() {
-        // read data from GPU
-        val collisionData = OpenGLUtils.readSSBO(
-            vbo[1],
-            collisionData.data.size,
-            Float.SIZE_BYTES
+        vboReader.getData(
+            key = dataSerializeName,
+            destArray = collisionData.data
         )
         // check if collision happened
-        if(collisionData[0] == 1f){
+        if(collisionData.data[0] == 1f){
             playerProperties.addForce(
-                floatArrayOf(collisionData[1], collisionData[2])
+                floatArrayOf(collisionData.data[1], collisionData.data[2])
             )
         }
     }

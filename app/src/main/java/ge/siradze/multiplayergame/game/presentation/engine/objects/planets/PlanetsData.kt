@@ -137,5 +137,8 @@ class PlanetsData {
         val drawLine : ShaderUniformLocation = ShaderUniformLocation(
             name = "u_drawLine"
         ),
+        val readerOffset : ShaderUniformLocation = ShaderUniformLocation(
+            name = "u_reader_offset"
+        ),
     )
 }

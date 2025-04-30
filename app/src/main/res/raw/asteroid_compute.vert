@@ -6,11 +6,7 @@ layout (std430, binding = 0) buffer InputOutputBuffer {
     float data[];
 } inputOutput;
 
-layout(std430, binding = 1) buffer InputBuffer  {
-    float[] request;
-} createAsteroidBuffer;
-
-layout(std430, binding = 2) buffer ResultBuffer {
+layout(std430, binding = 1) buffer ResultBuffer {
     float[] result;
 } resultBuffer;
 
@@ -18,6 +14,7 @@ uniform uint u_floats_per_vertex;
 uniform vec2 u_player_position;
 uniform bool u_destructible;
 uniform float u_delta_time;
+uniform uint u_reader_offset;
 
 float getDistance(vec2 p1, vec2 p2) {
     return length(p2 - p1);
@@ -30,32 +27,6 @@ uint findNextDeadAsteroidMemory() {
         uint startIndex = i * u_floats_per_vertex;
         if(inputOutput.data[startIndex + isAliveIndex] != 1.0) {
             return startIndex;
-        }
-    }
-}
-
-void handleAsteroidCreation(
-      uint aseteroidNumber,
-      uint index,
-      uint requestedIndex
-) {
-    uint placeToCreateAsteroid = requestedIndex + 1u;
-    uint isAliveIndex = u_floats_per_vertex - 1u;
-
-    // check if creating asteroid is requested
-    if(createAsteroidBuffer.request[u_floats_per_vertex] == 1.0){
-        // check if the index is the one where we want to create the asteroid
-        if(aseteroidNumber == uint(createAsteroidBuffer.request[placeToCreateAsteroid])){
-            //is is alive don't touch it
-            uint startIndexOfEmptyAsteroid = index;
-            if(inputOutput.data[index + isAliveIndex] == 1.0) {
-                startIndexOfEmptyAsteroid = findNextDeadAsteroidMemory();
-                return;
-            }
-            // write data
-            for(uint i = 0u; i < u_floats_per_vertex; i++){
-                inputOutput.data[startIndexOfEmptyAsteroid + i] = createAsteroidBuffer.request[uint(i)];
-            }
         }
     }
 }
@@ -73,20 +44,12 @@ void main() {
     uint requestIndex = u_floats_per_vertex;
 
 
-    handleAsteroidCreation(
-        aseteroidNumber,
-        index,
-        requestIndex
-    );
-
-
     // if asteroid momory block is not alive return (it's last float)
     if(inputOutput.data[index + isAliveIndex] != 1.0) {
         return;
     }
 
     // addVelocity
-    //vec2 normalized = normalize(vec2(inputOutput.data[index + 2u], inputOutput.data[index + 3u]));
     inputOutput.data[index] += inputOutput.data[index + 2u];
     inputOutput.data[index + 1u] += inputOutput.data[index + 3u];
 
@@ -109,21 +72,26 @@ void main() {
     float distance = getDistance(u_player_position, vec2(thisAsteroidPosition.x, thisAsteroidPosition.y));
 
     // if asteroid is too far away, destroy it
-    if(distance > 7.0) {
-        inputOutput.data[index + isAliveIndex] = 0.0; // mark the other asteroid as not alive
+    if(abs(thisAsteroidPosition.x - u_player_position.x) > 4.0) {
+        inputOutput.data[index] -= (thisAsteroidPosition.x - u_player_position.x) * 2.0; // mark the other asteroid as not alive
+        return;
+    }
+
+    if(abs(thisAsteroidPosition.y - u_player_position.y) > 4.0) {
+        inputOutput.data[index + 1u] -= (thisAsteroidPosition.y - u_player_position.y) * 2.0; // mark the other asteroid as not alive
         return;
     }
 
     if(distance < thisAsteroidSize / 1.8) {
         inputOutput.data[index + isAliveIndex] = 0.0; // mark the other asteroid as not alive
 
-        resultBuffer.result[0] = 1.0; // indicates that the colliding happened
-        resultBuffer.result[1] = thisAsteroidPosition.x;
-        resultBuffer.result[2] = thisAsteroidPosition.y;
-        resultBuffer.result[3] = thisAsteroidSize;
+        resultBuffer.result[u_reader_offset] = 1.0; // indicates that the colliding happened
+        resultBuffer.result[u_reader_offset + 1u] = thisAsteroidPosition.x;
+        resultBuffer.result[u_reader_offset + 2u] = thisAsteroidPosition.y;
+        resultBuffer.result[u_reader_offset + 3u] = thisAsteroidSize;
 
-        resultBuffer.result[4] = textureCoordX;
-        resultBuffer.result[5] = textureCoordY;
+        resultBuffer.result[u_reader_offset + 4u] = textureCoordX;
+        resultBuffer.result[u_reader_offset + 5u] = textureCoordY;
 
     }
     for(uint otherAsteroid = 0u; otherAsteroid < planetNumber; otherAsteroid++){
@@ -149,8 +117,6 @@ void main() {
             float minAvaliableDistance = (thisAsteroidSize + otherAsteroidSize) / 2.2;
             if(distance < minAvaliableDistance) {
                 uint otherAsteroidIndex = otherAsteroid * u_floats_per_vertex;
-                //inputOutput.data[otherAsteroidIndex + u_floats_per_vertex - 1u] = 0.0; // mark the other asteroid as not alive
-
                 inputOutput.data[otherAsteroidIndex + 2u] = (otherAsteroidPosition.x - thisAsteroidPosition.x) * u_delta_time;
                 inputOutput.data[otherAsteroidIndex + 3u] = (otherAsteroidPosition.y - thisAsteroidPosition.y) * u_delta_time;
             }

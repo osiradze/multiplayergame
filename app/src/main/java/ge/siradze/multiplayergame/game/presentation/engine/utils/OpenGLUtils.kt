@@ -78,13 +78,13 @@ object OpenGLUtils {
         }
     }
 
-    fun readSSBO(bufferId: Int, size: Int, typeSize: Int): FloatArray {
+    fun readSSBO(bufferId: Int, size: Int, typeSize: Int): FloatArray? {
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferId)
 
         // Map the buffer to read it on the CPU
         val mappedBuffer = glMapBufferRange(
             GL_SHADER_STORAGE_BUFFER, 0, size * typeSize, GL_MAP_READ_BIT
-        ) as? java.nio.ByteBuffer ?: return floatArrayOf()
+        ) as? java.nio.ByteBuffer ?: return null
 
         val result = FloatArray(size)
         mappedBuffer.order(ByteOrder.LITTLE_ENDIAN)

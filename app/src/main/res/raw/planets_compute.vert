@@ -13,6 +13,7 @@ layout(std430, binding = 1) buffer ResultBuffer {
 uniform uint u_floats_per_vertex;
 uniform vec2 u_player_position;
 uniform bool u_destructible;
+uniform uint u_reader_offset;
 
 float getDistance(vec2 p1, vec2 p2) {
     return length(p2 - p1);
@@ -45,17 +46,17 @@ void main() {
 
     float distance = getDistance(u_player_position, vec2(x, y));
     if(distance < size / 2.0 * 0.9) {
-        resultBuffer.result[0] = 1.0; // indicates that the player is colliding with the planet
-        resultBuffer.result[1] = x;
-        resultBuffer.result[2] = y;
-        resultBuffer.result[3] = size;
+        resultBuffer.result[u_reader_offset] = 1.0; // indicates that the player is colliding with the planet
+        resultBuffer.result[u_reader_offset + 1u] = x;
+        resultBuffer.result[u_reader_offset + 2u] = y;
+        resultBuffer.result[u_reader_offset + 3u] = size;
 
-        resultBuffer.result[4] = textureCoordX;
-        resultBuffer.result[5] = textureCoordY;
+        resultBuffer.result[u_reader_offset + 4u] = textureCoordX;
+        resultBuffer.result[u_reader_offset + 5u] = textureCoordY;
 
-        resultBuffer.result[6] = inputOutput.data[index + 7u]; // colorR
-        resultBuffer.result[7] = inputOutput.data[index + 8u]; // colorG
-        resultBuffer.result[8] = inputOutput.data[index + 9u]; // colorB
+        resultBuffer.result[u_reader_offset + 6u] = inputOutput.data[index + 7u]; // colorR
+        resultBuffer.result[u_reader_offset + 7u] = inputOutput.data[index + 8u]; // colorG
+        resultBuffer.result[u_reader_offset + 8u] = inputOutput.data[index + 9u]; // colorB
 
         inputOutput.data[index + 10u] = 1.0; // indicates that the player is collided with the planet
         /**if(u_destructible){

@@ -7,6 +7,8 @@ import android.opengl.GLES20.glClearColor
 import android.opengl.GLSurfaceView
 import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
+import ge.siradze.multiplayergame.game.presentation.engine.collision.VBOReader
+import ge.siradze.multiplayergame.game.presentation.engine.collision.VBOReaderImpl
 import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.objects.asteroids.Asteroids
 import ge.siradze.multiplayergame.game.presentation.engine.objects.evilPlanets.EvilPlanets
@@ -30,13 +32,13 @@ class GameRender(
 ) : GLSurfaceView.Renderer {
 
     private var ratio = 1f
-    private var lastFrameTime: Long = System.nanoTime()
-
-    private val textureCounter: TextureCounter = TextureCounter()
 
     val camera: Camera = Camera(
         state
     )
+
+    private val textureCounter: TextureCounter = TextureCounter()
+    private val vboReader: VBOReaderImpl = VBOReaderImpl()
 
     // create player and set camera to follow it
     val player = PlayerObject(state, context, camera, textureCounter).also {
@@ -56,6 +58,7 @@ class GameRender(
         playerProperties = player.properties,
         camera = camera,
         textureCounter = textureCounter,
+        vboReader = vboReader,
     )
     private val evilPlanets = EvilPlanets(
         name = "EvilPlanets",
@@ -64,9 +67,9 @@ class GameRender(
         playerProperties = player.properties,
         camera = camera,
         textureCounter = textureCounter,
-        evilPlanetsData = planets.getVertexData(),
+        planetsData = planets.getVertexData(),
+        vboReader = vboReader,
     )
-
 
     private val asteroids = Asteroids(
         name = "Asteroids",
@@ -75,7 +78,8 @@ class GameRender(
         playerProperties = player.properties,
         camera = camera,
         textureCounter = textureCounter,
-        event = explosionCreation
+        event = explosionCreation,
+        vboReader = vboReader,
     )
 
     private val stars = Stars(context, camera)
@@ -88,14 +92,15 @@ class GameRender(
         player,
         playerTrail,
     )
-    
+    // for objects that needs to be created
     val temporaryObjects: MutableList<Explosion> = mutableListOf()
 
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
-        lastFrameTime = System.nanoTime()
+        EngineGlobals.update()
         objects.forEach {
             it.init()
         }
+        vboReader.init()
     }
 
     override fun onSurfaceChanged(p0: GL10?, width: Int, height: Int) {
@@ -115,17 +120,17 @@ class GameRender(
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
         glClear(GL_COLOR_BUFFER_BIT)
 
-        val currentTime = System.nanoTime()
-        EngineGlobals.deltaTime = (currentTime - lastFrameTime) / 1_000_000_000f
-        lastFrameTime = currentTime
-
-
         createObject()
 
         camera.update()
         objects.forEach {
            it.draw()
         }
+
+        vboReader.read()
+        vboReader.clean()
+
+        EngineGlobals.update()
         EngineGlobals.fps++
     }
 
@@ -169,6 +174,6 @@ class GameRender(
 
     companion object {
         const val MAX_EXPLOSION = 70
-        const val NUMBER_OF_PLANETS = 20
+        const val NUMBER_OF_PLANETS = 30
     }
 }

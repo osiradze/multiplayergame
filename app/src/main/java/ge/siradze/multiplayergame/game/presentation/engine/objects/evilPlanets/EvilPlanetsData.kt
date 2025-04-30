@@ -102,8 +102,6 @@ class EvilPlanetsData {
     // For getting data from GPU about collision
     class CollisionData {
         val data: FloatArray = FloatArray(9)
-        val buffer: Buffer = data.toBuffer()
-        val bufferSize = data.size * Float.SIZE_BYTES
     }
 
     class ShaderLocations(
@@ -150,6 +148,9 @@ class EvilPlanetsData {
         ),
         val drawLine : ShaderUniformLocation = ShaderUniformLocation(
             name = "u_drawLine"
+        ),
+        val readerOffset : ShaderUniformLocation = ShaderUniformLocation(
+            name = "u_reader_offset"
         ),
     )
 }

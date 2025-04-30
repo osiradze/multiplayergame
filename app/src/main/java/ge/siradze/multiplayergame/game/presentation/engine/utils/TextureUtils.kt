@@ -35,7 +35,11 @@ object TextureUtils {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterType)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterType)
 
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+        try{
+            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0) }
+        catch (e: Exception){
+            e.printStackTrace()
+        }
         bitmap.recycle()
         glUniform1i(locations, offset)
         return texture
