@@ -31,6 +31,7 @@ import android.opengl.GLES31.GL_DYNAMIC_DRAW
 import android.opengl.GLES31.GL_FLOAT
 import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
+import android.util.Log
 import ge.siradze.multiplayergame.R
 import ge.siradze.multiplayergame.game.presentation.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.EngineGlobals
@@ -164,6 +165,10 @@ class Asteroids(
             init(program)
             load(4, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
         }
+        shader.color.apply {
+            init(program)
+            load(3, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
+        }
 
         shader.isAlive.apply {
             init(program)
@@ -197,12 +202,14 @@ class Asteroids(
     }
 
     override fun draw() {
+        //val time = System.nanoTime()
         glBindVertexArray(vao[0])
 
         compute()
         drawAsteroids()
 
         glBindVertexArray(0)
+        //Log.i("TAG", "Asteroids: ${System.nanoTime() - time}")
     }
 
     private fun compute() {
@@ -234,7 +241,7 @@ class Asteroids(
                     position = floatArrayOf(collisionData.data[1], collisionData.data[2]),
                     size = collisionData.data[3],
                     planet = floatArrayOf(collisionData.data[4],  collisionData.data[5]),
-                    color = floatArrayOf(1f, 1f, 1f),
+                    color = floatArrayOf(collisionData.data[6], collisionData.data[7], collisionData.data[8]),
                     explosionHelper = explosionHelper
                 )
             )
@@ -248,6 +255,7 @@ class Asteroids(
         glEnableVertexAttribArray(shader.velocity.location)
         glEnableVertexAttribArray(shader.textureCoordinates.location)
         glEnableVertexAttribArray(shader.size.location)
+        glEnableVertexAttribArray(shader.color.location)
         glEnableVertexAttribArray(shader.isAlive.location)
 
         glActiveTexture(texture)
@@ -268,6 +276,7 @@ class Asteroids(
         glDisableVertexAttribArray(shader.velocity.location)
         glDisableVertexAttribArray(shader.textureCoordinates.location)
         glDisableVertexAttribArray(shader.size.location)
+        glDisableVertexAttribArray(shader.color.location)
         glDisableVertexAttribArray(shader.isAlive.location)
 
         glUseProgram(0)

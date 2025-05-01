@@ -3,6 +3,7 @@ precision highp float;
 uniform sampler2D u_texture;
 varying vec4 v_texture_coordinates;
 varying float v_isAlive;
+varying vec3 v_color;
 
 
 vec4 toGrayscale(vec4 color) {
@@ -23,6 +24,9 @@ void main() {
         //gl_FragColor = vec4(1.0,0.0,0.0, 1.0);
         discard;
     } else {
+        pixel.r *= v_color.x;
+        pixel.g *= v_color.y;
+        pixel.b *= v_color.z;
         gl_FragColor = pixel;
         //gl_FragColor = toGrayscale(pixel);
     }

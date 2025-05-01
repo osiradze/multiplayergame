@@ -69,6 +69,11 @@ void main() {
     float textureCoordX = inputOutput.data[index + 5u];
     float textureCoordY = inputOutput.data[index + 6u];
 
+    float colorR = inputOutput.data[index + 9u];
+    float colorG = inputOutput.data[index + 10u];
+    float colorB = inputOutput.data[index + 11u];
+
+
     float distance = getDistance(u_player_position, vec2(thisAsteroidPosition.x, thisAsteroidPosition.y));
 
     // if asteroid is too far away, destroy it
@@ -92,6 +97,10 @@ void main() {
 
         resultBuffer.result[u_reader_offset + 4u] = textureCoordX;
         resultBuffer.result[u_reader_offset + 5u] = textureCoordY;
+
+        resultBuffer.result[u_reader_offset + 6u] = colorR;
+        resultBuffer.result[u_reader_offset + 7u] = colorG;
+        resultBuffer.result[u_reader_offset + 8u] = colorB;
 
     }
     for(uint otherAsteroid = 0u; otherAsteroid < planetNumber; otherAsteroid++){
@@ -117,8 +126,8 @@ void main() {
             float minAvaliableDistance = (thisAsteroidSize + otherAsteroidSize) / 2.2;
             if(distance < minAvaliableDistance) {
                 uint otherAsteroidIndex = otherAsteroid * u_floats_per_vertex;
-                inputOutput.data[otherAsteroidIndex + 2u] = (otherAsteroidPosition.x - thisAsteroidPosition.x) * u_delta_time;
-                inputOutput.data[otherAsteroidIndex + 3u] = (otherAsteroidPosition.y - thisAsteroidPosition.y) * u_delta_time;
+                inputOutput.data[otherAsteroidIndex + 2u] = (otherAsteroidPosition.x - thisAsteroidPosition.x) * u_delta_time * 0.5;
+                inputOutput.data[otherAsteroidIndex + 3u] = (otherAsteroidPosition.y - thisAsteroidPosition.y) * u_delta_time * 0.5;
             }
         }
     }

@@ -70,9 +70,9 @@ class ExplosionHelper(
             if(alpha < 0.1f) continue
 
             // get color values
-            val red = Color.red(pixel) / 60f
-            val green = Color.green(pixel) / 60f
-            val blue = Color.blue(pixel) / 60f
+            val red = Color.red(pixel) / 255f
+            val green = Color.green(pixel) / 255f
+            val blue = Color.blue(pixel) / 255f
 
             // set color values to data
             val startPosition = counter * numberOfFloatsPerPoint
@@ -90,7 +90,7 @@ class ExplosionHelper(
             data[x][y][startPosition + 6] = 0f
             counter += 1
         }
-        data[x][y][counter * numberOfFloatsPerPoint] = counter.toFloat()
+        //data[x][y][counter * numberOfFloatsPerPoint] = counter.toFloat()
 
     }
 

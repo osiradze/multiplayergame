@@ -13,9 +13,13 @@ varying vec4 v_texture_coordinates;
 attribute float a_isAlive;
 varying float v_isAlive;
 
+attribute vec3 a_color;
+varying vec3 v_color;
+
 void main() {
     v_isAlive = a_isAlive;
     v_texture_coordinates = a_texture_coordinates;
+    v_color = a_color;
     gl_PointSize = a_size * u_screen_width;
 
     vec2 position = vec2(

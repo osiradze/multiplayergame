@@ -28,9 +28,10 @@ object AsteroidsData {
      * 2 - velocity
      * 1 - size
      * 4 - texture coordinates
+     * 3 - color
      * 1 - is alive flag, 0 - no, 1 - yes
      **/
-    private const val NUMBER_OF_FLOATS_PER_VERTEX = 10
+    private const val NUMBER_OF_FLOATS_PER_VERTEX = 13
     private const val PX = 0
     private const val PY = 1
     private const val VX = 2
@@ -40,12 +41,16 @@ object AsteroidsData {
     private const val TY = 6
     private const val TW = 7
     private const val TH = 8
-    private const val IS_ALIVE = 9
+    private const val CR = 9
+    private const val CB = 10
+    private const val CG = 11
+    private const val IS_ALIVE = 12
 
-    const val NUMBER_OF_ASTEROIDS = 400
+
+    const val NUMBER_OF_ASTEROIDS = 500
     private const val MIN_SIZE = 0.1f
     private const val SIZE_RANGE = 0.2f
-    private const val SPAWN_DISTANCE = 7f
+    private const val SPAWN_DISTANCE = 8f
 
 
     class Vertex(
@@ -68,7 +73,7 @@ object AsteroidsData {
 
     // For getting data from GPU about collision
     class CollisionData {
-        val data: FloatArray = FloatArray(6)
+        val data: FloatArray = FloatArray(9)
     }
 
     class ShaderLocations(
@@ -89,9 +94,13 @@ object AsteroidsData {
             name = "a_texture_coordinates",
             offset = 5
         ),
+        val color : ShaderAttribLocation = ShaderAttribLocation(
+            name = "a_color",
+            offset = 9
+        ),
         val isAlive : ShaderAttribLocation = ShaderAttribLocation(
             name = "a_isAlive",
-            offset = 9
+            offset = 12
         ),
         // required to convert pixel size to world units
         val screenWidth : ShaderUniformLocation = ShaderUniformLocation(
@@ -137,7 +146,7 @@ object AsteroidsData {
                 Random.nextFloat(),
             )
             velocityVector.normalize()
-            val speed = EngineGlobals.deltaTime * (Math.random().toFloat() * 0.5f + 0.5f) * 0.1f
+            val speed = EngineGlobals.deltaTime * (Math.random().toFloat() * 0.5f + 0.5f) * 0.05f
             velocityVector.multiply(speed)
 
             vertex.data[i * NUMBER_OF_FLOATS_PER_VERTEX + VX] = velocityVector.x
@@ -152,6 +161,12 @@ object AsteroidsData {
             vertex.data[i * NUMBER_OF_FLOATS_PER_VERTEX + TY] = textureDimensions.stepY * (randomY - 1)
             vertex.data[i * NUMBER_OF_FLOATS_PER_VERTEX + TW] = textureDimensions.stepX
             vertex.data[i * NUMBER_OF_FLOATS_PER_VERTEX + TH] = textureDimensions.stepY
+
+            // color
+            val value = 0.3f + Random.nextFloat()
+            vertex.data[i * NUMBER_OF_FLOATS_PER_VERTEX + CR] = value
+            vertex.data[i * NUMBER_OF_FLOATS_PER_VERTEX + CB] = value
+            vertex.data[i * NUMBER_OF_FLOATS_PER_VERTEX + CG] = value
 
             // alive flag
             vertex.data[i * NUMBER_OF_FLOATS_PER_VERTEX + IS_ALIVE] = 1f

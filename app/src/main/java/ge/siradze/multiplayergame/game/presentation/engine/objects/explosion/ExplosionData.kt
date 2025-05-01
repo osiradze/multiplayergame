@@ -1,6 +1,6 @@
 package ge.siradze.multiplayergame.game.presentation.engine.objects.explosion
 
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.multiply
+import ge.siradze.multiplayergame.game.presentation.engine.extensions.scale
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.transform
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
@@ -30,7 +30,7 @@ class ExplosionData {
             (tilePosition.y * helper.textureDimensions.rows).toInt()
         ]
         .copyOfRange(0, pointNumber * helper.numberOfFloatsPerPoint).apply {
-            multiply(size)
+            scale(size, helper.numberOfFloatsPerPoint)
             transform(position.x, position.y, helper.numberOfFloatsPerPoint)
             for(i in 0 until pointNumber) {
                 // set color
