@@ -33,35 +33,32 @@ void main() {
     uint planetNumber = gl_WorkGroupID.x + gl_WorkGroupID.y * gl_NumWorkGroups.x;
     uint index = planetNumber * u_floats_per_vertex;
 
-   /** if(inputOutput.data[index + 11u] == 1.0) {
-        // If the planet is already collided with, skip the collision check
-        return;
-    }*/
-    float x = inputOutput.data[index];
-    float y = inputOutput.data[index + 1u];
+
+    vec2 pos = vec2(inputOutput.data[index + 0u], inputOutput.data[index + 1u]);
     float size = inputOutput.data[index + 2u];
-    float textureCoordX = inputOutput.data[index + 3u];
-    float textureCoordY = inputOutput.data[index + 4u];
+    float texX = inputOutput.data[index + 3u];
+    float texY = inputOutput.data[index + 4u];
+
+    float colorR = inputOutput.data[index + 7u];
+    float colorG = inputOutput.data[index + 8u];
+    float colorB = inputOutput.data[index + 9u];
 
 
-    float distance = getDistance(u_player_position, vec2(x, y));
+    float distance = getDistance(u_player_position, vec2(pos.x, pos.y));
     if(distance < size / 2.0 * 0.95) {
         resultBuffer.result[u_reader_offset] = 1.0; // indicates that the player is colliding with the planet
-        resultBuffer.result[u_reader_offset + 1u] = x;
-        resultBuffer.result[u_reader_offset + 2u] = y;
+        resultBuffer.result[u_reader_offset + 1u] = pos.x;
+        resultBuffer.result[u_reader_offset + 2u] = pos.y;
         resultBuffer.result[u_reader_offset + 3u] = size;
 
-        resultBuffer.result[u_reader_offset + 4u] = textureCoordX;
-        resultBuffer.result[u_reader_offset + 5u] = textureCoordY;
+        resultBuffer.result[u_reader_offset + 4u] = texX;
+        resultBuffer.result[u_reader_offset + 5u] = texY;
 
-        resultBuffer.result[u_reader_offset + 6u] = inputOutput.data[index + 7u]; // colorR
-        resultBuffer.result[u_reader_offset + 7u] = inputOutput.data[index + 8u]; // colorG
-        resultBuffer.result[u_reader_offset + 8u] = inputOutput.data[index + 9u]; // colorB
+        resultBuffer.result[u_reader_offset + 6u] = colorR;
+        resultBuffer.result[u_reader_offset + 7u] = colorG;
+        resultBuffer.result[u_reader_offset + 8u] = colorB;
 
         inputOutput.data[index + 10u] = 1.0; // indicates that the player is collided with the planet
-        /**if(u_destructible){
-            inputOutput.data[index + 11u] = 1.0; // indicates that the planet is destroyed
-        }*/
     }
 
     if(planetNumber == 0u) {

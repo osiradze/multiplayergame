@@ -1,39 +1,35 @@
 precision highp float;
 
 uniform sampler2D u_texture;
-varying vec4 v_texture_coordinates;
-varying vec3 v_color;
-varying float v_isDestroyed;
 uniform bool u_drawLine;
 
-
+varying vec4 v_texture_coordinates; // xy = offset, zw = size
+varying vec3 v_color;               // color tint
+varying float v_isDestroyed;        // 1.0 = destroyed
 
 void main() {
-    if(u_drawLine) {
-        float lineAlpha = 1.0;
-        if(v_isDestroyed > 0.8) {
+    if (u_drawLine) {
+        if (v_isDestroyed > 0.8) {
             discard;
         }
-        gl_FragColor = vec4(lineAlpha, lineAlpha, lineAlpha, 1.0);
+        // Draw simple white line fragment
+        gl_FragColor = vec4(1.0);
+        return;
     }
-    else {
-        vec2 texCoord = v_texture_coordinates.xy + gl_PointCoord * v_texture_coordinates.zw;
-        vec4 pixel = texture2D(u_texture, texCoord);
 
-        if(pixel.a < 0.1) {
-            //gl_FragColor = vec4(1.0,0.0,0.0, 1.0);
-            discard;
-        } else {
+    // Calculate subtexture coordinates
+    vec2 texCoord = v_texture_coordinates.xy + gl_PointCoord * v_texture_coordinates.zw;
 
-            pixel.r *= v_color.x;
-            pixel.g *= v_color.y;
-            pixel.b *= v_color.z;
+    // Sample texture
+    vec4 pixel = texture2D(u_texture, texCoord);
 
-            if(v_isDestroyed != 1.0) {
-                gl_FragColor = pixel;
-            } else {
-                discard;
-            }
-        }
+    // Discard if transparent or destroyed
+    if (pixel.a < 0.1 || v_isDestroyed == 1.0) {
+        discard;
     }
+
+    // Apply planet color tint
+    pixel.rgb *= v_color;
+
+    gl_FragColor = pixel;
 }

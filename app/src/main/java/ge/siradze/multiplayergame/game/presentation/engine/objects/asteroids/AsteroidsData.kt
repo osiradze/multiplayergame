@@ -1,6 +1,5 @@
 package ge.siradze.multiplayergame.game.presentation.engine.objects.asteroids
 
-import ge.siradze.multiplayergame.game.presentation.engine.EngineGlobals
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.multiply
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.normalize
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
@@ -47,7 +46,7 @@ object AsteroidsData {
     private const val IS_ALIVE = 12
 
 
-    const val NUMBER_OF_ASTEROIDS = 500
+    const val NUMBER_OF_ASTEROIDS = 100
     private const val MIN_SIZE = 0.1f
     private const val SIZE_RANGE = 0.2f
     private const val SPAWN_DISTANCE = 8f
@@ -146,13 +145,13 @@ object AsteroidsData {
                 Random.nextFloat(),
             )
             velocityVector.normalize()
-            val speed = EngineGlobals.deltaTime * (Math.random().toFloat() * 0.5f + 0.5f) * 0.05f
+            val speed = (Random.nextFloat() * 0.5f + 0.5f) * 0.05f
             velocityVector.multiply(speed)
 
             vertex.data[i * NUMBER_OF_FLOATS_PER_VERTEX + VX] = velocityVector.x
             vertex.data[i * NUMBER_OF_FLOATS_PER_VERTEX + VY] = velocityVector.y
             // size
-            vertex.data[i * NUMBER_OF_FLOATS_PER_VERTEX + SIZE] = Math.random().toFloat() * SIZE_RANGE + MIN_SIZE
+            vertex.data[i * NUMBER_OF_FLOATS_PER_VERTEX + SIZE] = Random.nextFloat() * SIZE_RANGE + MIN_SIZE
 
             // texture coordinates
             val randomX = Random.nextInt(until = textureDimensions.columns) + 1

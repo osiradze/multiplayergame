@@ -1,7 +1,6 @@
 package ge.siradze.multiplayergame.game.presentation.engine.objects.player
 
 import ge.siradze.multiplayergame.game.presentation.engine.EngineGlobals
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.middlePoint
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.normalize
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.rotate
 import ge.siradze.multiplayergame.game.presentation.engine.extensions.scale
@@ -82,10 +81,10 @@ class PlayerData {
         var direction: FloatArray = floatArrayOf(0.0f, 1.0f).apply {
             normalize()
         },
-        val targetDirection: FloatArray = floatArrayOf(0.0f, 1.0f).apply {
+        private val targetDirection: FloatArray = floatArrayOf(0.0f, 1.0f).apply {
             normalize()
         },
-        var velocity: Float = 0f,
+        private var velocity: Float = 0f,
     ) {
         // pushes or pulls particles
         var push: Boolean = true

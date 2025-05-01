@@ -54,7 +54,7 @@ void main() {
     }
     if(distance < actDistance) {
         // set velocity
-        float powDistance = pow(distance, 2.5);
+        float powDistance = pow(distance, 2.0);
         vec2 vector;
         float power;
         float randValue = 0.4 + rand(vec2(g, r)) * 0.6;

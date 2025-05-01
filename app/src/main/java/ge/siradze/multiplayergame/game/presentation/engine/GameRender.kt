@@ -69,7 +69,7 @@ class GameRender(
     )
 
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
-        EngineGlobals.update()
+        EngineGlobals.init()
         objects.forEach {
             it.init()
         }
@@ -112,7 +112,7 @@ class GameRender(
             val tempObject = temporaryObjects.first()
             tempObject.init()
             tempObject.setRatio(ratio)
-            objects.add(1, tempObject)
+            objects.add(0, tempObject)
             temporaryObjects.removeAt(0)
             if(objects.size > MAX_EXPLOSION) {
                 objects.findLast { it is Explosion }?.let {

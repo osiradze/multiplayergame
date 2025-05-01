@@ -20,18 +20,6 @@ float getDistance(vec2 p1, vec2 p2) {
     return length(p2 - p1);
 }
 
-uint findNextDeadAsteroidMemory() {
-    uint isAliveIndex = u_floats_per_vertex - 1u;
-    uint numberOfPlanets = uint(inputOutput.data.length()) / u_floats_per_vertex;
-    for(uint i = 0u; i < numberOfPlanets; i++) {
-        uint startIndex = i * u_floats_per_vertex;
-        if(inputOutput.data[startIndex + isAliveIndex] != 1.0) {
-            return startIndex;
-        }
-    }
-}
-
-
 void main() {
 
     uint aseteroidNumber = (gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x);
@@ -40,18 +28,14 @@ void main() {
     // position of float where it says if the asteroid is alive
     uint isAliveIndex = u_floats_per_vertex - 1u;
 
-    // position of float where it says creating asteroid requested is after the last float of the vertex
-    uint requestIndex = u_floats_per_vertex;
-
-
     // if asteroid momory block is not alive return (it's last float)
     if(inputOutput.data[index + isAliveIndex] != 1.0) {
         return;
     }
 
     // addVelocity
-    inputOutput.data[index] += inputOutput.data[index + 2u];
-    inputOutput.data[index + 1u] += inputOutput.data[index + 3u];
+    inputOutput.data[index] += inputOutput.data[index + 2u] * u_delta_time;
+    inputOutput.data[index + 1u] += inputOutput.data[index + 3u] * u_delta_time;
 
 
     uint planetNumber = uint(inputOutput.data.length()) / u_floats_per_vertex;
@@ -105,7 +89,7 @@ void main() {
     }
     for(uint otherAsteroid = 0u; otherAsteroid < planetNumber; otherAsteroid++){
         if(otherAsteroid != aseteroidNumber) {
-
+            uint otherAsteroidIndex = otherAsteroid * u_floats_per_vertex;
             float isAlive = inputOutput.data[otherAsteroid * u_floats_per_vertex + isAliveIndex];
             if(isAlive != 1.0) {
                 continue; // Skip if the other asteroid is not alive
@@ -121,13 +105,13 @@ void main() {
             );
 
             float otherAsteroidSize = inputOutput.data[otherAsteroid * u_floats_per_vertex + 4u];
-
             float distance = getDistance(otherAsteroidPosition, thisAsteroidPosition);
             float minAvaliableDistance = (thisAsteroidSize + otherAsteroidSize) / 2.2;
             if(distance < minAvaliableDistance) {
-                uint otherAsteroidIndex = otherAsteroid * u_floats_per_vertex;
-                inputOutput.data[otherAsteroidIndex + 2u] = (otherAsteroidPosition.x - thisAsteroidPosition.x) * u_delta_time * 0.5;
-                inputOutput.data[otherAsteroidIndex + 3u] = (otherAsteroidPosition.y - thisAsteroidPosition.y) * u_delta_time * 0.5;
+                float speedX = (otherAsteroidPosition.x - thisAsteroidPosition.x) * 0.5;
+                float speedY = (otherAsteroidPosition.y - thisAsteroidPosition.y) * 0.5;
+                inputOutput.data[otherAsteroidIndex + 2u] = speedX;
+                inputOutput.data[otherAsteroidIndex + 3u] = speedY;
             }
         }
     }
