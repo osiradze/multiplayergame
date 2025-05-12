@@ -5,18 +5,19 @@ import android.opengl.GLES20.GL_COLOR_BUFFER_BIT
 import android.opengl.GLES20.glClear
 import android.opengl.GLES20.glClearColor
 import android.opengl.GLSurfaceView
-import ge.siradze.multiplayergame.game.presentation.GameState
-import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
-import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
+import ge.siradze.core.EngineGlobals
+import ge.siradze.core.GameState
+import ge.siradze.core.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.objects.explosion.Explosion
 import ge.siradze.multiplayergame.game.presentation.engine.objects.explosion.ExplosionHelper
-import ge.siradze.multiplayergame.game.presentation.engine.objects.player.Player
 import ge.siradze.multiplayergame.game.presentation.engine.scene.ExplosionCreation
 import ge.siradze.multiplayergame.game.presentation.engine.scene.SceneObjects
-import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter
-import ge.siradze.multiplayergame.game.presentation.engine.vboReader.VBOReaderImpl
+import ge.siradze.core.texture.TextureCounter
+import ge.siradze.core.vboReader.VBOReaderImpl
 import ge.siradze.multiplayergame.game.presentation.feedback.FeedbackSounds
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
+import ge.siradze.player.Player
+import ge.siradze.player.PlayerEvents
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -35,7 +36,7 @@ class GameRender(
     private val vboReader: VBOReaderImpl = VBOReaderImpl()
 
     val player = Player(state, context, camera, textureCounter).also {
-        camera.followPlayer(it.properties)
+        camera.followPlayer(it.properties.position)
     }
 
     private val temporaryObjects: MutableList<Explosion> = mutableListOf()
@@ -59,7 +60,7 @@ class GameRender(
     )
 
 
-    private val objects: MutableList<GameObject> = mutableListOf(
+    private val objects: MutableList<ge.siradze.core.GameObject> = mutableListOf(
         sceneObjects.stars,
         sceneObjects.asteroids,
         sceneObjects.evilPlanets,
@@ -85,7 +86,12 @@ class GameRender(
     }
 
     fun onUIEvent(event: UIEvents) {
-        player.onUIEvent(event)
+        when(event) {
+            UIEvents.OnDown -> player.onUIEvent(PlayerEvents.Accelerate)
+            UIEvents.OnUp -> player.onUIEvent(PlayerEvents.Decelerate)
+            is UIEvents.OnMove -> player.onUIEvent(PlayerEvents.Rotate(event.move))
+            is UIEvents.Switch -> Unit
+        }
     }
 
     override fun onDrawFrame(p0: GL10?) {
@@ -136,6 +142,13 @@ class GameRender(
             val position: FloatArray,
             val size: Float,
             val planet: FloatArray,
+            val color: FloatArray,
+            val explosionHelper: ExplosionHelper
+        ) : InGameEvents()
+
+        class SpawnEnemies(
+            val position: FloatArray,
+            val size: Float,
             val color: FloatArray,
             val explosionHelper: ExplosionHelper
         ) : InGameEvents()

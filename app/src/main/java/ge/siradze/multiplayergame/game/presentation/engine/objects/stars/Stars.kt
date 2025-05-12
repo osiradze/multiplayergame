@@ -22,10 +22,10 @@ import android.opengl.GLES31.glBufferData
 import android.opengl.GLES31.glGenBuffers
 import android.opengl.GLES31.glGenVertexArrays
 import ge.siradze.multiplayergame.R
-import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
-import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
-import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
-import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
+import ge.siradze.core.camera.Camera
+import ge.siradze.core.GameObject
+import ge.siradze.core.shader.Shader
+import ge.siradze.core.utils.OpenGLUtils
 
 
 class Stars(

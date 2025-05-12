@@ -1,19 +1,19 @@
 package ge.siradze.multiplayergame.game.presentation.engine.objects.evilPlanets
 
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.multiply
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.normalize
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.rotate
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
-import ge.siradze.multiplayergame.game.presentation.engine.objects.AttributeData
-import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.PlanetsData
-import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
-import ge.siradze.multiplayergame.game.presentation.engine.shader.RatioShaderLocation
-import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderAttribLocation
-import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderLocation
-import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderUniformLocation
-import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureDimensions
+import ge.siradze.core.extensions.multiply
+import ge.siradze.core.extensions.normalize
+import ge.siradze.core.extensions.rotate
+import ge.siradze.core.extensions.toBuffer
+import ge.siradze.core.extensions.x
+import ge.siradze.core.extensions.y
+import ge.siradze.core.AttributeData
+import ge.siradze.core.shader.CameraShaderLocation
+import ge.siradze.core.shader.RatioShaderLocation
+import ge.siradze.core.shader.ShaderAttribLocation
+import ge.siradze.core.shader.ShaderLocation
+import ge.siradze.core.shader.ShaderUniformLocation
+import ge.siradze.core.texture.TextureDimensions
+import ge.siradze.planets.PlanetsData
 import java.nio.Buffer
 import kotlin.random.Random
 

@@ -25,15 +25,15 @@ import android.opengl.GLES31.GL_COMPUTE_SHADER
 import android.opengl.GLES31.GL_DYNAMIC_DRAW
 import android.opengl.GLES31.GL_FLOAT
 import ge.siradze.multiplayergame.R
-import ge.siradze.multiplayergame.game.presentation.engine.EngineGlobals
-import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
-import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
-import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerData
-import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
-import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
-import ge.siradze.multiplayergame.game.presentation.engine.utils.ShaderUtils
+import ge.siradze.core.EngineGlobals
+import ge.siradze.core.camera.Camera
+import ge.siradze.core.extensions.x
+import ge.siradze.core.extensions.y
+import ge.siradze.core.GameObject
+import ge.siradze.core.shader.Shader
+import ge.siradze.core.utils.OpenGLUtils
+import ge.siradze.core.utils.ShaderUtils
+import ge.siradze.player.PlayerData
 
 
 class Explosion(

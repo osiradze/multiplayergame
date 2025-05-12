@@ -3,10 +3,10 @@ package ge.siradze.multiplayergame.game.presentation.engine.scene
 import android.content.Context
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender.InGameEvents
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender.UIEffect
-import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
+import ge.siradze.core.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.objects.explosion.Explosion
-import ge.siradze.multiplayergame.game.presentation.engine.objects.player.Player
 import ge.siradze.multiplayergame.game.presentation.feedback.FeedbackSounds
+import ge.siradze.player.Player
 
 class ExplosionCreation(
     private val context: Context,

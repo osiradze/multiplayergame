@@ -1,18 +1,18 @@
 package ge.siradze.multiplayergame.game.presentation.engine.scene
 
 import android.content.Context
-import ge.siradze.multiplayergame.game.presentation.GameState
+import ge.siradze.core.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender.Companion.NUMBER_OF_PLANETS
-import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
+import ge.siradze.core.camera.Camera
 import ge.siradze.multiplayergame.game.presentation.engine.objects.asteroids.Asteroids
 import ge.siradze.multiplayergame.game.presentation.engine.objects.evilPlanets.EvilPlanets
-import ge.siradze.multiplayergame.game.presentation.engine.objects.planets.Planets
-import ge.siradze.multiplayergame.game.presentation.engine.objects.player.Player
-import ge.siradze.multiplayergame.game.presentation.engine.objects.player.trail.PlayerTrail
+import ge.siradze.planets.Planets
 import ge.siradze.multiplayergame.game.presentation.engine.objects.stars.Stars
-import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter
-import ge.siradze.multiplayergame.game.presentation.engine.vboReader.VBOReaderImpl
+import ge.siradze.core.texture.TextureCounter
+import ge.siradze.core.vboReader.VBOReaderImpl
+import ge.siradze.player.Player
+import ge.siradze.player.trail.PlayerTrail
 
 class SceneObjects(
     state: GameState,
@@ -25,7 +25,7 @@ class SceneObjects(
 ) {
 
     val playerTrail = PlayerTrail(
-        context  = context,
+        context = context,
         player.properties,
         camera
     )

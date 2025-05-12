@@ -3,6 +3,7 @@ package ge.siradze.multiplayergame.game.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ge.siradze.core.GameState
 import ge.siradze.multiplayergame.core.ResultFace
 import ge.siradze.multiplayergame.game.domain.GameRepository
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender

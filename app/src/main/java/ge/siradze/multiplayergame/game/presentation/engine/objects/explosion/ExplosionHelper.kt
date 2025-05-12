@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.util.Log
-import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureDimensions
+import ge.siradze.core.texture.TextureDimensions
 import androidx.core.graphics.get
 
 class ExplosionHelper(

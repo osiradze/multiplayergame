@@ -34,19 +34,18 @@ import android.opengl.GLES31.GL_FLOAT
 import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
 import ge.siradze.multiplayergame.R
-import ge.siradze.multiplayergame.game.presentation.GameState
-import ge.siradze.multiplayergame.game.presentation.engine.camera.Camera
-import ge.siradze.multiplayergame.game.presentation.engine.vboReader.VBOReader
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.x
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.y
-import ge.siradze.multiplayergame.game.presentation.engine.objects.GameObject
-import ge.siradze.multiplayergame.game.presentation.engine.objects.player.PlayerData
-import ge.siradze.multiplayergame.game.presentation.engine.shader.Shader
-import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureCounter
-import ge.siradze.multiplayergame.game.presentation.engine.texture.TextureDimensions
-import ge.siradze.multiplayergame.game.presentation.engine.utils.OpenGLUtils
-import ge.siradze.multiplayergame.game.presentation.engine.utils.ShaderUtils
-import ge.siradze.multiplayergame.game.presentation.engine.utils.TextureUtils
+import ge.siradze.core.camera.Camera
+import ge.siradze.core.vboReader.VBOReader
+import ge.siradze.core.extensions.x
+import ge.siradze.core.extensions.y
+import ge.siradze.core.GameState
+import ge.siradze.core.shader.Shader
+import ge.siradze.core.texture.TextureCounter
+import ge.siradze.core.texture.TextureDimensions
+import ge.siradze.core.utils.OpenGLUtils
+import ge.siradze.core.utils.ShaderUtils
+import ge.siradze.core.utils.TextureUtils
+import ge.siradze.player.PlayerData
 
 
 class EvilPlanets(
@@ -58,7 +57,7 @@ class EvilPlanets(
     private val textureCounter: TextureCounter,
     planetsData: FloatArray,
     private val vboReader: VBOReader
-): GameObject {
+): ge.siradze.core.GameObject {
 
     private val textureDimensions = TextureDimensions(4, 4, R.drawable.evilplanets)
 
@@ -199,7 +198,7 @@ class EvilPlanets(
         glBindVertexArray(vao[0])
 
         compute()
-        //drawLines()
+        drawLines()
         drawPlanets()
 
 
@@ -279,7 +278,7 @@ class EvilPlanets(
         // check if collision happened
         if(collisionData.data[0] == 1f){
             playerProperties.addForce(
-                floatArrayOf(collisionData.data[1], collisionData.data[2])
+                forceDirection = floatArrayOf(collisionData.data[1], collisionData.data[2]),
             )
         }
     }

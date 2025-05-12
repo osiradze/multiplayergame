@@ -1,10 +1,10 @@
 package ge.siradze.multiplayergame.game.presentation.engine.objects.stars
 
-import ge.siradze.multiplayergame.game.presentation.engine.extensions.toBuffer
-import ge.siradze.multiplayergame.game.presentation.engine.shader.CameraShaderLocation
-import ge.siradze.multiplayergame.game.presentation.engine.shader.RatioShaderLocation
-import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderAttribLocation
-import ge.siradze.multiplayergame.game.presentation.engine.shader.ShaderLocation
+import ge.siradze.core.extensions.toBuffer
+import ge.siradze.core.shader.CameraShaderLocation
+import ge.siradze.core.shader.RatioShaderLocation
+import ge.siradze.core.shader.ShaderAttribLocation
+import ge.siradze.core.shader.ShaderLocation
 import java.nio.Buffer
 import kotlin.random.Random
 
