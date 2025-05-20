@@ -1,4 +1,4 @@
-package ge.siradze.multiplayergame.game.presentation.engine.objects.stars
+package ge.siradze.stars
 
 import android.content.Context
 import android.opengl.GLES20.GL_FRAGMENT_SHADER
@@ -21,7 +21,6 @@ import android.opengl.GLES31.glBindVertexArray
 import android.opengl.GLES31.glBufferData
 import android.opengl.GLES31.glGenBuffers
 import android.opengl.GLES31.glGenVertexArrays
-import ge.siradze.multiplayergame.R
 import ge.siradze.core.camera.Camera
 import ge.siradze.core.GameObject
 import ge.siradze.core.shader.Shader

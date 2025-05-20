@@ -1,4 +1,4 @@
-package ge.siradze.multiplayergame.game.presentation.engine.objects.evilPlanets
+package ge.siradze.evilplanets
 
 import android.content.Context
 import android.graphics.BitmapFactory
@@ -33,7 +33,6 @@ import android.opengl.GLES31.GL_DYNAMIC_DRAW
 import android.opengl.GLES31.GL_FLOAT
 import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
-import ge.siradze.multiplayergame.R
 import ge.siradze.core.camera.Camera
 import ge.siradze.core.vboReader.VBOReader
 import ge.siradze.core.extensions.x
@@ -65,7 +64,8 @@ class EvilPlanets(
     private val vbo: IntArray = IntArray(1)
 
     private val dataSerializeName = EvilPlanets::class.qualifiedName + name
-    private val vertex: EvilPlanetsData.Vertex = state.get(dataSerializeName) as? EvilPlanetsData.Vertex ?:
+    private val vertex: EvilPlanetsData.Vertex = state.get(dataSerializeName) as? EvilPlanetsData.Vertex
+        ?:
         EvilPlanetsData.Vertex(
             textureDimensions = textureDimensions,
             planets = planetsData,

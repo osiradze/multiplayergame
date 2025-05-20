@@ -1,4 +1,4 @@
-package ge.siradze.multiplayergame.game.presentation.engine.objects.stars
+package ge.siradze.stars
 
 import ge.siradze.core.extensions.toBuffer
 import ge.siradze.core.shader.CameraShaderLocation

@@ -87,4 +87,6 @@ dependencies {
     implementation(projects.game.objects.player)
     implementation(projects.game.objects.explosion)
     implementation(projects.game.objects.asteroids)
+    implementation(projects.game.objects.evilplanets)
+    implementation(projects.game.objects.stars)
 }

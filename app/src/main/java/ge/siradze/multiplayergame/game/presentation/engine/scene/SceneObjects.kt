@@ -2,15 +2,14 @@ package ge.siradze.multiplayergame.game.presentation.engine.scene
 
 import android.content.Context
 import ge.siradze.core.GameState
-import ge.siradze.multiplayergame.game.presentation.engine.GameRender
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender.Companion.NUMBER_OF_PLANETS
 import ge.siradze.core.camera.Camera
 import ge.siradze.asteroids.Asteroids
-import ge.siradze.multiplayergame.game.presentation.engine.objects.evilPlanets.EvilPlanets
 import ge.siradze.planets.Planets
-import ge.siradze.multiplayergame.game.presentation.engine.objects.stars.Stars
+import ge.siradze.stars.Stars
 import ge.siradze.core.texture.TextureCounter
 import ge.siradze.core.vboReader.VBOReaderImpl
+import ge.siradze.evilplanets.EvilPlanets
 import ge.siradze.explosion.event.CreateExplosion
 import ge.siradze.player.Player
 import ge.siradze.player.trail.PlayerTrail
@@ -64,5 +63,5 @@ class SceneObjects(
         vboReader = vboReader,
     )
 
-    val stars = Stars(context, camera)
+    val stars = ge.siradze.stars.Stars(context, camera)
 }

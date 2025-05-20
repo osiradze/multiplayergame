@@ -1,4 +1,4 @@
-package ge.siradze.multiplayergame.game.presentation.engine.objects.evilPlanets
+package ge.siradze.evilplanets
 
 import ge.siradze.core.extensions.multiply
 import ge.siradze.core.extensions.normalize
@@ -67,7 +67,7 @@ class EvilPlanetsData {
 
             for (i in 0 until numberOfPlanets) {
                 val planetX = planets[i / NUMBER_OF_EVIL_PLANET_PER_PLANET * PlanetsData.NUMBER_OF_FLOATS_PER_VERTEX]
-                val planetY = planets[i / NUMBER_OF_EVIL_PLANET_PER_PLANET* PlanetsData.NUMBER_OF_FLOATS_PER_VERTEX + 1]
+                val planetY = planets[i / NUMBER_OF_EVIL_PLANET_PER_PLANET * PlanetsData.NUMBER_OF_FLOATS_PER_VERTEX + 1]
 
                 //position
                 direction.rotate(360f / NUMBER_OF_EVIL_PLANET_PER_PLANET)
