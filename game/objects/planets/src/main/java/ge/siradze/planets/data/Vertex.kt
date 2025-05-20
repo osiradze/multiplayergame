@@ -25,7 +25,7 @@ internal class VertexProperties(
 
 internal class Vertex(
     val properties: VertexProperties,
-    private val textureDimensions: TextureDimensions
+    textureDimensions: TextureDimensions
 ): AttributeData() {
 
     companion object {

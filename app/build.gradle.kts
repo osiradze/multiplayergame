@@ -85,4 +85,6 @@ dependencies {
     implementation(projects.game.objects.core)
     implementation(projects.game.objects.planets)
     implementation(projects.game.objects.player)
+    implementation(projects.game.objects.explosion)
+    implementation(projects.game.objects.asteroids)
 }

@@ -70,11 +70,11 @@ internal data class ShaderLocations(
         isDestroyed,
     )
     val programUniformLocations: List<ShaderLocation> = listOf(
-        texture,
         screenWidth,
         ratio,
         camera,
         drawLine,
+        texture,
     )
     val computeUniformLocations: List<ShaderLocation> = listOf(
         floatsPerVertex,

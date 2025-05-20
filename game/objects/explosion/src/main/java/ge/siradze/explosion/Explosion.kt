@@ -1,4 +1,4 @@
-package ge.siradze.multiplayergame.game.presentation.engine.objects.explosion
+package ge.siradze.explosion
 
 import android.content.Context
 import android.opengl.GLES20.GL_ARRAY_BUFFER
@@ -24,7 +24,6 @@ import android.opengl.GLES30.glUniform1ui
 import android.opengl.GLES31.GL_COMPUTE_SHADER
 import android.opengl.GLES31.GL_DYNAMIC_DRAW
 import android.opengl.GLES31.GL_FLOAT
-import ge.siradze.multiplayergame.R
 import ge.siradze.core.EngineGlobals
 import ge.siradze.core.camera.Camera
 import ge.siradze.core.extensions.x
@@ -33,13 +32,12 @@ import ge.siradze.core.GameObject
 import ge.siradze.core.shader.Shader
 import ge.siradze.core.utils.OpenGLUtils
 import ge.siradze.core.utils.ShaderUtils
-import ge.siradze.player.PlayerData
 
 
 class Explosion(
     private val context: Context,
     private val camera: Camera,
-    private val playerProperties: PlayerData.Properties,
+    private val playerPosition: FloatArray,
     helper: ExplosionHelper,
     planet: FloatArray,
     size: Float,
@@ -150,9 +148,9 @@ class Explosion(
             shaderProgram = computeProgram,
             uniforms = {
                 glUniform1ui(shader.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
-                glUniform2f(shader.playerPosition.location, playerProperties.position.x, playerProperties.position.y)
+                glUniform2f(shader.playerPosition.location, playerPosition.x, playerPosition.y)
                 glUniform1f(shader.deltaTime.location, EngineGlobals.deltaTime)
-                glUniform1i(shader.push.location, if (playerProperties.push) 1 else 0)
+                glUniform1i(shader.push.location, 1)
             },
             vbos = vbo,
             x = vertex.pointNumber,

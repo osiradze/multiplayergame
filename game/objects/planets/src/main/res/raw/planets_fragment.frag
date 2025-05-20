@@ -8,12 +8,13 @@ varying vec3 v_color;               // color tint
 varying float v_isDestroyed;        // 1.0 = destroyed
 
 void main() {
+    gl_FragColor = vec4(1.0);
     if (u_drawLine) {
         if (v_isDestroyed > 0.8) {
             discard;
         }
         // Draw simple white line fragment
-        gl_FragColor = vec4(1.0);
+
         return;
     }
 

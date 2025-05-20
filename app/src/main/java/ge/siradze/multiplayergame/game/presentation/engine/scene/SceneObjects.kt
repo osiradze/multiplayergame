@@ -5,12 +5,13 @@ import ge.siradze.core.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender.Companion.NUMBER_OF_PLANETS
 import ge.siradze.core.camera.Camera
-import ge.siradze.multiplayergame.game.presentation.engine.objects.asteroids.Asteroids
+import ge.siradze.asteroids.Asteroids
 import ge.siradze.multiplayergame.game.presentation.engine.objects.evilPlanets.EvilPlanets
 import ge.siradze.planets.Planets
 import ge.siradze.multiplayergame.game.presentation.engine.objects.stars.Stars
 import ge.siradze.core.texture.TextureCounter
 import ge.siradze.core.vboReader.VBOReaderImpl
+import ge.siradze.explosion.event.CreateExplosion
 import ge.siradze.player.Player
 import ge.siradze.player.trail.PlayerTrail
 
@@ -21,7 +22,7 @@ class SceneObjects(
     textureCounter: TextureCounter,
     vboReader: VBOReaderImpl,
     player: Player,
-    explosionCreation: (GameRender.InGameEvents.CreateExplosion) -> Unit,
+    explosionCreation: (CreateExplosion) -> Unit,
 ) {
 
     val playerTrail = PlayerTrail(

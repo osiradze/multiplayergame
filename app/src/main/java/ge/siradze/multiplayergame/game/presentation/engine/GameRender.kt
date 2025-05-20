@@ -6,14 +6,14 @@ import android.opengl.GLES20.glClear
 import android.opengl.GLES20.glClearColor
 import android.opengl.GLSurfaceView
 import ge.siradze.core.EngineGlobals
+import ge.siradze.core.GameObject
 import ge.siradze.core.GameState
 import ge.siradze.core.camera.Camera
-import ge.siradze.multiplayergame.game.presentation.engine.objects.explosion.Explosion
-import ge.siradze.multiplayergame.game.presentation.engine.objects.explosion.ExplosionHelper
 import ge.siradze.multiplayergame.game.presentation.engine.scene.ExplosionCreation
 import ge.siradze.multiplayergame.game.presentation.engine.scene.SceneObjects
 import ge.siradze.core.texture.TextureCounter
 import ge.siradze.core.vboReader.VBOReaderImpl
+import ge.siradze.explosion.Explosion
 import ge.siradze.multiplayergame.game.presentation.feedback.FeedbackSounds
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.player.Player
@@ -31,11 +31,11 @@ class GameRender(
 
     private var ratio = 1f
 
-    val camera: Camera = Camera(state)
+    private val camera: Camera = Camera(state)
     private val textureCounter: TextureCounter = TextureCounter()
     private val vboReader: VBOReaderImpl = VBOReaderImpl()
 
-    val player = Player(state, context, camera, textureCounter).also {
+    private val player = Player(state, context, camera, textureCounter).also {
         camera.followPlayer(it.properties.position)
     }
 
@@ -60,7 +60,7 @@ class GameRender(
     )
 
 
-    private val objects: MutableList<ge.siradze.core.GameObject> = mutableListOf(
+    private val objects: MutableList<GameObject> = mutableListOf(
         sceneObjects.stars,
         sceneObjects.asteroids,
         sceneObjects.evilPlanets,
@@ -134,24 +134,6 @@ class GameRender(
         objects.forEach {
             it.release()
         }
-    }
-
-
-    sealed class InGameEvents {
-        class CreateExplosion(
-            val position: FloatArray,
-            val size: Float,
-            val planet: FloatArray,
-            val color: FloatArray,
-            val explosionHelper: ExplosionHelper
-        ) : InGameEvents()
-
-        class SpawnEnemies(
-            val position: FloatArray,
-            val size: Float,
-            val color: FloatArray,
-            val explosionHelper: ExplosionHelper
-        ) : InGameEvents()
     }
 
     sealed class UIEffect {

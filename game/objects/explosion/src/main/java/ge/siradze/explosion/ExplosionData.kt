@@ -1,4 +1,4 @@
-package ge.siradze.multiplayergame.game.presentation.engine.objects.explosion
+package ge.siradze.explosion
 
 import ge.siradze.core.extensions.scale
 import ge.siradze.core.extensions.toBuffer

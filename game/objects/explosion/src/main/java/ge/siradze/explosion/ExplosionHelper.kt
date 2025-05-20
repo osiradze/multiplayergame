@@ -1,12 +1,10 @@
-package ge.siradze.multiplayergame.game.presentation.engine.objects.explosion
+package ge.siradze.explosion
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.util.Log
 import ge.siradze.core.texture.TextureDimensions
-import androidx.core.graphics.get
 
 class ExplosionHelper(
     context: Context,
@@ -61,7 +59,7 @@ class ExplosionHelper(
             val randomY = (Math.random() * bitmap.height).toInt()
             // get pixel color
             val pixel = try {
-                bitmap[randomX, randomY]
+                bitmap.getPixel(randomX, randomY)
             } catch (e: ArrayIndexOutOfBoundsException) {
                 continue
             }

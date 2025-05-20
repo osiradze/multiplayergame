@@ -55,7 +55,7 @@ import ge.siradze.player.PlayerData
 class Planets(
     name: String,
     state: GameState,
-    private val numberOfPlanets: Int,
+    numberOfPlanets: Int,
     private val context: Context,
     private val playerProperties: PlayerData.Properties,
     private val camera: Camera,
@@ -155,7 +155,7 @@ class Planets(
         shader.attributeLocations.forEach {
             with(it) {
                 init(program)
-                load(size, GL_FLOAT, false, vertex.stride, offset)
+                load(size, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
             }
         }
 

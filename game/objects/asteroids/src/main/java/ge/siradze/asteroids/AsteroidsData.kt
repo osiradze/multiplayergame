@@ -1,4 +1,4 @@
-package ge.siradze.multiplayergame.game.presentation.engine.objects.asteroids
+package ge.siradze.asteroids
 
 import ge.siradze.core.extensions.multiply
 import ge.siradze.core.extensions.normalize

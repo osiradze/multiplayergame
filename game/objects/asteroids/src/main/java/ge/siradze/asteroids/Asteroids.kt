@@ -1,4 +1,4 @@
-package ge.siradze.multiplayergame.game.presentation.engine.objects.asteroids
+package ge.siradze.asteroids
 
 import android.content.Context
 import android.graphics.BitmapFactory
@@ -32,21 +32,20 @@ import android.opengl.GLES31.GL_FLOAT
 import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
 import ge.siradze.core.GameObject
-import ge.siradze.multiplayergame.R
 import ge.siradze.core.EngineGlobals
-import ge.siradze.multiplayergame.game.presentation.engine.GameRender
 import ge.siradze.core.camera.Camera
 import ge.siradze.core.vboReader.VBOReader
 import ge.siradze.core.extensions.x
 import ge.siradze.core.extensions.y
 import ge.siradze.core.GameState
-import ge.siradze.multiplayergame.game.presentation.engine.objects.explosion.ExplosionHelper
 import ge.siradze.core.shader.Shader
 import ge.siradze.core.texture.TextureCounter
 import ge.siradze.core.texture.TextureDimensions
 import ge.siradze.core.utils.OpenGLUtils
 import ge.siradze.core.utils.ShaderUtils
 import ge.siradze.core.utils.TextureUtils
+import ge.siradze.explosion.ExplosionHelper
+import ge.siradze.explosion.event.CreateExplosion
 import ge.siradze.player.PlayerData
 
 class Asteroids(
@@ -56,11 +55,11 @@ class Asteroids(
     private val playerProperties: PlayerData.Properties,
     private val camera: Camera,
     private val textureCounter: TextureCounter,
-    private val event: (GameRender.InGameEvents.CreateExplosion) -> Unit,
+    private val event: (CreateExplosion) -> Unit,
     private val vboReader: VBOReader
 ): GameObject {
 
-    private val textureDimensions = TextureDimensions(6, 6, R.drawable.planets)
+    private val textureDimensions = TextureDimensions(6, 6, R.drawable.asteroids)
     private val explosionHelper = ExplosionHelper(context, textureDimensions)
 
 
@@ -236,7 +235,7 @@ class Asteroids(
         // check if collision happened
         if(collisionData.data[0] == 1f){
             event(
-                GameRender.InGameEvents.CreateExplosion(
+                CreateExplosion(
                     position = floatArrayOf(collisionData.data[1], collisionData.data[2]),
                     size = collisionData.data[3],
                     planet = floatArrayOf(collisionData.data[4],  collisionData.data[5]),
