@@ -1,11 +1,11 @@
-package ge.siradze.planets.data
+package ge.siradze.evilplanets.data
 
+import ge.siradze.core.shader.CameraShaderLocation
+import ge.siradze.core.shader.RatioShaderLocation
+import ge.siradze.core.shader.ReaderOffsetShaderLocation
 import ge.siradze.core.shader.ShaderAttribLocation
 import ge.siradze.core.shader.ShaderLocation
 import ge.siradze.core.shader.ShaderUniformLocation
-import ge.siradze.core.shader.RatioShaderLocation
-import ge.siradze.core.shader.CameraShaderLocation
-import ge.siradze.core.shader.ReaderOffsetShaderLocation
 
 
 internal data class ShaderLocations(
@@ -58,8 +58,9 @@ internal data class ShaderLocations(
     val drawLine : ShaderUniformLocation = ShaderUniformLocation(
         name = "u_drawLine"
     ),
-    val readerOffset : ShaderUniformLocation = ReaderOffsetShaderLocation(),
+    val readerOffset : ShaderUniformLocation = ReaderOffsetShaderLocation()
 ) {
+
     val attributeLocations: List<ShaderAttribLocation> = listOf(
         vertex,
         size,
@@ -80,4 +81,5 @@ internal data class ShaderLocations(
         destructible,
         readerOffset
     )
+
 }

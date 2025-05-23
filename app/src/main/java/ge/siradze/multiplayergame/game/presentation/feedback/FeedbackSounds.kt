@@ -29,7 +29,9 @@ class FeedbackSoundsImpl(context: Context): FeedbackSounds {
         val amplitude = getAmplitude()
         vibrator?.let { vibrator ->
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                vibrator.vibrate(VibrationEffect.createPredefined(amplitude))
+                try {
+                    vibrator.vibrate(VibrationEffect.createPredefined(amplitude))
+                } catch (_: Exception) {}
             } else {
                 @Suppress("DEPRECATION")
                 vibrator.vibrate(milliseconds)
@@ -44,7 +46,7 @@ class FeedbackSoundsImpl(context: Context): FeedbackSounds {
         ) {
             return VibrationEffect.EFFECT_TICK
         } else {
-            return VibrationEffect.DEFAULT_AMPLITUDE
+            return VibrationEffect.EFFECT_CLICK
         }
     }
 

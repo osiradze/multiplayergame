@@ -6,11 +6,21 @@ import ge.siradze.core.extensions.x
 import ge.siradze.core.extensions.y
 import ge.siradze.core.texture.TextureDimensions
 import ge.siradze.planets.PlanetsData.NUMBER_OF_FLOATS_PER_VERTEX
+import ge.siradze.planets.data.Vertex.Companion.CB
+import ge.siradze.planets.data.Vertex.Companion.CG
+import ge.siradze.planets.data.Vertex.Companion.CR
+import ge.siradze.planets.data.Vertex.Companion.PX
+import ge.siradze.planets.data.Vertex.Companion.PY
+import ge.siradze.planets.data.Vertex.Companion.SIZE
+import ge.siradze.planets.data.Vertex.Companion.TH
+import ge.siradze.planets.data.Vertex.Companion.TW
+import ge.siradze.planets.data.Vertex.Companion.TX
+import ge.siradze.planets.data.Vertex.Companion.TY
 import java.nio.Buffer
 import kotlin.random.Random
 
 internal class VertexProperties(
-    val numberOfPlanets: Int = 0,
+    val numberOfPlanets: Int,
     val minSize: Float = MIN_SIZE,
     val sizeRange: Float = SIZE_RANGE,
     val distanceBetweenPlanets: Float = DISTANCE_BETWEEN_PLANETS
@@ -42,9 +52,6 @@ internal class Vertex(
         const val CG = 9
     }
 
-
-
-    // 2 position + 1 size + 4 texture coordinates + 3 color + 1 collision flag + 1 isDestroyed flag
     override val numberOfFloatsPerVertex = NUMBER_OF_FLOATS_PER_VERTEX
     override val typeSize = Float.SIZE_BYTES
     override val size = properties.numberOfPlanets * numberOfFloatsPerVertex
@@ -62,38 +69,40 @@ internal class Vertex(
         )
     }
 
-    private fun generatePoints(
-        data: FloatArray,
-        numberOfFloatsPerVertex: Int,
-        properties: VertexProperties,
-        textureDimensions: TextureDimensions
-    ) = with(properties) {
-        val lastPlanetPosition = floatArrayOf(0f,0f)
-        for (i in 0 until numberOfPlanets) {
+}
 
-            //position
-            data[i * numberOfFloatsPerVertex + PX] = lastPlanetPosition.x + (Random.nextFloat()) * distanceBetweenPlanets + distanceBetweenPlanets / 2
-            data[i * numberOfFloatsPerVertex + PY] = lastPlanetPosition.y + (Random.nextFloat()) * distanceBetweenPlanets + distanceBetweenPlanets / 2
-            lastPlanetPosition[PX] = data[i * numberOfFloatsPerVertex + PX]
-            lastPlanetPosition[PY] = data[i * numberOfFloatsPerVertex + PY]
 
-            //size
-            data[i * numberOfFloatsPerVertex + SIZE] = Random.nextFloat() * sizeRange + minSize
+private fun generatePoints(
+    data: FloatArray,
+    numberOfFloatsPerVertex: Int,
+    properties: VertexProperties,
+    textureDimensions: TextureDimensions
+) = with(properties) {
+    val lastPlanetPosition = floatArrayOf(0f,0f)
+    for (i in 0 until numberOfPlanets) {
 
-            // texture coordinates
-            val randomX = Random.nextInt(until = textureDimensions.columns) + 1
-            val randomY = Random.nextInt(until = textureDimensions.rows) + 1
+        //position
+        data[i * numberOfFloatsPerVertex + PX] = lastPlanetPosition.x + (Random.nextFloat()) * distanceBetweenPlanets + distanceBetweenPlanets / 2
+        data[i * numberOfFloatsPerVertex + PY] = lastPlanetPosition.y + (Random.nextFloat()) * distanceBetweenPlanets + distanceBetweenPlanets / 2
+        lastPlanetPosition[PX] = data[i * numberOfFloatsPerVertex + PX]
+        lastPlanetPosition[PY] = data[i * numberOfFloatsPerVertex + PY]
 
-            data[i * numberOfFloatsPerVertex + TX] = textureDimensions.stepX * (randomX - 1)
-            data[i * numberOfFloatsPerVertex + TY] = textureDimensions.stepY * (randomY - 1)
-            data[i * numberOfFloatsPerVertex + TW] = textureDimensions.stepX
-            data[i * numberOfFloatsPerVertex + TH] = textureDimensions.stepY
+        //size
+        data[i * numberOfFloatsPerVertex + SIZE] = Random.nextFloat() * sizeRange + minSize
 
-            // color
-            val min = 0.5f
-            data[i * numberOfFloatsPerVertex + CR] = Random.nextFloat() + min
-            data[i * numberOfFloatsPerVertex + CB] = Random.nextFloat() + min
-            data[i * numberOfFloatsPerVertex + CG] = Random.nextFloat() + min
-        }
+        // texture coordinates
+        val randomX = Random.nextInt(until = textureDimensions.columns) + 1
+        val randomY = Random.nextInt(until = textureDimensions.rows) + 1
+
+        data[i * numberOfFloatsPerVertex + TX] = textureDimensions.stepX * (randomX - 1)
+        data[i * numberOfFloatsPerVertex + TY] = textureDimensions.stepY * (randomY - 1)
+        data[i * numberOfFloatsPerVertex + TW] = textureDimensions.stepX
+        data[i * numberOfFloatsPerVertex + TH] = textureDimensions.stepY
+
+        // color
+        val min = 0.5f
+        data[i * numberOfFloatsPerVertex + CR] = Random.nextFloat() + min
+        data[i * numberOfFloatsPerVertex + CB] = Random.nextFloat() + min
+        data[i * numberOfFloatsPerVertex + CG] = Random.nextFloat() + min
     }
 }

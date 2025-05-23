@@ -28,9 +28,12 @@ import android.opengl.GLES30.glGenVertexArrays
 import android.opengl.GLES30.glUniform1ui
 import android.opengl.GLES31.GL_COMPUTE_SHADER
 import android.opengl.GLES31.GL_DYNAMIC_DRAW
-import android.opengl.GLES31.GL_FLOAT
 import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
+import ge.siradze.asteroids.data.CollisionData
+import ge.siradze.asteroids.data.ShaderLocations
+import ge.siradze.asteroids.data.Vertex
+import ge.siradze.asteroids.data.VertexProperties
 import ge.siradze.core.GameObject
 import ge.siradze.core.EngineGlobals
 import ge.siradze.core.camera.Camera
@@ -68,11 +71,16 @@ class Asteroids(
     private val vbo: IntArray = IntArray(1)
 
     private val dataSerializeName = Asteroids::class.qualifiedName + name
-    private val vertex: AsteroidsData.Vertex =
-        state.get(dataSerializeName) as? AsteroidsData.Vertex
-            ?: AsteroidsData.Vertex(textureDimensions).also { state.set(dataSerializeName, it) }
+    private val vertex: Vertex =
+        state.get(dataSerializeName) as? Vertex ?:
+        Vertex(
+            properties = VertexProperties(),
+            textureDimensions = textureDimensions
+        ).also {
+            state.set(dataSerializeName, it)
+        }
 
-    private val shader = AsteroidsData.ShaderLocations()
+    private val shader = ShaderLocations()
     private val shaders = arrayOf(
         Shader(
             type = GL_VERTEX_SHADER,
@@ -98,7 +106,7 @@ class Asteroids(
     private var program: Int = 0
     private var computeProgram: Int = 0
 
-    private val collisionData = AsteroidsData.CollisionData()
+    private val collisionData = CollisionData()
 
     override fun init() {
         initProgram()
@@ -144,46 +152,21 @@ class Asteroids(
     private fun initLocations() {
         // attributes
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
-        shader.vertex.apply {
-            init(program)
-            load(2, GL_FLOAT, false, vertex.stride, offset)
+        shader.attributeLocations.forEach {
+            with(it) {
+                init(program)
+                load(size,
+                    android.opengl.GLES31.GL_FLOAT, false, vertex.stride, offset * kotlin.Float.SIZE_BYTES)
+            }
         }
 
-        shader.velocity.apply {
-            init(program)
-            load(2, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
+        // Program Uniforms
+        shader.programUniformLocations.forEach {
+            it.init(program)
         }
-
-        shader.size.apply {
-            init(program)
-            load(1, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
+        shader.computeUniformLocations.forEach {
+            it.init(computeProgram)
         }
-
-        shader.textureCoordinates.apply {
-            init(program)
-            load(4, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
-        }
-        shader.color.apply {
-            init(program)
-            load(3, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
-        }
-
-        shader.isAlive.apply {
-            init(program)
-            load(1, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
-        }
-
-        // Uniforms
-        shader.screenWidth.init(program)
-        shader.ratio.init(program)
-        shader.camera.init(program)
-        shader.texture.init(program)
-
-        shader.floatsPerVertex.init(computeProgram)
-        shader.playerPosition.init(computeProgram)
-        shader.destructible.init(computeProgram)
-        shader.deltaTime.init(computeProgram)
-        shader.readerOffset.init(computeProgram)
     }
 
     private fun bindTexture() {
@@ -200,14 +183,12 @@ class Asteroids(
     }
 
     override fun draw() {
-        //val time = System.nanoTime()
         glBindVertexArray(vao[0])
 
         compute()
         drawAsteroids()
 
         glBindVertexArray(0)
-        //Log.i("TAG", "Asteroids: ${System.nanoTime() - time}")
     }
 
     private fun compute() {
@@ -222,7 +203,7 @@ class Asteroids(
                 glUniform1ui(shader.readerOffset.location, vboReader.getOffset(dataSerializeName))
             },
             vbos = vbo + vboReader.vbo,
-            x = AsteroidsData.NUMBER_OF_ASTEROIDS,
+            x = vertex.numberOfAsteroids,
         )
         handleCollisionData()
     }
@@ -248,13 +229,9 @@ class Asteroids(
 
     private fun drawAsteroids() {
         glUseProgram(program)
-        glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
-        glEnableVertexAttribArray(shader.vertex.location)
-        glEnableVertexAttribArray(shader.velocity.location)
-        glEnableVertexAttribArray(shader.textureCoordinates.location)
-        glEnableVertexAttribArray(shader.size.location)
-        glEnableVertexAttribArray(shader.color.location)
-        glEnableVertexAttribArray(shader.isAlive.location)
+        shader.attributeLocations.forEach {
+            glEnableVertexAttribArray(it.location)
+        }
 
         glActiveTexture(texture)
         glBindTexture(GL_TEXTURE_2D, textures[0])
@@ -264,18 +241,15 @@ class Asteroids(
         glDrawArrays(
             GL_POINTS,
             0,
-            AsteroidsData.NUMBER_OF_ASTEROIDS
+            vertex.numberOfAsteroids
         )
 
         glActiveTexture(0)
         glBindTexture(GL_TEXTURE_2D, 0)
 
-        glDisableVertexAttribArray(shader.vertex.location)
-        glDisableVertexAttribArray(shader.velocity.location)
-        glDisableVertexAttribArray(shader.textureCoordinates.location)
-        glDisableVertexAttribArray(shader.size.location)
-        glDisableVertexAttribArray(shader.color.location)
-        glDisableVertexAttribArray(shader.isAlive.location)
+        shader.attributeLocations.forEach {
+            glDisableVertexAttribArray(it.location)
+        }
 
         glUseProgram(0)
     }

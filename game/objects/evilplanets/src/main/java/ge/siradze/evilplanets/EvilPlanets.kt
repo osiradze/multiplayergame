@@ -44,6 +44,10 @@ import ge.siradze.core.texture.TextureDimensions
 import ge.siradze.core.utils.OpenGLUtils
 import ge.siradze.core.utils.ShaderUtils
 import ge.siradze.core.utils.TextureUtils
+import ge.siradze.evilplanets.data.CollisionData
+import ge.siradze.evilplanets.data.ShaderLocations
+import ge.siradze.evilplanets.data.Vertex
+import ge.siradze.evilplanets.data.VertexProperties
 import ge.siradze.player.PlayerData
 
 
@@ -64,15 +68,16 @@ class EvilPlanets(
     private val vbo: IntArray = IntArray(1)
 
     private val dataSerializeName = EvilPlanets::class.qualifiedName + name
-    private val vertex: EvilPlanetsData.Vertex = state.get(dataSerializeName) as? EvilPlanetsData.Vertex
+    private val vertex: Vertex = state.get(dataSerializeName) as? Vertex
         ?:
-        EvilPlanetsData.Vertex(
+        Vertex(
+            properties = VertexProperties(),
             textureDimensions = textureDimensions,
             planets = planetsData,
         ).also {
             state.set(dataSerializeName, it)
         }
-    private val shader = EvilPlanetsData.ShaderLocations()
+    private val shader = ShaderLocations()
     private val shaders = arrayOf(
         Shader(
             type = GL_VERTEX_SHADER,
@@ -98,7 +103,7 @@ class EvilPlanets(
     private var program: Int = 0
     private var computeProgram: Int = 0
 
-    private val collisionData = EvilPlanetsData.CollisionData()
+    private val collisionData = CollisionData()
 
     override fun init() {
         initProgram()
@@ -143,42 +148,20 @@ class EvilPlanets(
     private fun initLocations() {
         // attributes
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
-        shader.vertex.apply {
-            init(program)
-            load(2, GL_FLOAT, false, vertex.stride, offset)
+        shader.attributeLocations.forEach {
+            with(it) {
+                init(program)
+                load(size, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
+            }
         }
 
-        shader.size.apply {
-            init(program)
-            load(1, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
+        // Program Uniforms
+        shader.programUniformLocations.forEach {
+            it.init(program)
         }
-
-        shader.textureCoordinates.apply {
-            init(program)
-            load(4, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
+        shader.computeUniformLocations.forEach {
+            it.init(computeProgram)
         }
-
-        shader.color.apply {
-            init(program)
-            load(3, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
-        }
-
-        shader.isDestroyed.apply {
-            init(program)
-            load(1, GL_FLOAT, false, vertex.stride, offset * Float.SIZE_BYTES)
-        }
-
-        // Uniforms
-        shader.texture.init(program)
-        shader.screenWidth.init(program)
-        shader.ratio.init(program)
-        shader.camera.init(program)
-        shader.drawLine.init(program)
-
-        shader.floatsPerVertex.init(computeProgram)
-        shader.playerPosition.init(computeProgram)
-        shader.destructible.init(computeProgram)
-        shader.readerOffset.init(computeProgram)
     }
 
     private fun bindTexture() {
@@ -208,12 +191,9 @@ class EvilPlanets(
     private fun drawPlanets() {
         glUseProgram(program)
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
-        glEnableVertexAttribArray(shader.vertex.location)
-        glEnableVertexAttribArray(shader.textureCoordinates.location)
-        glEnableVertexAttribArray(shader.size.location)
-        glEnableVertexAttribArray(shader.color.location)
-        glEnableVertexAttribArray(shader.isDestroyed.location)
-
+        shader.attributeLocations.forEach {
+            glEnableVertexAttribArray(it.location)
+        }
         glActiveTexture(texture)
         glBindTexture(GL_TEXTURE_2D, textures[0])
 
@@ -223,17 +203,14 @@ class EvilPlanets(
         glDrawArrays(
             GL_POINTS,
             0,
-            vertex.numberOfPlanets
+            vertex.numberOfEvilPlanets
         )
 
         glActiveTexture(0)
         glBindTexture(GL_TEXTURE_2D, 0)
-
-        glDisableVertexAttribArray(shader.vertex.location)
-        glDisableVertexAttribArray(shader.textureCoordinates.location)
-        glDisableVertexAttribArray(shader.size.location)
-        glDisableVertexAttribArray(shader.color.location)
-        glDisableVertexAttribArray(shader.isDestroyed.location)
+        shader.attributeLocations.forEach {
+            glDisableVertexAttribArray(it.location)
+        }
         glUseProgram(0)
     }
 
@@ -246,7 +223,7 @@ class EvilPlanets(
         glDrawArrays(
             GL_LINE_STRIP,
             0,
-            vertex.numberOfPlanets
+            vertex.numberOfEvilPlanets
         )
         glUniform1i(shader.drawLine.location, 0)
         glDisableVertexAttribArray(shader.vertex.location)
@@ -264,7 +241,7 @@ class EvilPlanets(
                  glUniform1ui(shader.readerOffset.location, vboReader.getOffset(dataSerializeName))
              },
              vbos = vbo + vboReader.vbo,
-             x = vertex.numberOfPlanets,
+             x = vertex.numberOfEvilPlanets,
          )
 
         handleCollisionData()

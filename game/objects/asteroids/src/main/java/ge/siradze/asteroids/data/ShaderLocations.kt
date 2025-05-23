@@ -1,12 +1,11 @@
-package ge.siradze.planets.data
+package ge.siradze.asteroids.data
 
+import ge.siradze.core.shader.CameraShaderLocation
+import ge.siradze.core.shader.RatioShaderLocation
+import ge.siradze.core.shader.ReaderOffsetShaderLocation
 import ge.siradze.core.shader.ShaderAttribLocation
 import ge.siradze.core.shader.ShaderLocation
 import ge.siradze.core.shader.ShaderUniformLocation
-import ge.siradze.core.shader.RatioShaderLocation
-import ge.siradze.core.shader.CameraShaderLocation
-import ge.siradze.core.shader.ReaderOffsetShaderLocation
-
 
 internal data class ShaderLocations(
     val vertex : ShaderAttribLocation = ShaderAttribLocation(
@@ -14,27 +13,32 @@ internal data class ShaderLocations(
         size = 2,
         offset = 0
     ),
+    val velocity : ShaderAttribLocation = ShaderAttribLocation(
+        name = "a_velocity",
+        size = 2,
+        offset = 2
+
+    ),
     val size : ShaderAttribLocation = ShaderAttribLocation(
         name = "a_size",
         size = 1,
-        offset = 2
+        offset = 4
     ),
     val textureCoordinates : ShaderAttribLocation = ShaderAttribLocation(
         name = "a_texture_coordinates",
         size = 4,
-        offset = 3
+        offset = 5
     ),
     val color : ShaderAttribLocation = ShaderAttribLocation(
         name = "a_color",
         size = 3,
-        offset = 7
+        offset = 9
     ),
-    val isDestroyed : ShaderAttribLocation = ShaderAttribLocation(
-        name = "a_isDestroyed",
+    val isAlive : ShaderAttribLocation = ShaderAttribLocation(
+        name = "a_isAlive",
         size = 1,
-        offset = 11
+        offset = 12
     ),
-
     // required to convert pixel size to world units
     val screenWidth : ShaderUniformLocation = ShaderUniformLocation(
         name = "u_screen_width"
@@ -46,6 +50,7 @@ internal data class ShaderLocations(
     val texture: ShaderLocation = ShaderUniformLocation(
         name = "u_texture"
     ),
+
     val floatsPerVertex: ShaderLocation = ShaderUniformLocation(
         name = "u_floats_per_vertex"
     ),
@@ -55,29 +60,32 @@ internal data class ShaderLocations(
     val destructible: ShaderUniformLocation = ShaderUniformLocation(
         name = "u_destructible"
     ),
-    val drawLine : ShaderUniformLocation = ShaderUniformLocation(
-        name = "u_drawLine"
+    val deltaTime : ShaderUniformLocation = ShaderUniformLocation(
+        name = "u_delta_time"
     ),
     val readerOffset : ShaderUniformLocation = ReaderOffsetShaderLocation(),
 ) {
     val attributeLocations: List<ShaderAttribLocation> = listOf(
         vertex,
+        velocity,
         size,
         textureCoordinates,
         color,
-        isDestroyed,
+        isAlive
     )
     val programUniformLocations: List<ShaderLocation> = listOf(
-        screenWidth,
         ratio,
         camera,
-        drawLine,
+        screenWidth,
         texture,
     )
+
     val computeUniformLocations: List<ShaderLocation> = listOf(
         floatsPerVertex,
         playerPosition,
         destructible,
+        deltaTime,
         readerOffset
     )
+
 }
