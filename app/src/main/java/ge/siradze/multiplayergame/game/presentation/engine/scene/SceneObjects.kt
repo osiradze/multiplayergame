@@ -10,7 +10,7 @@ import ge.siradze.glcore.texture.TextureCounter
 import ge.siradze.glcore.vboReader.VBOReaderImpl
 import ge.siradze.evilplanets.EvilPlanets
 import ge.siradze.explosion.event.CreateExplosion
-import ge.siradze.player.Player
+import ge.siradze.player.main.Player
 import ge.siradze.player.trail.PlayerTrail
 import ge.siradze.stars.Stars
 

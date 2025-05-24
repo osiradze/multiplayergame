@@ -3,7 +3,6 @@ package ge.siradze.player.trail
 import android.content.Context
 import android.opengl.GLES20
 import android.opengl.GLES20.GL_DYNAMIC_DRAW
-import android.opengl.GLES20.GL_FLOAT
 import android.opengl.GLES20.GL_FRAGMENT_SHADER
 import android.opengl.GLES20.GL_LINE_STRIP
 import android.opengl.GLES20.GL_VERTEX_SHADER
@@ -26,77 +25,19 @@ import android.opengl.GLES31.glBufferData
 import android.opengl.GLES31.glGenBuffers
 import android.opengl.GLES31.glGenVertexArrays
 import ge.siradze.glcore.camera.Camera
-import ge.siradze.glcore.extensions.fillWith
-import ge.siradze.glcore.extensions.toBuffer
 import ge.siradze.glcore.extensions.x
 import ge.siradze.glcore.extensions.y
-import ge.siradze.player.PlayerData
-import ge.siradze.glcore.shader.CameraShaderLocation
-import ge.siradze.glcore.shader.RatioShaderLocation
 import ge.siradze.glcore.shader.Shader
-import ge.siradze.glcore.shader.ShaderAttribLocation
-import ge.siradze.glcore.shader.ShaderLocation
-import ge.siradze.glcore.shader.ShaderUniformLocation
 import ge.siradze.glcore.utils.OpenGLUtils
 import ge.siradze.glcore.utils.ShaderUtils
 import ge.siradze.player.R
-import java.nio.Buffer
-
-
-class PlayerTrailData {
-
-    class Vertex(
-        val initPosition: FloatArray
-    ) {
-        // 3 floats per vertex, 2 for position, 1 for alpha
-        val numberOfFloatsPerVertex = 3
-        val data: FloatArray = FloatArray(size = 60 * numberOfFloatsPerVertex) { 0f }.also {
-            it.fillWith(
-                floatArrayOf(initPosition.x, initPosition.y, 0f)
-            )
-            for (i in it.indices) {
-               if(i % numberOfFloatsPerVertex == 0) {
-                   it[i+2] = i.toFloat() / it.size.toFloat()
-               }
-            }
-        }
-        val pointNumber = data.size / numberOfFloatsPerVertex
-        val stride = numberOfFloatsPerVertex * Float.SIZE_BYTES
-        val bufferSize = data.size * Float.SIZE_BYTES
-
-        fun getBuffer(): Buffer = data.toBuffer()
-    }
-
-    class ShaderLocations(
-        val vertex : ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_position"
-        ),
-        val ratio: ShaderLocation = RatioShaderLocation(),
-        val camera: ShaderLocation = CameraShaderLocation(),
-        val playerPosition: ShaderLocation = ShaderUniformLocation(
-            name = "u_player_position"
-        ),
-        val floatsPerVertex: ShaderLocation = ShaderUniformLocation(
-            name = "u_floatsPerVertex"
-        ),
-        val dataSize: ShaderUniformLocation = ShaderUniformLocation(
-            name = "u_dataSize"
-        )
-    )
-
-    class Properties {
-
-        // For addition logic
-        fun shouldUpdate(): Boolean {
-            return true
-        }
-    }
-
-}
+import ge.siradze.player.main.PlayerProperties
+import ge.siradze.player.trail.data.ShaderLocations
+import ge.siradze.player.trail.data.Vertex
 
 class PlayerTrail(
     private val context: Context,
-    private val playerProperties: PlayerData.Properties,
+    private val playerProperties: PlayerProperties,
     private val camera: Camera
 ): ge.siradze.core.GameObject {
 
@@ -104,9 +45,8 @@ class PlayerTrail(
     private val vao: IntArray = IntArray(1)
     private val vbo: IntArray = IntArray(1)
 
-    private val vertex = PlayerTrailData.Vertex(playerProperties.position)
-    private val shader = PlayerTrailData.ShaderLocations()
-    private val properties = PlayerTrailData.Properties()
+    private val vertex = Vertex(playerProperties.position)
+    private val shader = ShaderLocations()
 
     private val shaders = arrayOf(
         Shader(
@@ -163,16 +103,11 @@ class PlayerTrail(
     }
 
     private fun initLocations() {
-        shader.vertex.apply {
-            init(program)
-            load(3, GL_FLOAT, false, vertex.stride, 0)
-        }
-
-        shader.ratio.init(program)
-        shader.camera.init(program)
-        shader.playerPosition.init(computeProgram)
-        shader.floatsPerVertex.init(computeProgram)
-        shader.dataSize.init(computeProgram)
+        shader.init(
+            program = program,
+            computeProgram = computeProgram,
+            stride = vertex.stride,
+        )
         glUseProgram(computeProgram)
         glUniform1ui(
             shader.dataSize.location,
@@ -198,9 +133,6 @@ class PlayerTrail(
     }
 
     private fun compute() {
-        if(properties.shouldUpdate().not()) {
-          return
-        }
         ShaderUtils.computeShader(
             shaderProgram = computeProgram,
             vbos = vbo,

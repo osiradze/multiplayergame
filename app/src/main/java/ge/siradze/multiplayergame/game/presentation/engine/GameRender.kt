@@ -16,7 +16,7 @@ import ge.siradze.glcore.vboReader.VBOReaderImpl
 import ge.siradze.explosion.Explosion
 import ge.siradze.multiplayergame.game.presentation.feedback.FeedbackSounds
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
-import ge.siradze.player.Player
+import ge.siradze.player.main.Player
 import ge.siradze.player.PlayerEvents
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10

@@ -48,14 +48,14 @@ import ge.siradze.evilplanets.data.CollisionData
 import ge.siradze.evilplanets.data.ShaderLocations
 import ge.siradze.evilplanets.data.Vertex
 import ge.siradze.evilplanets.data.VertexProperties
-import ge.siradze.player.PlayerData
+import ge.siradze.player.main.PlayerProperties
 
 
 class EvilPlanets(
     name: String,
     state: GameState,
     private val context: Context,
-    private val playerProperties: PlayerData.Properties,
+    private val playerProperties: PlayerProperties,
     private val camera: Camera,
     private val textureCounter: TextureCounter,
     planetsData: FloatArray,
@@ -183,9 +183,9 @@ class EvilPlanets(
     private fun drawPlanets() {
         glUseProgram(program)
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
-        shader.attributeLocations.forEach {
-            glEnableVertexAttribArray(it.location)
-        }
+
+        shader.enableAttributeLocations()
+
         glActiveTexture(texture)
         glBindTexture(GL_TEXTURE_2D, textures[0])
 
@@ -200,9 +200,7 @@ class EvilPlanets(
 
         glActiveTexture(0)
         glBindTexture(GL_TEXTURE_2D, 0)
-        shader.attributeLocations.forEach {
-            glDisableVertexAttribArray(it.location)
-        }
+        shader.disableAttributeLocations()
         glUseProgram(0)
     }
 

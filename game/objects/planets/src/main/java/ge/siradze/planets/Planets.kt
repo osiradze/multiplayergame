@@ -49,7 +49,7 @@ import ge.siradze.planets.data.ShaderLocations
 import ge.siradze.planets.data.Vertex
 import ge.siradze.planets.data.VertexProperties
 import ge.siradze.glcore.utils.ShaderUtils
-import ge.siradze.player.PlayerData
+import ge.siradze.player.main.PlayerProperties
 
 
 class Planets(
@@ -57,7 +57,7 @@ class Planets(
     state: GameState,
     numberOfPlanets: Int,
     private val context: Context,
-    private val playerProperties: PlayerData.Properties,
+    private val playerProperties: PlayerProperties,
     private val camera: Camera,
     private val textureCounter: TextureCounter,
     private val vboReader: VBOReader
@@ -187,9 +187,8 @@ class Planets(
         glUseProgram(program)
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
 
-        shader.attributeLocations.forEach {
-            glEnableVertexAttribArray(it.location)
-        }
+        shader.enableAttributeLocations()
+
         glActiveTexture(texture)
         glBindTexture(GL_TEXTURE_2D, textures[0])
 
@@ -204,9 +203,7 @@ class Planets(
         glActiveTexture(0)
         glBindTexture(GL_TEXTURE_2D, 0)
 
-        shader.attributeLocations.forEach {
-            glDisableVertexAttribArray(it.location)
-        }
+        shader.disableAttributeLocations()
 
         glUseProgram(0)
     }

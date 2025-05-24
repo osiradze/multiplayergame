@@ -1,8 +1,7 @@
-package ge.siradze.player
+package ge.siradze.player.main
 
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.opengl.GLES20.GL_FLOAT
 import android.opengl.GLES20.GL_FRAGMENT_SHADER
 import android.opengl.GLES20.GL_LINEAR
 import android.opengl.GLES20.GL_TRIANGLES
@@ -17,8 +16,6 @@ import android.opengl.GLES30.glDeleteBuffers
 import android.opengl.GLES30.glDeleteProgram
 import android.opengl.GLES30.glDeleteShader
 import android.opengl.GLES30.glDeleteVertexArrays
-import android.opengl.GLES30.glDisableVertexAttribArray
-import android.opengl.GLES30.glEnableVertexAttribArray
 import android.opengl.GLES30.glGenTextures
 import android.opengl.GLES30.glUniform1f
 import android.opengl.GLES30.glUseProgram
@@ -37,6 +34,10 @@ import ge.siradze.glcore.texture.TextureCounter
 import ge.siradze.glcore.utils.OpenGLUtils
 import ge.siradze.glcore.utils.TextureUtils
 import ge.siradze.glcore.GameState
+import ge.siradze.player.PlayerEvents
+import ge.siradze.player.R
+import ge.siradze.player.main.data.ShaderLocations
+import ge.siradze.player.main.data.Vertex
 
 
 class Player(
@@ -49,12 +50,12 @@ class Player(
     private val vao: IntArray = IntArray(1)
     private val vbo: IntArray = IntArray(1)
 
-    private val vertex = PlayerData.Vertex()
-    private val shader = PlayerData.ShaderLocations()
-    val properties: PlayerData.Properties =
-        state.get(PlayerData.Properties::class.qualifiedName) as? PlayerData.Properties
-            ?: PlayerData.Properties().also {
-            state.set(PlayerData.Properties::class.qualifiedName, it)
+    private val vertex = Vertex()
+    private val shader = ShaderLocations()
+    val properties: PlayerProperties =
+        state.get(PlayerProperties::class.qualifiedName) as? PlayerProperties
+            ?: PlayerProperties().also {
+            state.set(PlayerProperties::class.qualifiedName, it)
         }
 
     private val shaders = arrayOf(
@@ -100,24 +101,10 @@ class Player(
     }
 
     private fun initLocations() {
-        shader.vertex.apply {
-            init(program)
-            load(2, GL_FLOAT, false, vertex.stride, 0)
-        }
-        shader.textureCoordinates.apply {
-            init(program)
-            load(2, GL_FLOAT, false, vertex.stride, 2 * Float.SIZE_BYTES)
-        }
-
-        // Uniforms
-        shader.ratio.init(program)
-        shader.camera.init(program)
-        shader.middlePoint.init(program)
-        shader.position.init(program)
-        shader.direction.init(program)
-        shader.velocity.init(program)
-        shader.texture.init(program)
-
+        shader.init(
+            program = program,
+            stride = vertex.stride,
+        )
         glUniform2f(shader.ratio.location, vertex.middlePoint.x, vertex.middlePoint.y)
         glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
@@ -149,8 +136,7 @@ class Player(
         glBindVertexArray(vao[0])
         glUseProgram(program)
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
-        glEnableVertexAttribArray(shader.vertex.location)
-        glEnableVertexAttribArray(shader.textureCoordinates.location)
+        shader.enableAttributeLocations()
 
         glActiveTexture(texture)
         glBindTexture(GL_TEXTURE_2D, textures[0])
@@ -166,8 +152,7 @@ class Player(
 
 
         glBindTexture(GL_TEXTURE_2D, 0)
-        glDisableVertexAttribArray(shader.vertex.location)
-        glDisableVertexAttribArray(shader.textureCoordinates.location)
+        shader.disableAttributeLocations()
 
         glBindVertexArray(0)
     }

@@ -1,5 +1,7 @@
 package ge.siradze.glcore.shader
 
+import android.opengl.GLES20.glDisableVertexAttribArray
+import android.opengl.GLES20.glEnableVertexAttribArray
 import android.opengl.GLES31.GL_FLOAT
 
 interface ObjectShaderLocations {
@@ -9,7 +11,7 @@ interface ObjectShaderLocations {
 
     fun init(
         program: Int,
-        computeProgram: Int,
+        computeProgram: Int? = null,
         stride: Int,
         type: Int = GL_FLOAT,
         typeSize : Int = Float.SIZE_BYTES
@@ -25,8 +27,21 @@ interface ObjectShaderLocations {
         programUniformLocations.forEach {
             it.init(program)
         }
-        computeUniformLocations.forEach {
-            it.init(computeProgram)
+        computeProgram?.let {
+            computeUniformLocations.forEach {
+                it.init(computeProgram)
+            }
+        }
+    }
+
+    fun enableAttributeLocations() {
+        attributeLocations.forEach {
+            glEnableVertexAttribArray(it.location)
+        }
+    }
+    fun disableAttributeLocations() {
+        attributeLocations.forEach {
+            glDisableVertexAttribArray(it.location)
         }
     }
 }

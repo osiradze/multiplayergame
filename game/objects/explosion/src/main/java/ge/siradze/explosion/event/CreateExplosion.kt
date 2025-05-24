@@ -1,6 +1,6 @@
 package ge.siradze.explosion.event
 
-import ge.siradze.explosion.ExplosionHelper
+import ge.siradze.explosion.helper.ExplosionHelper
 
 
 class CreateExplosion(

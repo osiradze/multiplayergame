@@ -1,4 +1,4 @@
-package ge.siradze.explosion
+package ge.siradze.explosion.helper
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -88,8 +88,6 @@ class ExplosionHelper(
             data[x][y][startPosition + 6] = 0f
             counter += 1
         }
-        //data[x][y][counter * numberOfFloatsPerPoint] = counter.toFloat()
-
     }
 
 

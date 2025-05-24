@@ -6,7 +6,7 @@ import ge.siradze.glcore.camera.Camera
 import ge.siradze.explosion.Explosion
 import ge.siradze.explosion.event.CreateExplosion
 import ge.siradze.multiplayergame.game.presentation.feedback.FeedbackSounds
-import ge.siradze.player.Player
+import ge.siradze.player.main.Player
 
 class ExplosionCreation(
     private val context: Context,

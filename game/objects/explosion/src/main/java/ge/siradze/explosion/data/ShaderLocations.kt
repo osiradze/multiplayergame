@@ -8,7 +8,7 @@ import ge.siradze.glcore.shader.ShaderAttribLocation
 import ge.siradze.glcore.shader.ShaderLocation
 import ge.siradze.glcore.shader.ShaderUniformLocation
 
-data class ShaderLocations (
+internal data class ShaderLocations (
     val vertex: ShaderAttribLocation = ShaderAttribLocation(
         name = "a_position",
         size = 2,

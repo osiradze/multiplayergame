@@ -10,9 +10,7 @@ import android.opengl.GLES20.glActiveTexture
 import android.opengl.GLES20.glDeleteBuffers
 import android.opengl.GLES20.glDeleteShader
 import android.opengl.GLES20.glDeleteTextures
-import android.opengl.GLES20.glDisableVertexAttribArray
 import android.opengl.GLES20.glDrawArrays
-import android.opengl.GLES20.glEnableVertexAttribArray
 import android.opengl.GLES20.glGenBuffers
 import android.opengl.GLES20.glUniform1f
 import android.opengl.GLES20.glUniform1i
@@ -48,15 +46,15 @@ import ge.siradze.glcore.texture.TextureDimensions
 import ge.siradze.glcore.utils.OpenGLUtils
 import ge.siradze.glcore.utils.ShaderUtils
 import ge.siradze.glcore.utils.TextureUtils
-import ge.siradze.explosion.ExplosionHelper
+import ge.siradze.explosion.helper.ExplosionHelper
 import ge.siradze.explosion.event.CreateExplosion
-import ge.siradze.player.PlayerData
+import ge.siradze.player.main.PlayerProperties
 
 class Asteroids(
     name: String,
     state: GameState,
     private val context: Context,
-    private val playerProperties: PlayerData.Properties,
+    private val playerProperties: PlayerProperties,
     private val camera: Camera,
     private val textureCounter: TextureCounter,
     private val event: (CreateExplosion) -> Unit,
@@ -221,9 +219,7 @@ class Asteroids(
 
     private fun drawAsteroids() {
         glUseProgram(program)
-        shader.attributeLocations.forEach {
-            glEnableVertexAttribArray(it.location)
-        }
+        shader.enableAttributeLocations()
 
         glActiveTexture(texture)
         glBindTexture(GL_TEXTURE_2D, textures[0])
@@ -239,9 +235,7 @@ class Asteroids(
         glActiveTexture(0)
         glBindTexture(GL_TEXTURE_2D, 0)
 
-        shader.attributeLocations.forEach {
-            glDisableVertexAttribArray(it.location)
-        }
+        shader.disableAttributeLocations()
 
         glUseProgram(0)
     }

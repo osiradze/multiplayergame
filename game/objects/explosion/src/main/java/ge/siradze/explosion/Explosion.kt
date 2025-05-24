@@ -9,9 +9,7 @@ import android.opengl.GLES20.glBindBuffer
 import android.opengl.GLES20.glBufferData
 import android.opengl.GLES20.glDeleteBuffers
 import android.opengl.GLES20.glDeleteShader
-import android.opengl.GLES20.glDisableVertexAttribArray
 import android.opengl.GLES20.glDrawArrays
-import android.opengl.GLES20.glEnableVertexAttribArray
 import android.opengl.GLES20.glGenBuffers
 import android.opengl.GLES20.glUniform1f
 import android.opengl.GLES20.glUniform1i
@@ -30,6 +28,8 @@ import ge.siradze.glcore.extensions.x
 import ge.siradze.glcore.extensions.y
 import ge.siradze.core.GameObject
 import ge.siradze.explosion.data.ShaderLocations
+import ge.siradze.explosion.data.Vertex
+import ge.siradze.explosion.helper.ExplosionHelper
 import ge.siradze.glcore.shader.Shader
 import ge.siradze.glcore.utils.OpenGLUtils
 import ge.siradze.glcore.utils.ShaderUtils
@@ -48,14 +48,13 @@ class Explosion(
     private val vao: IntArray = IntArray(1)
     private val vbo: IntArray = IntArray(1)
 
-    private val vertex: ExplosionData.Vertex =
-        ExplosionData.Vertex(
-            helper = helper,
-            tilePosition = planet,
-            size = size,
-            position = position,
-            color = color,
-        )
+    private val vertex: Vertex = Vertex(
+        helper = helper,
+        tilePosition = planet,
+        size = size,
+        position = position,
+        color = color,
+    )
 
     private val shader = ShaderLocations()
 
@@ -142,9 +141,8 @@ class Explosion(
 
     private fun drawExplosion() {
         glUseProgram(program)
-        glEnableVertexAttribArray(shader.vertex.location)
-        glEnableVertexAttribArray(shader.color.location)
-        glEnableVertexAttribArray(shader.isDead.location)
+
+        shader.enableAttributeLocations()
         camera.bindUniform(shader.camera.location)
 
         glDrawArrays(
@@ -153,9 +151,7 @@ class Explosion(
             vertex.numberOfVertex
         )
 
-        glDisableVertexAttribArray(shader.vertex.location)
-        glDisableVertexAttribArray(shader.color.location)
-        glDisableVertexAttribArray(shader.isDead.location)
+        shader.disableAttributeLocations()
         glBindBuffer(GL_ARRAY_BUFFER, 0)
 
     }
