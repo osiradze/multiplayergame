@@ -24,14 +24,15 @@ import android.opengl.GLES30.glUniform1ui
 import android.opengl.GLES31.GL_COMPUTE_SHADER
 import android.opengl.GLES31.GL_DYNAMIC_DRAW
 import android.opengl.GLES31.GL_FLOAT
-import ge.siradze.core.EngineGlobals
-import ge.siradze.core.camera.Camera
-import ge.siradze.core.extensions.x
-import ge.siradze.core.extensions.y
+import ge.siradze.glcore.EngineGlobals
+import ge.siradze.glcore.camera.Camera
+import ge.siradze.glcore.extensions.x
+import ge.siradze.glcore.extensions.y
 import ge.siradze.core.GameObject
-import ge.siradze.core.shader.Shader
-import ge.siradze.core.utils.OpenGLUtils
-import ge.siradze.core.utils.ShaderUtils
+import ge.siradze.explosion.data.ShaderLocations
+import ge.siradze.glcore.shader.Shader
+import ge.siradze.glcore.utils.OpenGLUtils
+import ge.siradze.glcore.utils.ShaderUtils
 
 
 class Explosion(
@@ -56,7 +57,7 @@ class Explosion(
             color = color,
         )
 
-    private val shader = ExplosionData.ShaderLocations()
+    private val shader = ShaderLocations()
 
     private val shaders = arrayOf(
         Shader(
@@ -108,30 +109,12 @@ class Explosion(
     }
     private fun initLocations() {
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
-
-        shader.vertex.apply {
-            init(program)
-            load(2, GL_FLOAT, false, vertex.stride, offset)
-        }
-        shader.color.apply {
-            init(program)
-            load(3, GL_FLOAT, false, vertex.stride, offset * vertex.typeSize)
-        }
-
-        shader.isDead.apply {
-            init(program)
-            load(1, GL_FLOAT, false, vertex.stride, offset * vertex.typeSize)
-        }
-
-        // Uniforms
-        shader.ratio.init(program)
-        shader.camera.init(program)
-        glUseProgram(program)
-
-        shader.floatsPerVertex.init(computeProgram)
-        shader.playerPosition.init(computeProgram)
-        shader.deltaTime.init(computeProgram)
-        shader.push.init(computeProgram)
+        shader.init(
+            program = program,
+            computeProgram = computeProgram,
+            stride = vertex.stride,
+            type = GL_FLOAT,
+        )
     }
 
     override fun draw() {

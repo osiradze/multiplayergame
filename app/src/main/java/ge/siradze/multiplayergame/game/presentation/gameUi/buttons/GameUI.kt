@@ -25,11 +25,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import ge.siradze.core.extensions.multiply
-import ge.siradze.core.extensions.normalize
-import ge.siradze.core.extensions.vectorLength
-import ge.siradze.core.extensions.x
-import ge.siradze.core.extensions.y
+import ge.siradze.glcore.extensions.multiply
+import ge.siradze.glcore.extensions.normalize
+import ge.siradze.glcore.extensions.vectorLength
+import ge.siradze.glcore.extensions.x
+import ge.siradze.glcore.extensions.y
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import kotlin.math.roundToInt
 

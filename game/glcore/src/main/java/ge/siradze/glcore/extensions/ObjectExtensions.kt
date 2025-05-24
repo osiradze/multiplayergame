@@ -1,4 +1,4 @@
-package ge.siradze.core.extensions
+package ge.siradze.glcore.extensions
 
 
 fun FloatArray.scale(times: Float, floatsPerVertex: Int) {

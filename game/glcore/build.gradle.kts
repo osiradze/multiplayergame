@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "ge.siradze.core"
+    namespace = "ge.siradze.glcore"
     compileSdk = 35
 
     defaultConfig {

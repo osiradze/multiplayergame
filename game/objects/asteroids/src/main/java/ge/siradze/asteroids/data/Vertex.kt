@@ -14,13 +14,13 @@ import ge.siradze.asteroids.data.Vertex.Companion.TX
 import ge.siradze.asteroids.data.Vertex.Companion.TY
 import ge.siradze.asteroids.data.Vertex.Companion.VX
 import ge.siradze.asteroids.data.Vertex.Companion.VY
-import ge.siradze.core.extensions.multiply
-import ge.siradze.core.extensions.normalize
-import ge.siradze.core.extensions.toBuffer
-import ge.siradze.core.extensions.x
-import ge.siradze.core.extensions.y
+import ge.siradze.glcore.extensions.multiply
+import ge.siradze.glcore.extensions.normalize
+import ge.siradze.glcore.extensions.toBuffer
+import ge.siradze.glcore.extensions.x
+import ge.siradze.glcore.extensions.y
 import ge.siradze.core.AttributeData
-import ge.siradze.core.texture.TextureDimensions
+import ge.siradze.glcore.texture.TextureDimensions
 import kotlin.random.Random
 
 internal class VertexProperties(

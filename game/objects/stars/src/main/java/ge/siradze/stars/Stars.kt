@@ -21,10 +21,10 @@ import android.opengl.GLES31.glBindVertexArray
 import android.opengl.GLES31.glBufferData
 import android.opengl.GLES31.glGenBuffers
 import android.opengl.GLES31.glGenVertexArrays
-import ge.siradze.core.camera.Camera
+import ge.siradze.glcore.camera.Camera
 import ge.siradze.core.GameObject
-import ge.siradze.core.shader.Shader
-import ge.siradze.core.utils.OpenGLUtils
+import ge.siradze.glcore.shader.Shader
+import ge.siradze.glcore.utils.OpenGLUtils
 
 
 class Stars(

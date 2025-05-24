@@ -1,17 +1,11 @@
 package ge.siradze.explosion
 
-import ge.siradze.core.extensions.scale
-import ge.siradze.core.extensions.toBuffer
-import ge.siradze.core.extensions.transform
-import ge.siradze.core.extensions.x
-import ge.siradze.core.extensions.y
 import ge.siradze.core.AttributeData
-import ge.siradze.core.shader.CameraShaderLocation
-import ge.siradze.core.shader.DeltaTimeShaderLocation
-import ge.siradze.core.shader.RatioShaderLocation
-import ge.siradze.core.shader.ShaderAttribLocation
-import ge.siradze.core.shader.ShaderLocation
-import ge.siradze.core.shader.ShaderUniformLocation
+import ge.siradze.glcore.extensions.scale
+import ge.siradze.glcore.extensions.toBuffer
+import ge.siradze.glcore.extensions.transform
+import ge.siradze.glcore.extensions.x
+import ge.siradze.glcore.extensions.y
 import java.nio.Buffer
 
 class ExplosionData {
@@ -48,36 +42,5 @@ class ExplosionData {
         override fun getBuffer(): Buffer = data.toBuffer()
     }
 
-    class ShaderLocations (
-        val vertex: ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_position",
-            offset = 0,
-        ),
-        val color: ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_color",
-            offset = 2,
-        ),
-        val isDead: ShaderAttribLocation = ShaderAttribLocation(
-            name = "a_isDead",
-            offset = 7,
-        ),
 
-        // Uniforms
-        val ratio: ShaderLocation = RatioShaderLocation(),
-        var camera: ShaderLocation = CameraShaderLocation(),
-
-
-        val floatsPerVertex: ShaderLocation = ShaderUniformLocation(
-            name = "u_floats_per_vertex"
-        ),
-        val playerPosition: ShaderLocation = ShaderUniformLocation(
-            name = "u_player_position"
-        ),
-
-        val deltaTime: DeltaTimeShaderLocation = DeltaTimeShaderLocation(),
-
-        val push: ShaderUniformLocation = ShaderUniformLocation(
-            name = "u_push"
-        ),
-    )
 }

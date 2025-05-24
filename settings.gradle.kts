@@ -19,15 +19,15 @@ dependencyResolutionManagement {
     }
 }
 
-
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 
 rootProject.name = "MultiplayerGame"
 include(":app")
 include(":game")
+include(":game:glcore")
 include(":game:objects")
 include(":game:objects:planets")
-include(":game:core")
 include(":game:objects:core")
 include(":game:objects:player")
 include(":game:objects:asteroids")

@@ -1,4 +1,4 @@
-package ge.siradze.core
+package ge.siradze.glcore
 
 /**
  * Every speed value game of should be multiplied by deltaTime,

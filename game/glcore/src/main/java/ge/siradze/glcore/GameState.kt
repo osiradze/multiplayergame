@@ -1,4 +1,4 @@
-package ge.siradze.core
+package ge.siradze.glcore
 
 interface GameState {
 

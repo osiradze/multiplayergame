@@ -1,4 +1,4 @@
-package ge.siradze.core.extensions
+package ge.siradze.glcore.extensions
 
 import kotlin.math.acos
 import kotlin.math.cos

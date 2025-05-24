@@ -1,4 +1,4 @@
-package ge.siradze.core.texture
+package ge.siradze.glcore.texture
 
 
 /*

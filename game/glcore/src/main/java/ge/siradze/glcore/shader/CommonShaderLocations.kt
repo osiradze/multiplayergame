@@ -1,4 +1,4 @@
-package ge.siradze.core.shader
+package ge.siradze.glcore.shader
 
 class RatioShaderLocation: ShaderUniformLocation(name = "u_ratio")
 

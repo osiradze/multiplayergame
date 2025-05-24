@@ -1,10 +1,10 @@
 package ge.siradze.planets.data
 
 import ge.siradze.core.AttributeData
-import ge.siradze.core.extensions.toBuffer
-import ge.siradze.core.extensions.x
-import ge.siradze.core.extensions.y
-import ge.siradze.core.texture.TextureDimensions
+import ge.siradze.glcore.extensions.toBuffer
+import ge.siradze.glcore.extensions.x
+import ge.siradze.glcore.extensions.y
+import ge.siradze.glcore.texture.TextureDimensions
 import ge.siradze.planets.PlanetsData.NUMBER_OF_FLOATS_PER_VERTEX
 import ge.siradze.planets.data.Vertex.Companion.CB
 import ge.siradze.planets.data.Vertex.Companion.CG

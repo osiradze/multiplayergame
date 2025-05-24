@@ -28,6 +28,7 @@ import android.opengl.GLES30.glGenVertexArrays
 import android.opengl.GLES30.glUniform1ui
 import android.opengl.GLES31.GL_COMPUTE_SHADER
 import android.opengl.GLES31.GL_DYNAMIC_DRAW
+import android.opengl.GLES31.GL_FLOAT
 import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
 import ge.siradze.asteroids.data.CollisionData
@@ -35,18 +36,18 @@ import ge.siradze.asteroids.data.ShaderLocations
 import ge.siradze.asteroids.data.Vertex
 import ge.siradze.asteroids.data.VertexProperties
 import ge.siradze.core.GameObject
-import ge.siradze.core.EngineGlobals
-import ge.siradze.core.camera.Camera
-import ge.siradze.core.vboReader.VBOReader
-import ge.siradze.core.extensions.x
-import ge.siradze.core.extensions.y
-import ge.siradze.core.GameState
-import ge.siradze.core.shader.Shader
-import ge.siradze.core.texture.TextureCounter
-import ge.siradze.core.texture.TextureDimensions
-import ge.siradze.core.utils.OpenGLUtils
-import ge.siradze.core.utils.ShaderUtils
-import ge.siradze.core.utils.TextureUtils
+import ge.siradze.glcore.EngineGlobals
+import ge.siradze.glcore.camera.Camera
+import ge.siradze.glcore.vboReader.VBOReader
+import ge.siradze.glcore.extensions.x
+import ge.siradze.glcore.extensions.y
+import ge.siradze.glcore.GameState
+import ge.siradze.glcore.shader.Shader
+import ge.siradze.glcore.texture.TextureCounter
+import ge.siradze.glcore.texture.TextureDimensions
+import ge.siradze.glcore.utils.OpenGLUtils
+import ge.siradze.glcore.utils.ShaderUtils
+import ge.siradze.glcore.utils.TextureUtils
 import ge.siradze.explosion.ExplosionHelper
 import ge.siradze.explosion.event.CreateExplosion
 import ge.siradze.player.PlayerData
@@ -152,21 +153,12 @@ class Asteroids(
     private fun initLocations() {
         // attributes
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
-        shader.attributeLocations.forEach {
-            with(it) {
-                init(program)
-                load(size,
-                    android.opengl.GLES31.GL_FLOAT, false, vertex.stride, offset * kotlin.Float.SIZE_BYTES)
-            }
-        }
-
-        // Program Uniforms
-        shader.programUniformLocations.forEach {
-            it.init(program)
-        }
-        shader.computeUniformLocations.forEach {
-            it.init(computeProgram)
-        }
+        shader.init(
+            program = program,
+            computeProgram = computeProgram,
+            stride = vertex.stride,
+            type = GL_FLOAT,
+        )
     }
 
     private fun bindTexture() {

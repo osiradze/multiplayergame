@@ -1,4 +1,4 @@
-package ge.siradze.core.utils
+package ge.siradze.glcore.utils
 
 import android.graphics.Bitmap
 import android.graphics.Matrix

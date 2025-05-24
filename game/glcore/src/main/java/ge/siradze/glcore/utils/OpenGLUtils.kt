@@ -1,4 +1,4 @@
-package ge.siradze.core.utils
+package ge.siradze.glcore.utils
 
 import android.opengl.GLES20.GL_ACTIVE_UNIFORMS
 import android.opengl.GLES20.GL_ACTIVE_UNIFORM_MAX_LENGTH

@@ -1,4 +1,4 @@
-package ge.siradze.core.vboReader
+package ge.siradze.glcore.vboReader
 
 import android.opengl.GLES20.GL_DYNAMIC_DRAW
 import android.opengl.GLES20.glGenBuffers
@@ -6,8 +6,8 @@ import android.opengl.GLES20.glBindBuffer
 import android.opengl.GLES20.glBufferData
 import android.opengl.GLES31.GL_SHADER_STORAGE_BUFFER
 import android.util.Log
-import ge.siradze.core.extensions.toBuffer
-import ge.siradze.core.utils.OpenGLUtils
+import ge.siradze.glcore.extensions.toBuffer
+import ge.siradze.glcore.utils.OpenGLUtils
 
 
 /**

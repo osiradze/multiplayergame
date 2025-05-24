@@ -21,6 +21,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.game.core)
+    implementation(projects.game.glcore)
     implementation(projects.game.objects.core)
 }

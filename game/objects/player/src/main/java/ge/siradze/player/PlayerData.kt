@@ -1,19 +1,19 @@
 package ge.siradze.player
 
-import ge.siradze.core.EngineGlobals
-import ge.siradze.core.extensions.normalize
-import ge.siradze.core.extensions.rotate
-import ge.siradze.core.extensions.scale
-import ge.siradze.core.extensions.signedAngleBetweenVectors
-import ge.siradze.core.extensions.toBuffer
-import ge.siradze.core.extensions.vectorLength
-import ge.siradze.core.extensions.x
-import ge.siradze.core.extensions.y
-import ge.siradze.core.shader.CameraShaderLocation
-import ge.siradze.core.shader.RatioShaderLocation
-import ge.siradze.core.shader.ShaderAttribLocation
-import ge.siradze.core.shader.ShaderLocation
-import ge.siradze.core.shader.ShaderUniformLocation
+import ge.siradze.glcore.EngineGlobals
+import ge.siradze.glcore.extensions.normalize
+import ge.siradze.glcore.extensions.rotate
+import ge.siradze.glcore.extensions.scale
+import ge.siradze.glcore.extensions.signedAngleBetweenVectors
+import ge.siradze.glcore.extensions.toBuffer
+import ge.siradze.glcore.extensions.vectorLength
+import ge.siradze.glcore.extensions.x
+import ge.siradze.glcore.extensions.y
+import ge.siradze.glcore.shader.CameraShaderLocation
+import ge.siradze.glcore.shader.RatioShaderLocation
+import ge.siradze.glcore.shader.ShaderAttribLocation
+import ge.siradze.glcore.shader.ShaderLocation
+import ge.siradze.glcore.shader.ShaderUniformLocation
 import java.nio.Buffer
 import kotlin.math.pow
 

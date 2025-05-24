@@ -1,6 +1,6 @@
 package ge.siradze.multiplayergame.game.presentation
 
-import ge.siradze.core.GameState
+import ge.siradze.glcore.GameState
 
 class GameStateImpl : GameState {
     private val map: MutableMap<String, Any> = mutableMapOf()

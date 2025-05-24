@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import ge.siradze.core.texture.TextureDimensions
+import ge.siradze.glcore.texture.TextureDimensions
 
 class ExplosionHelper(
     context: Context,

@@ -1,13 +1,13 @@
 package ge.siradze.evilplanets.data
 
 import ge.siradze.core.AttributeData
-import ge.siradze.core.extensions.multiply
-import ge.siradze.core.extensions.normalize
-import ge.siradze.core.extensions.rotate
-import ge.siradze.core.extensions.toBuffer
-import ge.siradze.core.extensions.x
-import ge.siradze.core.extensions.y
-import ge.siradze.core.texture.TextureDimensions
+import ge.siradze.glcore.extensions.multiply
+import ge.siradze.glcore.extensions.normalize
+import ge.siradze.glcore.extensions.rotate
+import ge.siradze.glcore.extensions.toBuffer
+import ge.siradze.glcore.extensions.x
+import ge.siradze.glcore.extensions.y
+import ge.siradze.glcore.texture.TextureDimensions
 import ge.siradze.evilplanets.data.Vertex.Companion.CB
 import ge.siradze.evilplanets.data.Vertex.Companion.CG
 import ge.siradze.evilplanets.data.Vertex.Companion.CR

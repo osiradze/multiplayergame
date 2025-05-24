@@ -28,18 +28,19 @@ import android.opengl.GLES31.glBindVertexArray
 import android.opengl.GLES31.glBufferData
 import android.opengl.GLES31.glGenBuffers
 import android.opengl.GLES31.glGenVertexArrays
-import ge.siradze.core.camera.Camera
-import ge.siradze.core.extensions.x
-import ge.siradze.core.extensions.y
+import ge.siradze.glcore.camera.Camera
+import ge.siradze.glcore.extensions.x
+import ge.siradze.glcore.extensions.y
 import ge.siradze.core.GameObject
-import ge.siradze.core.shader.Shader
-import ge.siradze.core.texture.TextureCounter
-import ge.siradze.core.utils.OpenGLUtils
-import ge.siradze.core.utils.TextureUtils
+import ge.siradze.glcore.shader.Shader
+import ge.siradze.glcore.texture.TextureCounter
+import ge.siradze.glcore.utils.OpenGLUtils
+import ge.siradze.glcore.utils.TextureUtils
+import ge.siradze.glcore.GameState
 
 
 class Player(
-    state: ge.siradze.core.GameState,
+    state: GameState,
     private val context: Context,
     private val camera: Camera,
     private val textureCounter: TextureCounter,

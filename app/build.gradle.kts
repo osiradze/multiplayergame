@@ -81,7 +81,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation(projects.game.core)
+    implementation(projects.game.glcore)
     implementation(projects.game.objects.core)
     implementation(projects.game.objects.planets)
     implementation(projects.game.objects.player)

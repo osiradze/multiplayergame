@@ -1,9 +1,9 @@
-package ge.siradze.core.shader
+package ge.siradze.glcore.shader
 
 import android.content.Context
 import androidx.annotation.RawRes
-import ge.siradze.core.utils.OpenGLUtils
-import ge.siradze.core.utils.ShaderUtils
+import ge.siradze.glcore.utils.OpenGLUtils
+import ge.siradze.glcore.utils.ShaderUtils
 
 class Shader(
     val type: Int,

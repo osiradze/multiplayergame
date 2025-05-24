@@ -1,11 +1,12 @@
 package ge.siradze.planets.data
 
-import ge.siradze.core.shader.ShaderAttribLocation
-import ge.siradze.core.shader.ShaderLocation
-import ge.siradze.core.shader.ShaderUniformLocation
-import ge.siradze.core.shader.RatioShaderLocation
-import ge.siradze.core.shader.CameraShaderLocation
-import ge.siradze.core.shader.ReaderOffsetShaderLocation
+import ge.siradze.glcore.shader.ShaderAttribLocation
+import ge.siradze.glcore.shader.ShaderLocation
+import ge.siradze.glcore.shader.ShaderUniformLocation
+import ge.siradze.glcore.shader.RatioShaderLocation
+import ge.siradze.glcore.shader.CameraShaderLocation
+import ge.siradze.glcore.shader.ObjectShaderLocations
+import ge.siradze.glcore.shader.ReaderOffsetShaderLocation
 
 
 internal data class ShaderLocations(
@@ -59,22 +60,22 @@ internal data class ShaderLocations(
         name = "u_drawLine"
     ),
     val readerOffset : ShaderUniformLocation = ReaderOffsetShaderLocation(),
-) {
-    val attributeLocations: List<ShaderAttribLocation> = listOf(
+) : ObjectShaderLocations {
+    override val attributeLocations: List<ShaderAttribLocation> = listOf(
         vertex,
         size,
         textureCoordinates,
         color,
         isDestroyed,
     )
-    val programUniformLocations: List<ShaderLocation> = listOf(
+    override val programUniformLocations: List<ShaderLocation> = listOf(
         screenWidth,
         ratio,
         camera,
         drawLine,
         texture,
     )
-    val computeUniformLocations: List<ShaderLocation> = listOf(
+    override val computeUniformLocations: List<ShaderLocation> = listOf(
         floatsPerVertex,
         playerPosition,
         destructible,

@@ -1,10 +1,10 @@
 package ge.siradze.stars
 
-import ge.siradze.core.extensions.toBuffer
-import ge.siradze.core.shader.CameraShaderLocation
-import ge.siradze.core.shader.RatioShaderLocation
-import ge.siradze.core.shader.ShaderAttribLocation
-import ge.siradze.core.shader.ShaderLocation
+import ge.siradze.glcore.extensions.toBuffer
+import ge.siradze.glcore.shader.CameraShaderLocation
+import ge.siradze.glcore.shader.RatioShaderLocation
+import ge.siradze.glcore.shader.ShaderAttribLocation
+import ge.siradze.glcore.shader.ShaderLocation
 import java.nio.Buffer
 import kotlin.random.Random
 

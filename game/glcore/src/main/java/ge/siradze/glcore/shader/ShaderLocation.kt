@@ -1,10 +1,12 @@
-package ge.siradze.core.shader
+package ge.siradze.glcore.shader
 
 import android.opengl.GLES20.glDisableVertexAttribArray
 import android.opengl.GLES20.glEnableVertexAttribArray
 import android.opengl.GLES20.glGetAttribLocation
 import android.opengl.GLES20.glGetUniformLocation
 import android.opengl.GLES31.glVertexAttribPointer
+
+
 
 abstract class ShaderLocation(
     var location: Int = -1,

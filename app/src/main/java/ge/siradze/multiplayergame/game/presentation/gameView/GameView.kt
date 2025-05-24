@@ -3,8 +3,8 @@ package ge.siradze.multiplayergame.game.presentation.gameView
 import android.content.Context
 import android.opengl.GLSurfaceView
 import androidx.lifecycle.LifecycleCoroutineScope
-import ge.siradze.core.EngineGlobals
-import ge.siradze.core.GameState
+import ge.siradze.glcore.EngineGlobals
+import ge.siradze.glcore.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.multiplayergame.game.presentation.feedback.FeedbackSounds

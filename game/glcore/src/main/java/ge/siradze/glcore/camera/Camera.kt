@@ -1,10 +1,10 @@
-package ge.siradze.core.camera
+package ge.siradze.glcore.camera
 
 import android.opengl.GLES20.glUniform2f
-import ge.siradze.core.EngineGlobals
-import ge.siradze.core.GameState
-import ge.siradze.core.extensions.x
-import ge.siradze.core.extensions.y
+import ge.siradze.glcore.EngineGlobals
+import ge.siradze.glcore.GameState
+import ge.siradze.glcore.extensions.x
+import ge.siradze.glcore.extensions.y
 
 class Camera(state: GameState) {
 

@@ -1,4 +1,4 @@
-package ge.siradze.core.utils
+package ge.siradze.glcore.utils
 
 import android.content.Context
 import android.opengl.GLES31.GL_SHADER_STORAGE_BARRIER_BIT
