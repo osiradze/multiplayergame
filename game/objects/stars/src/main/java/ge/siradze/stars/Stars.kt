@@ -25,6 +25,8 @@ import ge.siradze.glcore.camera.Camera
 import ge.siradze.core.GameObject
 import ge.siradze.glcore.shader.Shader
 import ge.siradze.glcore.utils.OpenGLUtils
+import ge.siradze.stars.data.ShaderLocations
+import ge.siradze.stars.data.Vertex
 
 
 class Stars(
@@ -36,8 +38,8 @@ class Stars(
     private val vbo: IntArray = IntArray(1)
 
 
-    private val vertex = StarsData.Vertex()
-    private val shader = StarsData.ShaderLocations()
+    private val vertex = Vertex()
+    private val shader = ShaderLocations()
     private val shaders = arrayOf(
         Shader(
             type = GL_VERTEX_SHADER,
@@ -73,22 +75,10 @@ class Stars(
             GL_DYNAMIC_DRAW
         )
 
-        shader.vertex.apply {
-            init(program)
-            load(2, GL_FLOAT, false, vertex.stride, 0)
-        }
-        shader.cameraSpeed.apply {
-            init(program)
-            load(1, GL_FLOAT, false, vertex.stride, 2 * Float.SIZE_BYTES)
-        }
-        shader.brightness.apply {
-            init(program)
-            load(1, GL_FLOAT, false, vertex.stride, 3 * Float.SIZE_BYTES)
-        }
-
-        shader.camera.init(program)
-        shader.ratio.init(program)
-
+        shader.init(
+            program = program,
+            stride = vertex.stride
+        )
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindVertexArray(0)
     }
@@ -105,9 +95,8 @@ class Stars(
     override fun draw() {
         glUseProgram(program)
         glBindVertexArray(vao[0])
-        glEnableVertexAttribArray(shader.vertex.location)
-        glEnableVertexAttribArray(shader.cameraSpeed.location)
-        glEnableVertexAttribArray(shader.brightness.location)
+
+        shader.enableAttributeLocations()
 
         camera.bindUniform(shader.camera.location)
 
@@ -117,9 +106,8 @@ class Stars(
             vertex.numberOfPoints
         )
 
-        glDisableVertexAttribArray(shader.vertex.location)
-        glDisableVertexAttribArray(shader.cameraSpeed.location)
-        glDisableVertexAttribArray(shader.brightness.location)
+        shader.disableAttributeLocations()
+
         glBindVertexArray(0)
         glUseProgram(0)
     }
