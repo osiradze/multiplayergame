@@ -1,4 +1,4 @@
-package ge.siradze.asteroids.data
+package ge.siradze.enemy.data
 
 // For getting data from GPU about collision
 internal class CollisionData {

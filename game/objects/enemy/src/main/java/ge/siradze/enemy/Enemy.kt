@@ -1,4 +1,4 @@
-package ge.siradze.asteroids
+package ge.siradze.enemy
 
 import android.content.Context
 import android.graphics.BitmapFactory
@@ -13,7 +13,6 @@ import android.opengl.GLES20.glDeleteTextures
 import android.opengl.GLES20.glDrawArrays
 import android.opengl.GLES20.glGenBuffers
 import android.opengl.GLES20.glUniform1f
-import android.opengl.GLES20.glUniform1i
 import android.opengl.GLES20.glUniform2f
 import android.opengl.GLES20.glUseProgram
 import android.opengl.GLES30.GL_TEXTURE_2D
@@ -29,47 +28,52 @@ import android.opengl.GLES31.GL_DYNAMIC_DRAW
 import android.opengl.GLES31.GL_FLOAT
 import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
-import ge.siradze.asteroids.data.CollisionData
-import ge.siradze.asteroids.data.ShaderLocations
-import ge.siradze.asteroids.data.Vertex
-import ge.siradze.asteroids.data.VertexProperties
 import ge.siradze.core.GameObject
+import ge.siradze.enemy.data.CollisionData
+import ge.siradze.enemy.data.ShaderLocations
+import ge.siradze.enemy.data.Vertex
+import ge.siradze.enemy.data.VertexProperties
+import ge.siradze.explosion.event.CreateExplosion
+import ge.siradze.explosion.helper.ExplosionHelper
 import ge.siradze.glcore.EngineGlobals
+import ge.siradze.glcore.GameState
 import ge.siradze.glcore.camera.Camera
-import ge.siradze.glcore.vboReader.VBOReader
 import ge.siradze.glcore.extensions.x
 import ge.siradze.glcore.extensions.y
-import ge.siradze.glcore.GameState
 import ge.siradze.glcore.shader.Shader
 import ge.siradze.glcore.texture.TextureCounter
 import ge.siradze.glcore.texture.TextureDimensions
 import ge.siradze.glcore.utils.OpenGLUtils
 import ge.siradze.glcore.utils.ShaderUtils
 import ge.siradze.glcore.utils.TextureUtils
-import ge.siradze.explosion.helper.ExplosionHelper
-import ge.siradze.explosion.event.CreateExplosion
+import ge.siradze.glcore.vboReader.VBOReader
 import ge.siradze.player.main.PlayerProperties
 
-class Asteroids(
+class Enemy(
     name: String,
     state: GameState,
     private val context: Context,
+    private val spawnPosition: FloatArray,
     private val playerProperties: PlayerProperties,
     private val camera: Camera,
     private val textureCounter: TextureCounter,
     private val event: (CreateExplosion) -> Unit,
     private val vboReader: VBOReader
-): GameObject {
+) : GameObject {
 
-    private val textureDimensions = TextureDimensions(6, 6, R.drawable.asteroids)
+
+
+    private val textureDimensions = TextureDimensions(4, 4, R.drawable.enemy)
     private val explosionHelper = ExplosionHelper(context, textureDimensions)
-
 
     private val vao: IntArray = IntArray(1)
     private val vbo: IntArray = IntArray(1)
 
-    private val properties = VertexProperties()
-    private val dataSerializeName = Asteroids::class.qualifiedName + name
+
+    private val properties = VertexProperties(
+        spawnPosition = spawnPosition,
+    )
+    private val dataSerializeName = Enemy::class.qualifiedName + name
     private val vertex: Vertex =
         state.get(dataSerializeName) as? Vertex ?:
         Vertex(
@@ -83,17 +87,17 @@ class Asteroids(
     private val shaders = arrayOf(
         Shader(
             type = GL_VERTEX_SHADER,
-            source = R.raw.asteroid_vertex,
+            source = R.raw.enemy_vertex,
             name = "Asteroid Vertex"
         ),
         Shader(
             type = GL_FRAGMENT_SHADER,
-            source = R.raw.asteroid_fragment,
+            source = R.raw.enemy_fragment,
             name = "Asteroid Fragment"
         ),
         Shader(
             type = GL_COMPUTE_SHADER,
-            source = R.raw.asteroid_compute,
+            source = R.raw.enemy_compute,
             name = "Asteroid Compute"
         )
     )
@@ -126,6 +130,7 @@ class Asteroids(
         glDeleteShader(computeShader)
     }
 
+
     private fun initData() {
         glGenVertexArrays(1, vao, 0)
         glBindVertexArray(vao[0])
@@ -146,7 +151,6 @@ class Asteroids(
             numberOfFloats = collisionData.data.size
         )
     }
-
 
     private fun initLocations() {
         // attributes
@@ -176,7 +180,7 @@ class Asteroids(
         glBindVertexArray(vao[0])
 
         compute()
-        drawAsteroids()
+        drawEnemy()
 
         glBindVertexArray(0)
     }
@@ -188,36 +192,16 @@ class Asteroids(
             uniforms = {
                 glUniform1ui(shader.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
                 glUniform2f(shader.playerPosition.location, playerProperties.position.x, playerProperties.position.y)
-                glUniform1i(shader.destructible.location, if (playerProperties.push) 1 else 0)
                 glUniform1f(shader.deltaTime.location, EngineGlobals.deltaTime)
                 glUniform1ui(shader.readerOffset.location, vboReader.getOffset(dataSerializeName))
             },
             vbos = vbo + vboReader.vbo,
-            x = properties.numberOfAsteroids,
+            x = properties.numberOfEnemies,
         )
-        handleCollisionData()
     }
 
-    private fun handleCollisionData() {
-        vboReader.getData(
-            key = dataSerializeName,
-            destArray = collisionData.data
-        )
-        // check if collision happened
-        if(collisionData.data[0] == 1f){
-            event(
-                CreateExplosion(
-                    position = floatArrayOf(collisionData.data[1], collisionData.data[2]),
-                    size = collisionData.data[3],
-                    planet = floatArrayOf(collisionData.data[4],  collisionData.data[5]),
-                    color = floatArrayOf(collisionData.data[6], collisionData.data[7], collisionData.data[8]),
-                    explosionHelper = explosionHelper
-                )
-            )
-        }
-    }
+    private fun drawEnemy() {
 
-    private fun drawAsteroids() {
         glUseProgram(program)
         shader.enableAttributeLocations()
 
@@ -229,7 +213,7 @@ class Asteroids(
         glDrawArrays(
             GL_POINTS,
             0,
-            properties.numberOfAsteroids
+            properties.numberOfEnemies
         )
 
         glActiveTexture(0)

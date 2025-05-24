@@ -73,7 +73,6 @@ internal class Vertex(
     override val typeSize = Float.SIZE_BYTES
     override val size = properties.numberOfAsteroids * numberOfFloatsPerVertex
     val data: FloatArray = FloatArray(size)
-    val numberOfAsteroids = properties.numberOfAsteroids
 
     init {
         generatePoints(
