@@ -48,6 +48,7 @@ import ge.siradze.evilplanets.data.CollisionData
 import ge.siradze.evilplanets.data.ShaderLocations
 import ge.siradze.evilplanets.data.Vertex
 import ge.siradze.evilplanets.data.VertexProperties
+import ge.siradze.glcore.EngineGlobals
 import ge.siradze.player.main.PlayerProperties
 
 
@@ -176,13 +177,14 @@ class EvilPlanets(
         drawLines()
         drawPlanets()
 
-
         glBindVertexArray(0)
     }
 
     private fun drawPlanets() {
         glUseProgram(program)
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
+
+        glUniform1i(shader.counter.location, EngineGlobals.counter)
 
         shader.enableAttributeLocations()
 

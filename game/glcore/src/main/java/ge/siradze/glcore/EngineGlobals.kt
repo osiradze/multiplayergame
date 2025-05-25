@@ -6,11 +6,14 @@ package ge.siradze.glcore
 */
 
 object EngineGlobals {
-    // at start we have wrong numbers so we need to wait for 60 frames
-    private var startUpTime = 60
 
+    // counter for fragment animations
+    var counter: Int = 0
     var fps: Int = 120
     var deltaTime: Float = 0.007790469f
+
+    // at start we have wrong numbers so we need to wait for 60 frames
+    private var startUpTime = 60
     private var lastFrameTime: Long = 0
     private var currentTime: Long = 0
 
@@ -25,5 +28,6 @@ object EngineGlobals {
             startUpTime--
         }
         lastFrameTime = currentTime
+        counter++
     }
 }

@@ -14,7 +14,6 @@ import ge.siradze.evilplanets.data.Vertex.Companion.CR
 import ge.siradze.evilplanets.data.Vertex.Companion.PX
 import ge.siradze.evilplanets.data.Vertex.Companion.PY
 import ge.siradze.evilplanets.data.Vertex.Companion.SIZE
-import ge.siradze.evilplanets.data.Vertex.Companion.SPAWN_RADIUS
 import ge.siradze.evilplanets.data.Vertex.Companion.TH
 import ge.siradze.evilplanets.data.Vertex.Companion.TW
 import ge.siradze.evilplanets.data.Vertex.Companion.TX
@@ -28,11 +27,13 @@ internal class VertexProperties(
     val numberOfEvilPlanetsPerPlanet: Int = NUMBER_OF_EVIL_PLANET_PER_PLANET,
     val minSize: Float = MIN_SIZE,
     val sizeRange: Float = SIZE_RANGE,
+    val spawnRadius: Float = SPAWN_RADIUS
 ) {
     companion object {
         const val NUMBER_OF_EVIL_PLANET_PER_PLANET = 10
         const val MIN_SIZE = 0.3f
         const val SIZE_RANGE = 0.3f
+        const val SPAWN_RADIUS = 2.5f
 
     }
 }
@@ -50,8 +51,6 @@ internal class Vertex(
 
         // 2 position + 1 size + 4 texture coordinates + 3 color + 1 collision flag + 1 isDestroyed flag
         const val NUMBER_OF_FLOATS_PER_VERTEX = 12
-        const val SPAWN_RADIUS = 2f
-
 
         const val PX = 0
         const val PY = 1
@@ -110,7 +109,7 @@ private fun generatePoints(
         direction.rotate(360f / numberOfEvilPlanetsPerPlanet)
 
         direction.normalize()
-        direction.multiply(SPAWN_RADIUS)
+        direction.multiply(properties.spawnRadius)
 
         data[i * numberOfFloatsPerVertex + PX] = planetX + direction.x
         data[i * numberOfFloatsPerVertex + PY] = planetY + direction.y

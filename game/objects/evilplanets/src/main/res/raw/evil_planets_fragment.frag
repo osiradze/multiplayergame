@@ -14,7 +14,7 @@ void main() {
             discard;
         }
         // Draw simple white line fragment
-        gl_FragColor = vec4(0.3);
+        gl_FragColor = vec4(0.1);
         return;
     }
 

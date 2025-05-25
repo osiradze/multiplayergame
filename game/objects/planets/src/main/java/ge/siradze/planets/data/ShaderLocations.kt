@@ -5,6 +5,7 @@ import ge.siradze.glcore.shader.ShaderLocation
 import ge.siradze.glcore.shader.ShaderUniformLocation
 import ge.siradze.glcore.shader.RatioShaderLocation
 import ge.siradze.glcore.shader.CameraShaderLocation
+import ge.siradze.glcore.shader.CounterShaderLocation
 import ge.siradze.glcore.shader.ObjectShaderLocations
 import ge.siradze.glcore.shader.ReaderOffsetShaderLocation
 
@@ -59,6 +60,7 @@ internal data class ShaderLocations(
     val drawLine : ShaderUniformLocation = ShaderUniformLocation(
         name = "u_drawLine"
     ),
+    val counter : ShaderLocation = CounterShaderLocation(),
     val readerOffset : ShaderUniformLocation = ReaderOffsetShaderLocation(),
 ) : ObjectShaderLocations {
     override val attributeLocations: List<ShaderAttribLocation> = listOf(
@@ -74,6 +76,7 @@ internal data class ShaderLocations(
         camera,
         drawLine,
         texture,
+        counter
     )
     override val computeUniformLocations: List<ShaderLocation> = listOf(
         floatsPerVertex,

@@ -34,6 +34,7 @@ import android.opengl.GLES31.GL_FLOAT
 import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
 import ge.siradze.core.GameObject
+import ge.siradze.glcore.EngineGlobals
 import ge.siradze.glcore.GameState
 import ge.siradze.glcore.camera.Camera
 import ge.siradze.glcore.extensions.x
@@ -186,6 +187,8 @@ class Planets(
     private fun drawPlanets() {
         glUseProgram(program)
         glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
+        glUniform1i(shader.counter.location, EngineGlobals.counter)
+
 
         shader.enableAttributeLocations()
 
@@ -237,7 +240,7 @@ class Planets(
          vbos = vbo + vboReader.vbo,
          x = vertex.numberOfPlanets,
         )
-        handleCollisionData()
+        //handleCollisionData()
     }
 
     private fun handleCollisionData() {

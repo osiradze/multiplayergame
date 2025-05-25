@@ -1,6 +1,7 @@
 package ge.siradze.evilplanets.data
 
 import ge.siradze.glcore.shader.CameraShaderLocation
+import ge.siradze.glcore.shader.CounterShaderLocation
 import ge.siradze.glcore.shader.ObjectShaderLocations
 import ge.siradze.glcore.shader.RatioShaderLocation
 import ge.siradze.glcore.shader.ReaderOffsetShaderLocation
@@ -59,6 +60,7 @@ internal data class ShaderLocations(
     val drawLine : ShaderUniformLocation = ShaderUniformLocation(
         name = "u_drawLine"
     ),
+    val counter : ShaderUniformLocation = CounterShaderLocation(),
     val readerOffset : ShaderUniformLocation = ReaderOffsetShaderLocation()
 ) : ObjectShaderLocations {
 
@@ -75,6 +77,7 @@ internal data class ShaderLocations(
         camera,
         drawLine,
         texture,
+        counter
     )
     override val computeUniformLocations: List<ShaderLocation> = listOf(
         floatsPerVertex,

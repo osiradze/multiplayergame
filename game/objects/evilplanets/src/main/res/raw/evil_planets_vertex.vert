@@ -16,7 +16,16 @@ varying vec3 v_color;
 attribute float a_isDestroyed;
 varying float v_isDestroyed;
 
+uniform int u_counter;
+
 uniform bool u_drawLine;
+
+void pulseEffect() {
+    float pulseSpeed = 0.04; // Speed of the pulse effect
+    float pulseSize = 0.01; // Size of the pulse effect
+    float pulse = 1.0 + pulseSize * sin(float(u_counter) * pulseSpeed); // oscillates between 0.8 and 1.2
+    gl_PointSize = a_size * u_screen_width * pulse;
+}
 
 void main() {
     if(u_drawLine != true) {
@@ -24,6 +33,8 @@ void main() {
         v_color = a_color;
         v_isDestroyed = a_isDestroyed;
         gl_PointSize = a_size * u_screen_width;
+
+        pulseEffect();
     }
 
     vec2 position = vec2(
