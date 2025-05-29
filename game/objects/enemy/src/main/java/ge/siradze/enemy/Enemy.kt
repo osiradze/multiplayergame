@@ -13,6 +13,7 @@ import android.opengl.GLES20.glDeleteTextures
 import android.opengl.GLES20.glDrawArrays
 import android.opengl.GLES20.glGenBuffers
 import android.opengl.GLES20.glUniform1f
+import android.opengl.GLES20.glUniform1i
 import android.opengl.GLES20.glUniform2f
 import android.opengl.GLES20.glUseProgram
 import android.opengl.GLES30.GL_TEXTURE_2D
@@ -30,6 +31,7 @@ import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
 import ge.siradze.core.GameObject
 import ge.siradze.enemy.data.CollisionData
+import ge.siradze.enemy.data.Data
 import ge.siradze.enemy.data.ShaderLocations
 import ge.siradze.enemy.data.Vertex
 import ge.siradze.enemy.data.VertexProperties
@@ -57,7 +59,6 @@ class Enemy(
     private val playerProperties: PlayerProperties,
     private val camera: Camera,
     private val textureCounter: TextureCounter,
-    private val event: (CreateExplosion) -> Unit,
     private val vboReader: VBOReader
 ) : GameObject {
 
@@ -82,6 +83,8 @@ class Enemy(
         ).also {
             state.set(dataSerializeName, it)
         }
+
+    private val data = Data(properties.numberOfEnemies)
 
     private val shader = ShaderLocations()
     private val shaders = arrayOf(
@@ -177,6 +180,8 @@ class Enemy(
     }
 
     override fun draw() {
+        data.update()
+
         glBindVertexArray(vao[0])
 
         compute()
@@ -184,6 +189,7 @@ class Enemy(
 
         glBindVertexArray(0)
     }
+
 
     private fun compute() {
         // Running as many work as there is max number of asteroid, and each work will be working with each planet.
@@ -196,7 +202,7 @@ class Enemy(
                 glUniform1ui(shader.readerOffset.location, vboReader.getOffset(dataSerializeName))
             },
             vbos = vbo + vboReader.vbo,
-            x = properties.numberOfEnemies,
+            x = data.activeEnemyCount,
         )
     }
 
@@ -207,6 +213,8 @@ class Enemy(
 
         glActiveTexture(texture)
         glBindTexture(GL_TEXTURE_2D, textures[0])
+
+        glUniform1i(shader.counter.location, EngineGlobals.counter)
 
         camera.bindUniform(shader.camera.location)
 

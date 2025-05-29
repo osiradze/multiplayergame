@@ -11,6 +11,7 @@ import ge.siradze.glcore.texture.TextureDimensions
 import ge.siradze.evilplanets.data.Vertex.Companion.CB
 import ge.siradze.evilplanets.data.Vertex.Companion.CG
 import ge.siradze.evilplanets.data.Vertex.Companion.CR
+import ge.siradze.evilplanets.data.Vertex.Companion.IS_ALIVE
 import ge.siradze.evilplanets.data.Vertex.Companion.PX
 import ge.siradze.evilplanets.data.Vertex.Companion.PY
 import ge.siradze.evilplanets.data.Vertex.Companion.SIZE
@@ -49,8 +50,8 @@ internal class Vertex(
 
     companion object {
 
-        // 2 position + 1 size + 4 texture coordinates + 3 color + 1 collision flag + 1 isDestroyed flag
-        const val NUMBER_OF_FLOATS_PER_VERTEX = 12
+        // 2 position + 1 size + 4 texture coordinates + 3 color + 1 isDestroyed flag
+        const val NUMBER_OF_FLOATS_PER_VERTEX = 11
 
         const val PX = 0
         const val PY = 1
@@ -63,6 +64,8 @@ internal class Vertex(
         const val CR = 7
         const val CB = 8
         const val CG = 9
+
+        const val IS_ALIVE = 10 // a_isDestroyed, 1 means destroyed, 0 means not destroyed
 
     }
 
@@ -131,5 +134,8 @@ private fun generatePoints(
         data[i * numberOfFloatsPerVertex + CR] = Random.nextFloat()  + min
         data[i * numberOfFloatsPerVertex + CB] = Random.nextFloat()  + min
         data[i * numberOfFloatsPerVertex + CG] = Random.nextFloat()  + min
+
+        // isAlive flag
+        data[i * numberOfFloatsPerVertex + IS_ALIVE] = 1f
     }
 }

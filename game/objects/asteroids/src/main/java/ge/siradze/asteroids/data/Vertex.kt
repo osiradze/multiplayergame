@@ -33,7 +33,7 @@ internal class VertexProperties(
         private const val MIN_SIZE = 0.1f
         private const val SIZE_RANGE = 0.2f
         private const val SPAWN_DISTANCE = 8f
-        private const val NUMBER_OF_ASTEROIDS = 100
+        private const val NUMBER_OF_ASTEROIDS = 30
     }
 }
 

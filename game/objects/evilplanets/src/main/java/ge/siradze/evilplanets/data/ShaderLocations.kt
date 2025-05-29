@@ -32,9 +32,9 @@ internal data class ShaderLocations(
         offset = 7
     ),
     val isDestroyed : ShaderAttribLocation = ShaderAttribLocation(
-        name = "a_isDestroyed",
+        name = "a_isAlive",
         size = 1,
-        offset = 11
+        offset = 10
     ),
 
     // required to convert pixel size to world units
@@ -53,9 +53,6 @@ internal data class ShaderLocations(
     ),
     val playerPosition: ShaderLocation = ShaderUniformLocation(
         name = "u_player_position"
-    ),
-    val destructible: ShaderUniformLocation = ShaderUniformLocation(
-        name = "u_destructible"
     ),
     val drawLine : ShaderUniformLocation = ShaderUniformLocation(
         name = "u_drawLine"
@@ -82,7 +79,6 @@ internal data class ShaderLocations(
     override val computeUniformLocations: List<ShaderLocation> = listOf(
         floatsPerVertex,
         playerPosition,
-        destructible,
         readerOffset
     )
 

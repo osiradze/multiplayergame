@@ -1,6 +1,7 @@
 package ge.siradze.enemy.data
 
 import ge.siradze.glcore.shader.CameraShaderLocation
+import ge.siradze.glcore.shader.CounterShaderLocation
 import ge.siradze.glcore.shader.ObjectShaderLocations
 import ge.siradze.glcore.shader.RatioShaderLocation
 import ge.siradze.glcore.shader.ReaderOffsetShaderLocation
@@ -60,6 +61,7 @@ internal data class ShaderLocations(
     val deltaTime : ShaderUniformLocation = ShaderUniformLocation(
         name = "u_delta_time"
     ),
+    val counter : ShaderUniformLocation = CounterShaderLocation(),
     val readerOffset : ShaderUniformLocation = ReaderOffsetShaderLocation(),
 ) : ObjectShaderLocations {
     override val attributeLocations: List<ShaderAttribLocation> = listOf(
@@ -75,6 +77,7 @@ internal data class ShaderLocations(
         camera,
         screenWidth,
         texture,
+        counter
     )
 
     override val computeUniformLocations: List<ShaderLocation> = listOf(

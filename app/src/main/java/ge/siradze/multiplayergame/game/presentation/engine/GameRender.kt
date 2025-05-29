@@ -14,6 +14,7 @@ import ge.siradze.multiplayergame.game.presentation.engine.scene.SceneObjects
 import ge.siradze.glcore.texture.TextureCounter
 import ge.siradze.glcore.vboReader.VBOReaderImpl
 import ge.siradze.explosion.Explosion
+import ge.siradze.multiplayergame.game.presentation.engine.scene.EnemySpawning
 import ge.siradze.multiplayergame.game.presentation.feedback.FeedbackSounds
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.player.main.Player
@@ -31,6 +32,9 @@ class GameRender(
 
     private var ratio = 1f
 
+    private var screenWidth = 0
+    private var screenHeight = 0
+
     private val camera: Camera = Camera(state)
     private val textureCounter: TextureCounter = TextureCounter()
     private val vboReader: VBOReaderImpl = VBOReaderImpl()
@@ -39,7 +43,8 @@ class GameRender(
         camera.followPlayer(it.properties.position)
     }
 
-    private val temporaryObjects: MutableList<Explosion> = mutableListOf()
+    private val temporaryObjects: MutableList<GameObject> = mutableListOf()
+
     private val explosionCreation = ExplosionCreation(
         context = context,
         camera = camera,
@@ -47,6 +52,16 @@ class GameRender(
         temporaryObjects = temporaryObjects,
         feedbackSounds = feedbackSounds,
         uiEffect = uiEffect
+    )
+
+    private val enemySpawning = EnemySpawning(
+        context = context,
+        camera = camera,
+        player = player,
+        temporaryObjects = temporaryObjects,
+        state = state,
+        textureCounter = textureCounter,
+        vboReader = vboReader,
     )
 
     private val sceneObjects = SceneObjects(
@@ -57,14 +72,16 @@ class GameRender(
         vboReader = vboReader,
         player = player,
         explosionCreation = explosionCreation,
+        enemySpawn = enemySpawning
     )
 
 
     private val objects: MutableList<GameObject> = mutableListOf(
         sceneObjects.stars,
+        sceneObjects.planets,
         sceneObjects.asteroids,
         sceneObjects.evilPlanets,
-        sceneObjects.planets,
+        sceneObjects.enemy,
         player,
         sceneObjects.playerTrail,
     )
@@ -78,6 +95,8 @@ class GameRender(
     }
 
     override fun onSurfaceChanged(p0: GL10?, width: Int, height: Int) {
+        this.screenWidth = width
+        this.screenHeight = height
         ratio = width.toFloat() / height.toFloat()
         objects.forEach {
             it.setRatio(ratio)
@@ -118,16 +137,30 @@ class GameRender(
             val tempObject = temporaryObjects.first()
             tempObject.init()
             tempObject.setRatio(ratio)
-            objects.add(0, tempObject)
-            temporaryObjects.removeAt(0)
-            if(objects.size > MAX_EXPLOSION) {
-                objects.findLast { it is Explosion }?.let {
-                    objects.remove(it)
-                    it.release()
-                }
+            tempObject.onSizeChange(screenWidth, screenHeight)
+            if(tempObject is Explosion) {
+                addExplosion(tempObject)
+            }else {
+                addEnemy(tempObject)
             }
 
         }
+    }
+
+    private fun addExplosion(explosion: Explosion) {
+        objects.add(0, explosion)
+        temporaryObjects.removeAt(temporaryObjects.size - 1 )
+        if(objects.size > MAX_OBJECTS) {
+            objects.findLast { it is Explosion }?.let {
+                objects.remove(it)
+                it.release()
+            }
+        }
+    }
+
+    private fun addEnemy(enemy: GameObject) {
+        objects.add(enemy)
+        temporaryObjects.removeAt(temporaryObjects.size - 1 )
     }
 
     fun release() {
@@ -141,7 +174,7 @@ class GameRender(
     }
 
     companion object {
-        const val MAX_EXPLOSION = 50
+        const val MAX_OBJECTS = 50
         const val NUMBER_OF_PLANETS = 30
     }
 }

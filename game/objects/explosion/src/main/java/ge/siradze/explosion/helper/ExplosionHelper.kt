@@ -8,10 +8,9 @@ import ge.siradze.glcore.texture.TextureDimensions
 
 class ExplosionHelper(
     context: Context,
-    val textureDimensions: TextureDimensions
-) {
+    val textureDimensions: TextureDimensions,
     val pointNumber: Int = 2000
-
+) {
     val numberOfFloatsPerPoint = 8 // 2 - position.  3 - color. 2 - velocity. 1 - isDead
     // adding 1 for counter
     val data: Array<Array<FloatArray>> = Array(textureDimensions.columns) { Array(textureDimensions.rows) { FloatArray((pointNumber * numberOfFloatsPerPoint)) } }

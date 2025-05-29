@@ -12,7 +12,6 @@ layout(std430, binding = 1) buffer ResultBuffer {
 
 uniform uint u_floats_per_vertex;
 uniform vec2 u_player_position;
-uniform bool u_destructible;
 uniform uint u_reader_offset;
 
 float getDistance(vec2 p1, vec2 p2) {
@@ -28,6 +27,14 @@ void setFirstPlanetPositionToPlayer(uint index) {
 void main() {
     uint planetIndex = gl_WorkGroupID.x + gl_WorkGroupID.y * gl_NumWorkGroups.x;
     uint index = planetIndex * u_floats_per_vertex;
+
+    // position of float where it says if the asteroid is alive
+    uint isAliveIndex = u_floats_per_vertex - 1u;
+
+    // if asteroid momory block is not alive return (it's last float)
+    if(inputOutput.data[index + isAliveIndex] != 1.0) {
+        return;
+    }
 
     vec2 pos = vec2(inputOutput.data[index + 0u], inputOutput.data[index + 1u]);
     float size = inputOutput.data[index + 2u];
@@ -51,6 +58,6 @@ void main() {
         resultBuffer.result[u_reader_offset + 7u] = colorG;
         resultBuffer.result[u_reader_offset + 8u] = colorB;
 
-        inputOutput.data[index + 10u] = 1.0; // mark that player collided
+        inputOutput.data[index + 10u] = 0.0; // mark that player collided
     }
 }

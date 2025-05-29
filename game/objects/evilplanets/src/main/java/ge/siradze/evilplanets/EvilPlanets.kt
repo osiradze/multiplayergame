@@ -33,6 +33,7 @@ import android.opengl.GLES31.GL_DYNAMIC_DRAW
 import android.opengl.GLES31.GL_FLOAT
 import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
+import ge.siradze.enemy.event.EnemySpawn
 import ge.siradze.glcore.camera.Camera
 import ge.siradze.glcore.vboReader.VBOReader
 import ge.siradze.glcore.extensions.x
@@ -48,6 +49,8 @@ import ge.siradze.evilplanets.data.CollisionData
 import ge.siradze.evilplanets.data.ShaderLocations
 import ge.siradze.evilplanets.data.Vertex
 import ge.siradze.evilplanets.data.VertexProperties
+import ge.siradze.explosion.event.CreateExplosion
+import ge.siradze.explosion.helper.ExplosionHelper
 import ge.siradze.glcore.EngineGlobals
 import ge.siradze.player.main.PlayerProperties
 
@@ -60,10 +63,13 @@ class EvilPlanets(
     private val camera: Camera,
     private val textureCounter: TextureCounter,
     planetsData: FloatArray,
+    private val event: (CreateExplosion) -> Unit,
+    private val enemySpawn: (EnemySpawn) -> Unit,
     private val vboReader: VBOReader
 ): ge.siradze.core.GameObject {
 
     private val textureDimensions = TextureDimensions(4, 4, R.drawable.evilplanets)
+    private val explosionHelper = ExplosionHelper(context, textureDimensions, pointNumber = 6000)
 
     private val vao: IntArray = IntArray(1)
     private val vbo: IntArray = IntArray(1)
@@ -229,7 +235,6 @@ class EvilPlanets(
              uniforms = {
                  glUniform1ui(shader.floatsPerVertex.location, vertex.numberOfFloatsPerVertex)
                  glUniform2f(shader.playerPosition.location, playerProperties.position.x, playerProperties.position.y)
-                 glUniform1i(shader.destructible.location, if (playerProperties.push) 1 else 0)
                  glUniform1ui(shader.readerOffset.location, vboReader.getOffset(dataSerializeName))
              },
              vbos = vbo + vboReader.vbo,
@@ -246,9 +251,18 @@ class EvilPlanets(
         )
         // check if collision happened
         if(collisionData.data[0] == 1f){
-            playerProperties.addForce(
-                forceDirection = floatArrayOf(collisionData.data[1], collisionData.data[2]),
-            )
+            val position = floatArrayOf(collisionData.data[1], collisionData.data[2])
+           /* event(
+                CreateExplosion(
+                    position = position,
+                    size = collisionData.data[3],
+                    planet = floatArrayOf(collisionData.data[4],  collisionData.data[5]),
+                    color = floatArrayOf(collisionData.data[6], collisionData.data[7], collisionData.data[8]),
+                    explosionHelper = explosionHelper
+                )
+            )*/
+
+            enemySpawn(EnemySpawn(position))
         }
     }
 

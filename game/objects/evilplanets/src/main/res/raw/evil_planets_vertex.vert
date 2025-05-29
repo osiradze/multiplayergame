@@ -13,8 +13,8 @@ varying vec4 v_texture_coordinates;
 attribute vec3 a_color;
 varying vec3 v_color;
 
-attribute float a_isDestroyed;
-varying float v_isDestroyed;
+attribute float a_isAlive;
+varying float v_isAlive;
 
 uniform int u_counter;
 
@@ -31,7 +31,7 @@ void main() {
     if(u_drawLine != true) {
         v_texture_coordinates = a_texture_coordinates;
         v_color = a_color;
-        v_isDestroyed = a_isDestroyed;
+        v_isAlive = a_isAlive;
         gl_PointSize = a_size * u_screen_width;
 
         pulseEffect();

@@ -12,7 +12,7 @@ vec4 toGrayscale(vec4 color) {
 }
 
 void main() {
-    if (v_isAlive == 0.0) {
+    if (v_isAlive != 1.0) {
         discard;
     }
 

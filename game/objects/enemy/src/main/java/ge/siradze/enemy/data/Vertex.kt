@@ -14,11 +14,11 @@ class VertexProperties (
     val spawnPosition: FloatArray,
     val numberOfEnemies: Int = NUMBER_OF_ENEMIES,
     val minSize: Float = MIN_SIZE,
-    val sizeRange: Float = SIZE_RANGE,
+    val sizeRange: Float = SIZE_RANGE
 ) {
     companion object {
-        private const val MIN_SIZE = 0.1f
-        private const val SIZE_RANGE = 0.2f
+        private const val MIN_SIZE = 0.2f
+        private const val SIZE_RANGE = 0.02f
         private const val NUMBER_OF_ENEMIES = 20
     }
 }
@@ -52,7 +52,7 @@ class Vertex(
         const val CR = 9
         const val CB = 10
         const val CG = 11
-        const val IS_ALIVE = 12
+        const val IS_ALIVE = 12 // 0 - has not born, 1 - is alive, 2 - has died
     }
 
 
@@ -98,6 +98,6 @@ private fun generatePoints(
         vertex.data[index + Vertex.CR] = 1f // Color Red
         vertex.data[index + Vertex.CB] = 1f // Color Blue
         vertex.data[index + Vertex.CG] = 1f // Color Green
-        vertex.data[index + Vertex.IS_ALIVE] = 1f // Alive flag
+        vertex.data[index + Vertex.IS_ALIVE] = 0f // Alive flag
     }
 }

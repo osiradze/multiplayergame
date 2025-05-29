@@ -5,6 +5,8 @@ import ge.siradze.glcore.GameState
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender.Companion.NUMBER_OF_PLANETS
 import ge.siradze.glcore.camera.Camera
 import ge.siradze.asteroids.Asteroids
+import ge.siradze.enemy.Enemy
+import ge.siradze.enemy.event.EnemySpawn
 import ge.siradze.planets.Planets
 import ge.siradze.glcore.texture.TextureCounter
 import ge.siradze.glcore.vboReader.VBOReaderImpl
@@ -22,6 +24,7 @@ class SceneObjects(
     vboReader: VBOReaderImpl,
     player: Player,
     explosionCreation: (CreateExplosion) -> Unit,
+    enemySpawn: (EnemySpawn) -> Unit
 ) {
 
     val playerTrail = PlayerTrail(
@@ -49,8 +52,22 @@ class SceneObjects(
         camera = camera,
         textureCounter = textureCounter,
         planetsData = planets.getVertexData(),
+        event = explosionCreation,
+        enemySpawn = enemySpawn,
         vboReader = vboReader,
     )
+
+    val enemy = Enemy(
+        name = "Enemy",
+        state = state,
+        context = context,
+        spawnPosition = floatArrayOf(0f, 0f, 0f),
+        playerProperties = player.properties,
+        camera = camera,
+        textureCounter = textureCounter,
+        vboReader = vboReader,
+    )
+
 
     val asteroids = Asteroids(
         name = "Asteroids",
