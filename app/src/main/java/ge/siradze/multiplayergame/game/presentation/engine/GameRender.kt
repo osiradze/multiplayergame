@@ -9,12 +9,12 @@ import ge.siradze.glcore.EngineGlobals
 import ge.siradze.core.GameObject
 import ge.siradze.glcore.GameState
 import ge.siradze.glcore.camera.Camera
-import ge.siradze.multiplayergame.game.presentation.engine.scene.ExplosionCreation
+import ge.siradze.multiplayergame.game.presentation.engine.scene.helpers.ExplosionCreationHelper
 import ge.siradze.multiplayergame.game.presentation.engine.scene.SceneObjects
 import ge.siradze.glcore.texture.TextureCounter
 import ge.siradze.glcore.vboReader.VBOReaderImpl
 import ge.siradze.explosion.Explosion
-import ge.siradze.multiplayergame.game.presentation.engine.scene.EnemySpawning
+import ge.siradze.multiplayergame.game.presentation.engine.scene.helpers.EnemySpawnerHelper
 import ge.siradze.multiplayergame.game.presentation.feedback.FeedbackSounds
 import ge.siradze.multiplayergame.game.presentation.gameUi.UIEvents
 import ge.siradze.player.main.Player
@@ -45,7 +45,7 @@ class GameRender(
 
     private val temporaryObjects: MutableList<GameObject> = mutableListOf()
 
-    private val explosionCreation = ExplosionCreation(
+    private val explosionCreationHelper = ExplosionCreationHelper(
         context = context,
         camera = camera,
         player = player,
@@ -54,7 +54,7 @@ class GameRender(
         uiEffect = uiEffect
     )
 
-    private val enemySpawning = EnemySpawning(
+    private val enemySpawnerHelper = EnemySpawnerHelper(
         context = context,
         camera = camera,
         player = player,
@@ -71,8 +71,8 @@ class GameRender(
         textureCounter = textureCounter,
         vboReader = vboReader,
         player = player,
-        explosionCreation = explosionCreation,
-        enemySpawn = enemySpawning
+        explosionCreationHelper = explosionCreationHelper,
+        enemySpawnerHelper = enemySpawnerHelper
     )
 
 
@@ -81,7 +81,6 @@ class GameRender(
         sceneObjects.planets,
         sceneObjects.asteroids,
         sceneObjects.evilPlanets,
-        sceneObjects.enemy,
         player,
         sceneObjects.playerTrail,
     )
@@ -148,10 +147,10 @@ class GameRender(
     }
 
     private fun addExplosion(explosion: Explosion) {
-        objects.add(0, explosion)
+        objects.add(explosion)
         temporaryObjects.removeAt(temporaryObjects.size - 1 )
         if(objects.size > MAX_OBJECTS) {
-            objects.findLast { it is Explosion }?.let {
+            objects.find { it is Explosion }?.let {
                 objects.remove(it)
                 it.release()
             }

@@ -21,10 +21,14 @@ uniform int u_counter;
 uniform bool u_drawLine;
 
 void pulseEffect() {
+    float size = a_size;
+    if(a_isAlive == 0.0) {
+        //size /= 2.0; // if the planet is dead, make it smaller
+    }
     float pulseSpeed = 0.04; // Speed of the pulse effect
     float pulseSize = 0.01; // Size of the pulse effect
     float pulse = 1.0 + pulseSize * sin(float(u_counter) * pulseSpeed); // oscillates between 0.8 and 1.2
-    gl_PointSize = a_size * u_screen_width * pulse;
+    gl_PointSize = size * u_screen_width * pulse;
 }
 
 void main() {
@@ -32,8 +36,6 @@ void main() {
         v_texture_coordinates = a_texture_coordinates;
         v_color = a_color;
         v_isAlive = a_isAlive;
-        gl_PointSize = a_size * u_screen_width;
-
         pulseEffect();
     }
 

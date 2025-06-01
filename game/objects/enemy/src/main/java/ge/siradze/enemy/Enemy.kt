@@ -35,7 +35,6 @@ import ge.siradze.enemy.data.Data
 import ge.siradze.enemy.data.ShaderLocations
 import ge.siradze.enemy.data.Vertex
 import ge.siradze.enemy.data.VertexProperties
-import ge.siradze.explosion.event.CreateExplosion
 import ge.siradze.explosion.helper.ExplosionHelper
 import ge.siradze.glcore.EngineGlobals
 import ge.siradze.glcore.GameState

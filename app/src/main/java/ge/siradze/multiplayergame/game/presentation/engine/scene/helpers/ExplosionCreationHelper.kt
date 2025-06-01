@@ -1,23 +1,23 @@
-package ge.siradze.multiplayergame.game.presentation.engine.scene
+package ge.siradze.multiplayergame.game.presentation.engine.scene.helpers
 
 import android.content.Context
 import ge.siradze.core.GameObject
 import ge.siradze.multiplayergame.game.presentation.engine.GameRender.UIEffect
 import ge.siradze.glcore.camera.Camera
 import ge.siradze.explosion.Explosion
-import ge.siradze.explosion.event.CreateExplosion
+import ge.siradze.explosion.event.ExplotionCreationEvent
 import ge.siradze.multiplayergame.game.presentation.feedback.FeedbackSounds
 import ge.siradze.player.main.Player
 
-class ExplosionCreation(
+class ExplosionCreationHelper(
     private val context: Context,
     private val camera: Camera,
     private val player: Player,
     private val temporaryObjects: MutableList<GameObject>,
     private val feedbackSounds: FeedbackSounds,
     private val uiEffect: (UIEffect) -> Unit,
-): (CreateExplosion) -> Unit {
-    override fun invoke(event: CreateExplosion) {
+): (ExplotionCreationEvent) -> Unit {
+    override fun invoke(event: ExplotionCreationEvent) {
         Thread {
             temporaryObjects.add(
                 Explosion(

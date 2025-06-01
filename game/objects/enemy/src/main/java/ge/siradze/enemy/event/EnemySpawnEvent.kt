@@ -1,5 +1,5 @@
 package ge.siradze.enemy.event
 
-class EnemySpawn(
+class EnemySpawnEvent(
     val position: FloatArray,
 )

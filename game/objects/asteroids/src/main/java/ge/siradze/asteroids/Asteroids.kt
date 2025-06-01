@@ -47,7 +47,7 @@ import ge.siradze.glcore.utils.OpenGLUtils
 import ge.siradze.glcore.utils.ShaderUtils
 import ge.siradze.glcore.utils.TextureUtils
 import ge.siradze.explosion.helper.ExplosionHelper
-import ge.siradze.explosion.event.CreateExplosion
+import ge.siradze.explosion.event.ExplotionCreationEvent
 import ge.siradze.player.main.PlayerProperties
 
 class Asteroids(
@@ -57,7 +57,7 @@ class Asteroids(
     private val playerProperties: PlayerProperties,
     private val camera: Camera,
     private val textureCounter: TextureCounter,
-    private val event: (CreateExplosion) -> Unit,
+    private val event: (ExplotionCreationEvent) -> Unit,
     private val vboReader: VBOReader
 ): GameObject {
 
@@ -206,7 +206,7 @@ class Asteroids(
         // check if collision happened
         if(collisionData.data[0] == 1f){
             event(
-                CreateExplosion(
+                ExplotionCreationEvent(
                     position = floatArrayOf(collisionData.data[1], collisionData.data[2]),
                     size = collisionData.data[3],
                     planet = floatArrayOf(collisionData.data[4],  collisionData.data[5]),

@@ -6,12 +6,14 @@ import ge.siradze.multiplayergame.game.presentation.engine.GameRender.Companion.
 import ge.siradze.glcore.camera.Camera
 import ge.siradze.asteroids.Asteroids
 import ge.siradze.enemy.Enemy
-import ge.siradze.enemy.event.EnemySpawn
+import ge.siradze.enemy.event.EnemySpawnEvent
 import ge.siradze.planets.Planets
 import ge.siradze.glcore.texture.TextureCounter
 import ge.siradze.glcore.vboReader.VBOReaderImpl
 import ge.siradze.evilplanets.EvilPlanets
-import ge.siradze.explosion.event.CreateExplosion
+import ge.siradze.explosion.event.ExplotionCreationEvent
+import ge.siradze.multiplayergame.game.presentation.engine.scene.helpers.EnemySpawnerHelper
+import ge.siradze.multiplayergame.game.presentation.engine.scene.helpers.ExplosionCreationHelper
 import ge.siradze.player.main.Player
 import ge.siradze.player.trail.PlayerTrail
 import ge.siradze.stars.Stars
@@ -23,8 +25,8 @@ class SceneObjects(
     textureCounter: TextureCounter,
     vboReader: VBOReaderImpl,
     player: Player,
-    explosionCreation: (CreateExplosion) -> Unit,
-    enemySpawn: (EnemySpawn) -> Unit
+    explosionCreationHelper: ExplosionCreationHelper,
+    enemySpawnerHelper: EnemySpawnerHelper
 ) {
 
     val playerTrail = PlayerTrail(
@@ -52,22 +54,10 @@ class SceneObjects(
         camera = camera,
         textureCounter = textureCounter,
         planetsData = planets.getVertexData(),
-        event = explosionCreation,
-        enemySpawn = enemySpawn,
+        event = explosionCreationHelper,
+        enemySpawn = enemySpawnerHelper,
         vboReader = vboReader,
     )
-
-    val enemy = Enemy(
-        name = "Enemy",
-        state = state,
-        context = context,
-        spawnPosition = floatArrayOf(0f, 0f, 0f),
-        playerProperties = player.properties,
-        camera = camera,
-        textureCounter = textureCounter,
-        vboReader = vboReader,
-    )
-
 
     val asteroids = Asteroids(
         name = "Asteroids",
@@ -76,7 +66,7 @@ class SceneObjects(
         playerProperties = player.properties,
         camera = camera,
         textureCounter = textureCounter,
-        event = explosionCreation,
+        event = explosionCreationHelper,
         vboReader = vboReader,
     )
 

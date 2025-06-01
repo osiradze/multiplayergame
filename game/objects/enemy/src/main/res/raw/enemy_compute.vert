@@ -35,10 +35,11 @@ void main() {
     inputOutput.data[index + isAliveIndex] = 1.0;
 
 
+    float speed = 0.6; // speed of the enemy
 
     // addVelocity
-    inputOutput.data[index] += inputOutput.data[index + 2u] * u_delta_time;
-    inputOutput.data[index + 1u] += inputOutput.data[index + 3u] * u_delta_time;
+    inputOutput.data[index] += inputOutput.data[index + 2u] * u_delta_time * speed;
+    inputOutput.data[index + 1u] += inputOutput.data[index + 3u] * u_delta_time * speed;
 
 
     float textureCoordX = inputOutput.data[index + 5u];

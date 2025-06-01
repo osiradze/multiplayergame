@@ -10,9 +10,6 @@ varying float v_isAlive;
 void main() {
 
     if (u_drawLine) {
-        if (v_isAlive == 0.0) {
-            discard;
-        }
         // Draw simple white line fragment
         gl_FragColor = vec4(0.1);
         return;
@@ -21,10 +18,17 @@ void main() {
     vec2 texCoord = v_texture_coordinates.xy + gl_PointCoord * v_texture_coordinates.zw;
     vec4 pixel = texture2D(u_texture, texCoord);
 
-    if (pixel.a < 0.1 || v_isAlive == 0.0) {
+    if (pixel.a < 0.1) {
         discard;
     }
-    pixel.rgb *= v_color;
+
+    vec3 color = v_color;
+    if(v_isAlive == 0.0) {
+        // If the planet is not alive, use a gray color
+        color = vec3(0.1);
+    }
+
+    pixel.rgb *= color;
 
     gl_FragColor = pixel;
 }

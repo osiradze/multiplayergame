@@ -11,7 +11,7 @@ internal class Data(private val enemyNumber: Int) {
             return
         }
         counter++
-        if(counter > EngineGlobals.fps) {
+        if(counter > EngineGlobals.fps / 2) {
             counter = 0
             activeEnemyCount++
         }

@@ -59,7 +59,7 @@ void main() {
         float power;
         float randValue = 0.4 + rand(vec2(g, r)) * 0.6;
         if(u_push) {
-            power = 0.1;
+            power = 0.2;
             vector = vec2(x - u_player_position.x, y - u_player_position.y);
         } else {
             power = 0.3;
