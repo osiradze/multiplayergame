@@ -19,14 +19,72 @@ float getDistance(vec2 p1, vec2 p2) {
     return length(p2 - p1);
 }
 
+void addVelosity(uint index) {
+    float speed = 0.8; // speed of the enemy
+
+    // addVelocity
+    inputOutput.data[index] += inputOutput.data[index + 2u] * u_delta_time * speed;
+    inputOutput.data[index + 1u] += inputOutput.data[index + 3u] * u_delta_time * speed;
+
+    vec2 vector = normalize(
+        vec2(
+            u_player_position.x - inputOutput.data[index],
+            u_player_position.y - inputOutput.data[index + 1u]
+        )
+    );
+    inputOutput.data[index + 2u] = vector.x;
+    inputOutput.data[index + 3u] = vector.y;
+}
+
+void collisionBetweenEnemies(
+    uint currentEnemyIndex,
+    vec2 currentEnemyPosition,
+    float currentEnemySize,
+    uint isAliveIndex
+) {
+    uint enemyNumber = uint(inputOutput.data.length()) / u_floats_per_vertex;
+
+
+    for(uint otherEnemy = 0u; otherEnemy < enemyNumber; otherEnemy++){
+        if(otherEnemy != enemyNumber) {
+            uint otherEnemyIndex = otherEnemy * u_floats_per_vertex;
+            float isOtherEnemyAlive = inputOutput.data[otherEnemy * u_floats_per_vertex + isAliveIndex];
+            if(isOtherEnemyAlive != 1.0) {
+                continue; // Skip if the other enemy is not alive
+            }
+
+            vec2 otherEnemyPosition = vec2(
+            inputOutput.data[otherEnemy * u_floats_per_vertex],
+            inputOutput.data[otherEnemy * u_floats_per_vertex + 1u]
+            );
+            vec2 otherEnemyVelocity = vec2(
+            inputOutput.data[otherEnemy * u_floats_per_vertex + 2u],
+            inputOutput.data[otherEnemy * u_floats_per_vertex + 3u]
+            );
+
+            float otherAsteroidSize = inputOutput.data[otherEnemy * u_floats_per_vertex + 4u];
+            float distance = getDistance(otherEnemyPosition, currentEnemyPosition);
+            float minAvaliableDistance = (currentEnemySize + otherAsteroidSize) * 0.5;
+            if(distance < minAvaliableDistance) {
+                float speedX = (otherEnemyPosition.x - currentEnemyPosition.x);
+                float speedY = (otherEnemyPosition.y - currentEnemyPosition.y);
+                inputOutput.data[otherEnemyIndex + 2u] += speedX;
+                inputOutput.data[otherEnemyIndex + 3u] += speedY;
+            }
+        }
+    }
+}
+
 
 void main() {
-
-    uint aseteroidNumber = (gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x);
-    uint index = aseteroidNumber * u_floats_per_vertex;
-
-    // position of float where it says if the enemy is alive
+    uint currentEnemy = (gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x);
+    uint index = currentEnemy * u_floats_per_vertex;
     uint isAliveIndex = u_floats_per_vertex - 1u;
+    vec2 currentEnemyPosition = vec2(
+        inputOutput.data[index],
+        inputOutput.data[index + 1u]
+    );
+    float currentEnemySize = inputOutput.data[index + 4u];
 
     // if enemy momory block is not alive return (it's last float)
     if(inputOutput.data[index + isAliveIndex] == 2.0) {
@@ -34,28 +92,7 @@ void main() {
     }
     inputOutput.data[index + isAliveIndex] = 1.0;
 
-
-    float speed = 0.6; // speed of the enemy
-
-    // addVelocity
-    inputOutput.data[index] += inputOutput.data[index + 2u] * u_delta_time * speed;
-    inputOutput.data[index + 1u] += inputOutput.data[index + 3u] * u_delta_time * speed;
-
-
-    float textureCoordX = inputOutput.data[index + 5u];
-    float textureCoordY = inputOutput.data[index + 6u];
-
-    float colorR = inputOutput.data[index + 9u];
-    float colorG = inputOutput.data[index + 10u];
-    float colorB = inputOutput.data[index + 11u];
-
-    vec2 vector = normalize(vec2(
-        u_player_position.x - inputOutput.data[index],
-        u_player_position.y - inputOutput.data[index + 1u]
-    ));
-
-    inputOutput.data[index + 2u] = vector.x;
-    inputOutput.data[index + 3u] = vector.y;
+    addVelosity(index);
 
     float distance = getDistance(
         vec2(inputOutput.data[index], inputOutput.data[index + 1u]),
@@ -67,4 +104,10 @@ void main() {
         return;
     }
 
+    collisionBetweenEnemies(
+        currentEnemy,
+        currentEnemyPosition,
+        currentEnemySize,
+        isAliveIndex
+    );
 }

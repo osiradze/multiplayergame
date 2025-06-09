@@ -33,8 +33,6 @@ void main() {
     gl_PointSize = a_size * u_screen_width;
     pulseEffect();
 
-
-
     vec2 position = vec2(
         a_position.x - u_camera.x,
         (a_position.y - u_camera.y) * u_ratio

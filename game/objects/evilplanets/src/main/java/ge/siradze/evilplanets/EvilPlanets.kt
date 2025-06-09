@@ -180,7 +180,7 @@ class EvilPlanets(
         glBindVertexArray(vao[0])
 
         compute()
-        drawLines()
+        //drawLines()
         drawPlanets()
 
         glBindVertexArray(0)

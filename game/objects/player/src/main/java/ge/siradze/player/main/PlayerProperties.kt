@@ -25,8 +25,8 @@ class PlayerProperties(
 
     private val rotateSpeed = 10f
     private var gas = false
-    private val gasForce = 0.01f
-    private val maxSpeed = 1.0f
+    private val gasForce = 0.007f
+    private val maxSpeed = 0.9f
     private val deceleration = 0.98f
 
     fun update() {

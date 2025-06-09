@@ -87,7 +87,7 @@ void main() {
         resultBuffer.result[u_reader_offset + 8u] = colorB;
 
     }
-    for(uint otherAsteroid = 0u; otherAsteroid < planetNumber; otherAsteroid++){
+   /** for(uint otherAsteroid = 0u; otherAsteroid < planetNumber; otherAsteroid++){
         if(otherAsteroid != aseteroidNumber) {
             uint otherAsteroidIndex = otherAsteroid * u_floats_per_vertex;
             float isAlive = inputOutput.data[otherAsteroid * u_floats_per_vertex + isAliveIndex];
@@ -114,5 +114,5 @@ void main() {
                 inputOutput.data[otherAsteroidIndex + 3u] = speedY;
             }
         }
-    }
+    }*/
 }

@@ -11,7 +11,7 @@ void main() {
 
     if (u_drawLine) {
         // Draw simple white line fragment
-        gl_FragColor = vec4(0.1);
+        gl_FragColor = vec4(0.5);
         return;
     }
 

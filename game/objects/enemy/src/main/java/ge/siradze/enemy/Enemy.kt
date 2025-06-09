@@ -31,7 +31,7 @@ import android.opengl.GLES31.glBindBuffer
 import android.opengl.GLES31.glBufferData
 import ge.siradze.core.GameObject
 import ge.siradze.enemy.data.CollisionData
-import ge.siradze.enemy.data.Data
+import ge.siradze.enemy.data.SpawnHandler
 import ge.siradze.enemy.data.ShaderLocations
 import ge.siradze.enemy.data.Vertex
 import ge.siradze.enemy.data.VertexProperties
@@ -83,7 +83,7 @@ class Enemy(
             state.set(dataSerializeName, it)
         }
 
-    private val data = Data(properties.numberOfEnemies)
+    private val data = SpawnHandler(properties.numberOfEnemies)
 
     private val shader = ShaderLocations()
     private val shaders = arrayOf(

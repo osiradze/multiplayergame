@@ -78,8 +78,8 @@ class GameRender(
 
     private val objects: MutableList<GameObject> = mutableListOf(
         sceneObjects.stars,
-        sceneObjects.planets,
         sceneObjects.asteroids,
+        sceneObjects.planets,
         sceneObjects.evilPlanets,
         player,
         sceneObjects.playerTrail,

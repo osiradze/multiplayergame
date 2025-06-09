@@ -17,9 +17,9 @@ class VertexProperties (
     val sizeRange: Float = SIZE_RANGE
 ) {
     companion object {
-        private const val MIN_SIZE = 0.2f
+        private const val MIN_SIZE = 0.1f
         private const val SIZE_RANGE = 0.02f
-        private const val NUMBER_OF_ENEMIES = 20
+        private const val NUMBER_OF_ENEMIES = 200
     }
 }
 
